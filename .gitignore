@@ -1,0 +1,27 @@
+# package directories
+node_modules
+lib
+
+# hardhat
+artifacts
+cache
+deployments
+typechain
+
+#defender
+.defender/
+secrets.*.yml
+
+# coverage directory used by tools like istanbul
+coverage
+coverage.json
+coverageEnv
+
+
+# Other
+.env
+*.log
+.DS_Store
+tsconfig.tsbuildinfo
+
+.vscode
