@@ -25,3 +25,6 @@ coverageEnv
 tsconfig.tsbuildinfo
 
 .vscode
+
+#openzeppelin upgrades plugin localhost json file(https://github.com/OpenZeppelin/openzeppelin-upgrades)
+**/.openzeppelin/*.json

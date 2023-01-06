@@ -1,0 +1,61 @@
+service: defender-serverless-template
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: "${self:custom.config.network}DeFi" #avoid hyphens since they create conflicts in stack secrets
+  ssot: false
+
+custom:
+  config: ${file(secrets.${self:provider.stage}.yml)}
+
+defender:
+  key: ${self:custom.config.keys.api}
+  secret: ${self:custom.config.keys.secret}
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        eip1559-pricing: true
+
+    sentinels:
+      upgrade-sentinel:
+        name: "Underlying Asset Monitor"
+        type: "BLOCK"
+        network: "${self:custom.config.network}"
+        addresses:
+          - "${self:custom.config.proxy-address}"
+        abi: ${file(./abis/Upgrade.json.abi)}
+        paused: false
+        autotask-condition: null
+        autotask-trigger: null
+        confirm-level: 1
+        notify-config:
+          channels:
+            - ${self:resources.Resources.notifications.slack-security}
+        conditions:
+          event:
+            - signature: "Upgraded(address)"
+          function: # we don't monitor function calls in this sentinel
+            - signature: ""
+
+    notifications:
+      slack-security:
+        type: "slack"
+        name: "Slack Secruity Channel"
+        paused: false
+        config:
+          url: "${self:custom.config.notifications.slack-webhook}"
+      email-security:
+        type: "email"
+        name: "Security Email"
+        paused: true
+        config:
+          emails:
+            - "${self:custom.config.notifications.email-address}"
+
+plugins:
+  - defender-serverless
