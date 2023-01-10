@@ -5,11 +5,13 @@ frameworkVersion: "3"
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: "${self:custom.config.network}DeFi" #avoid hyphens since they create conflicts in stack secrets
+  stackName: "underlying-upgradable-token"
   ssot: false
 
 custom:
-  config: ${file(secrets.${self:provider.stage}.yml)}
+  config: ${file(../secrets.${self:provider.stage}.yml)}
+  # Fill with your proxy address
+  proxy-address: ""
 
 defender:
   key: ${self:custom.config.keys.api}
@@ -27,7 +29,7 @@ resources:
         type: "BLOCK"
         network: "${self:custom.config.network}"
         addresses:
-          - "${self:custom.config.proxy-address}"
+          - "${self:custom.proxy-address}"
         abi: ${file(./abis/Upgrade.json.abi)}
         paused: false
         autotask-condition: null

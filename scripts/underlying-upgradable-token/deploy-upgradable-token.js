@@ -1,5 +1,5 @@
 const { ethers, upgrades, network } = require("hardhat");
-const { developmentChains } = require("../helper-hardhat-config");
+const { developmentChains } = require("./helper-hardhat-config");
 const { verify } = require("../verify");
 
 /**
@@ -23,7 +23,7 @@ async function main() {
         process.env.ETHERSCAN_API_KEY
     ) {
         console.log("Verifying contract...");
-        await verify(token.address, [], "MyUpgradableToken");
+        await verify(token.address, []);
     }
 }
 

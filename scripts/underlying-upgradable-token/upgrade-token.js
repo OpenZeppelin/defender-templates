@@ -1,5 +1,5 @@
 const { ethers, upgrades, network } = require("hardhat");
-const { networkConfig } = require("../helper-hardhat-config");
+const { networkConfig } = require("./helper-hardhat-config");
 
 /**
  * Upgrades MyUpgradableToken to V2 verion.
