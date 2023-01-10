@@ -17,14 +17,19 @@
         "@openzeppelin/hardhat-upgrades": "^1.22.0",
         "@typechain/ethers-v5": "^10.2.0",
         "@typechain/hardhat": "^6.1.5",
+        "@types/chai": "^4.3.4",
+        "@types/mocha": "^10.0.1",
+        "@types/node": "^18.11.18",
         "chai": "^4.3.7",
         "ethers": "^5.7.2",
         "hardhat": "^2.12.5",
         "hardhat-gas-reporter": "^1.0.9",
-        "solidity-coverage": "^0.8.2",
-        "typechain": "^8.1.1",
         "prettier": "^2.8.2",
-        "prettier-plugin-solidity": "^1.1.1"
+        "prettier-plugin-solidity": "^1.1.1",
+        "solidity-coverage": "^0.8.2",
+        "ts-node": "^10.9.1",
+        "typechain": "^8.1.1",
+        "typescript": "^4.9.4"
     },
     "dependencies": {
         "defender-serverless": "^1.0.3"
