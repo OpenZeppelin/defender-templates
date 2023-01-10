@@ -5,17 +5,17 @@ frameworkVersion: "3"
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: "underlying-upgradable-token"
+  stackName: "${self:custom.config.network}-underlying-upgradable-token" #prepend network name to separate between networks
   ssot: false
 
 custom:
-  config: ${file(../secrets.${self:provider.stage}.yml)}
-  # Fill with your proxy address
-  proxy-address: ""
+  secrets: ${file(../secrets.${self:provider.stage}.yml)}
+  config: ${file(../config.${self:provider.stage}.yml)}
+  addresses: ${file(./addresses.${self:provider.stage}.yml)}
 
 defender:
-  key: ${self:custom.config.keys.api}
-  secret: ${self:custom.config.keys.secret}
+  key: ${self:custom.secrets.keys.api}
+  secret: ${self:custom.secrets.keys.secret}
 
 resources:
   Resources:
@@ -29,7 +29,7 @@ resources:
         type: "BLOCK"
         network: "${self:custom.config.network}"
         addresses:
-          - "${self:custom.proxy-address}"
+          - "${self:custom.addresses.proxy-address}"
         abi: ${file(./abis/Upgrade.json.abi)}
         paused: false
         autotask-condition: null
@@ -47,17 +47,17 @@ resources:
     notifications:
       slack-security:
         type: "slack"
-        name: "Slack Secruity Channel"
+        name: "Slack Security Channel"
         paused: false
         config:
-          url: "${self:custom.config.notifications.slack-webhook}"
+          url: "${self:custom.secrets.notifications.slack-webhook}"
       email-security:
         type: "email"
         name: "Security Email"
         paused: true
         config:
           emails:
-            - "${self:custom.config.notifications.email-address}"
+            - "${self:custom.secrets.notifications.email-address}"
 
 plugins:
   - defender-serverless

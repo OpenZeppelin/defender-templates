@@ -11,13 +11,10 @@ This repository contains templates for all tracks of the 2023 BUIDLathon. They a
 The templates are structured by use case, which matches to one or more tracks.
 
 ## Templates
-### Underlying asset monitor
+### [Underlying asset monitor](defender/underlying-upgradable-token/Readme.md)
 
 Most DeFi protocols face risks when integrating with upgradable tokens that are outside of the protocol's reach.  
 This section shows how to monitor upgradable tokens and emit an alert :rotating_light: if they get updated.
-- [Defender](defender/underlying-upgradable-token/Readme.md)
-- [Contracts](contracts/underlying-upgradable-token/)
-- [Scripts](scripts/underlying-upgradable-token/Readme.md)
 
 ---
 ## Additional Resources
