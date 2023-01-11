@@ -1,0 +1,63 @@
+service: defender-serverless-template
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: "${self:custom.config.network}-underlying-upgradable-token" #prepend network name to separate between networks
+  ssot: false
+
+custom:
+  secrets: ${file(../secrets.${self:provider.stage}.yml)}
+  config: ${file(../config.${self:provider.stage}.yml)}
+  addresses: ${file(./addresses.${self:provider.stage}.yml)}
+
+defender:
+  key: ${self:custom.secrets.keys.api}
+  secret: ${self:custom.secrets.keys.secret}
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        eip1559-pricing: true
+
+    sentinels:
+      upgrade-sentinel:
+        name: "Underlying Asset Monitor"
+        type: "BLOCK"
+        network: "${self:custom.config.network}"
+        addresses:
+          - "${self:custom.addresses.proxy-address}"
+        abi: ${file(./abis/Upgrade.json.abi)}
+        paused: false
+        autotask-condition: null
+        autotask-trigger: null
+        confirm-level: 1
+        notify-config:
+          channels:
+            - ${self:resources.Resources.notifications.slack-security}
+        conditions:
+          event:
+            - signature: "Upgraded(address)"
+          function: # we don't monitor function calls in this sentinel
+            - signature: ""
+
+    notifications:
+      slack-security:
+        type: "slack"
+        name: "Slack Security Channel"
+        paused: false
+        config:
+          url: "${self:custom.secrets.notifications.slack-webhook}"
+      email-security:
+        type: "email"
+        name: "Security Email"
+        paused: true
+        config:
+          emails:
+            - "${self:custom.secrets.notifications.email-address}"
+
+plugins:
+  - defender-serverless

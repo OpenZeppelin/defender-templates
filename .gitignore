@@ -25,3 +25,9 @@ coverageEnv
 tsconfig.tsbuildinfo
 
 .vscode
+
+#openzeppelin upgrades plugin localhost json file(https://github.com/OpenZeppelin/openzeppelin-upgrades)
+**/.openzeppelin/*.json
+
+#typechain - https://github.com/dethcrypto/TypeChain#q-should-i-commit-generated-files-to-my-repository
+types/**

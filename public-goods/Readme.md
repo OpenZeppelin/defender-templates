@@ -1,1 +1,0 @@
-# Impact + Public Goods Templates
