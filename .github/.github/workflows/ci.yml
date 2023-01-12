@@ -1,0 +1,41 @@
+name: checks
+
+on:
+  pull_request: 
+    types: [assigned, opened, synchronize, reopened]
+  workflow_dispatch: {}
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      - run: npm run lint
+
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: 1
+      GAS: true
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up environment
+        uses: ./.github/actions/setup
+      - name: Run tests and generate gas report
+        run: npm run test
+
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run CodeSpell
+        uses: codespell-project/actions-codespell@v1.0
+        with:
+          check_filenames: true
+          skip: package-lock.json
