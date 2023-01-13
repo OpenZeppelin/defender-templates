@@ -4,7 +4,7 @@
   "description": "Templates collection to empower your project with OpenZeppelin Defender and OpenZeppelin Contracts",
   "main": "index.js",
   "scripts": {
-    "compile": "hardhat compile",
+    "compile": "hardhat compile && ./scripts/renameABIs.sh",
     "coverage": "env COVERAGE=true hardhat coverage",
     "lint:fix": "eslint ./ --ext js,jsx,ts,tsx --fix",
     "lint": "eslint ./ --ext js,jsx,ts,tsx && yarn run lint:sol",
