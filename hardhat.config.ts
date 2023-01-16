@@ -4,6 +4,7 @@ import '@nomiclabs/hardhat-web3';
 import '@typechain/hardhat';
 import 'hardhat-abi-exporter';
 import 'hardhat-contract-sizer';
+import '@openzeppelin/hardhat-upgrades';
 import { task } from 'hardhat/config';
 import { deploy } from './scripts/deployContract';
 import * as dotenv from "dotenv";
