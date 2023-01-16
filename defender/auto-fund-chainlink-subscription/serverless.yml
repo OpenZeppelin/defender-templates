@@ -26,13 +26,21 @@ functions:
       type: "webhook"
     paused: false
 
+  fund-subscription:
+    name: "Funds chainlink subscription"
+    path: "./autotasks/fund-subscription"
+    relayer: ${self:resources.Resources.relayers.relayer-1}
+    trigger:
+      type: "webhook"
+    paused: false
+
 resources:
   Resources:
     policies:
       policy-1:
         eip1559-pricing: true
 
-    relayers: #Replace with common relayer?
+    relayers:
       relayer-1:
         name: "Fund relayer"
         network: "${self:custom.config.network}"
@@ -49,7 +57,7 @@ resources:
         abi: ${file(./abis/vrfCoordinator.json.abi)}
         paused: false
         autotask-condition: ${self:functions.low-balance}
-        autotask-trigger: null #add
+        autotask-trigger: ${self:functions.fund-subscription}
         confirm-level: 1
         notify-config:
           channels:
