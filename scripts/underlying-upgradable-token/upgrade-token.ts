@@ -1,5 +1,5 @@
 import { ethers, upgrades, network } from "hardhat";
-import { networkConfig } from "./helper-hardhat-config";
+import { networkConfig } from "../helper-hardhat-config";
 
 /**
  * Upgrades MyUpgradableToken to V2 verion.
