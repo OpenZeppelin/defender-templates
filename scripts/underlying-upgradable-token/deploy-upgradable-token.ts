@@ -1,5 +1,5 @@
 import { ethers, upgrades, network } from "hardhat";
-import { developmentChains, networkConfig } from "./helper-hardhat-config";
+import { developmentChains, networkConfig } from "../helper-hardhat-config";
 import { verify } from "../verify";
 
 /**
