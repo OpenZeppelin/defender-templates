@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "es2022": true,
+    "browser": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends" : [
+    "eslint:recommended",
+    "plugin:promise/recommended",
+    "prettier" // eslint-config-prettier
+  ],
+  "plugins": [
+    "promise"
+  ],
+  "globals" : {
+    "artifacts": "readonly",
+    "contract": "readonly",
+    "assert": "readonly",
+    "web3": "readonly"
+  },
+}

@@ -1,0 +1,1 @@
+find ./abi -name "*.json" -exec bash -c 'cp "$1" "${1%.json}".json.abi' - '{}' \;

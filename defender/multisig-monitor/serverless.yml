@@ -5,7 +5,7 @@ frameworkVersion: "3"
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: "${self:custom.config.network}-underlying-upgradable-token" #prepend network name to separate between networks
+  stackName: "${self:custom.config.network}-multisig" #prepend network name to separate between networks
   ssot: false
 
 custom:
@@ -20,13 +20,13 @@ defender:
 resources:
   Resources:
     sentinels:
-      upgrade-sentinel:
-        name: "Underlying Asset Monitor"
+      multisig-sentinel:
+        name: "Multisig Monitor"
         type: "BLOCK"
         network: "${self:custom.config.network}"
         addresses:
-          - "${self:custom.addresses.proxy-address}"
-        abi: ${file(./abis/Upgrade.json.abi)}
+          - "${self:custom.addresses.multisig-address}"
+        abi: ${file(./abis/Safe.json.abi)}
         paused: false
         autotask-condition: null
         autotask-trigger: null
@@ -36,7 +36,9 @@ resources:
             - ${self:resources.Resources.notifications.slack-security}
         conditions:
           event:
-            - signature: "Upgraded(address)"
+            - signature: "ChangedThreshold(uint256)"
+            - signature: "AddedOwner(address)"
+            - signature: "RemovedOwner(address)"
           function: # we don't monitor function calls in this sentinel
             - signature: ""
 
@@ -47,13 +49,6 @@ resources:
         paused: false
         config:
           url: "${self:custom.secrets.notifications.slack-webhook}"
-      email-security:
-        type: "email"
-        name: "Security Email"
-        paused: true
-        config:
-          emails:
-            - "${self:custom.secrets.notifications.email-address}"
 
 plugins:
   - defender-serverless
