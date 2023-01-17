@@ -19,8 +19,8 @@ functions:
     path: './autotasks/refill-tokens/dist'
     trigger:
       type: 'schedule'
-      frequency: 5
-    paused: true
+      frequency: 1
+    paused: true #Default paused you have to change this once autotask has correct addresses set
     relayer: ${self:resources.Resources.relayers.relayer-1}
 
 resources:
