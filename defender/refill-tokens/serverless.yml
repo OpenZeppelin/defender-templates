@@ -1,0 +1,42 @@
+service: my-service
+configValidationMode: error
+frameworkVersion: '3'
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: 'refill-tokens'
+  ssot: false
+custom:
+  config: ${file(../.secrets/${self:provider.stage}.yml)}
+defender:
+  key: ${self:custom.config.keys.defender-api-key}
+  secret: ${self:custom.config.keys.defender-api-secret}
+
+functions:
+  refiller-autotask:
+    name: 'Refill address with tokens'
+    path: './autotasks/refill-tokens/dist'
+    trigger:
+      type: 'schedule'
+      frequency: 5
+    paused: true
+    relayer: ${self:resources.Resources.relayers.relayer-1}
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        eip1559-pricing: true
+
+    relayers:
+      relayer-1:
+        name: 'Refiller Relayer'
+        network: 'goerli'
+        min-balance: 1000
+        policy: ${self:resources.Resources.policies.policy-1}
+        api-keys:
+          - key1
+
+plugins:
+  - defender-serverless

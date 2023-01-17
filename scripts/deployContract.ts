@@ -1,4 +1,4 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
 export const deploy = async ({
   contractName,
   constructorArgs,
@@ -10,31 +10,19 @@ export const deploy = async ({
 }) => {
   const Contract = await hre.ethers.getContractFactory(contractName);
 
-  console.log(
-    "deploying with args",
-    constructorArgs && constructorArgs.length > 0
-      ? { ...constructorArgs.slice(1, constructorArgs.length) }
-      : ""
-  );
+  const cArgs: any[] =
+    constructorArgs && constructorArgs?.length > 0 ?  constructorArgs.slice(1, constructorArgs.length)  : [];
 
-  const contract = await Contract.deploy(
-    constructorArgs && constructorArgs?.length > 0
-      ? { ...constructorArgs.slice(1, constructorArgs.length) }
-      : null
-  );
+  console.log('deploying with args', cArgs);
+
+  const contract = await Contract.deploy(... cArgs);
 
   await contract.deployed();
   if (require.main === module) {
-    console.log(
-      "Deploy ",
-      contractName,
-      " hash:",
-      contract.deployTransaction.hash
-    );
+    console.log('Deploy ', contractName, ' hash:', contract.deployTransaction.hash);
   }
   return contract.address;
 };
-
 
 exports.deploy = deploy;
 export default { deploy };
