@@ -16,6 +16,9 @@ The templates are structured by use case, which matches to one or more tracks.
 Most DeFi protocols face risks when integrating with upgradable tokens that are outside of the protocol's reach.  
 This section shows how to monitor upgradable tokens and emit an alert :rotating_light: if they get updated.
 
+### [Auto fund chainlink subscription when funds are low](defender/auto-fund-chainlink-subscription/Readme.md)
+[Chainlink VRF](https://docs.chain.link/vrf/v2/introduction) is one of the most popular options for achieving provable randomness in a blockchain. It can be used for raffles, gaming and other use cases. Wouldn't it be great if you can monitor when funds are running low and automatically fund the subscription?  
+
 ---
 ## Additional Resources
 

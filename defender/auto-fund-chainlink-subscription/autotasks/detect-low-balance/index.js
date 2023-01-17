@@ -1,6 +1,6 @@
-const { ethers } = require("ethers");
-const { DefenderRelayProvider } = require("defender-relay-client/lib/ethers");
-const vrfCoordinatorAddress = "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D";
+import { ethers } from "ethers";
+import { DefenderRelayProvider } from "defender-relay-client/lib/ethers";
+import { vrfCoordinatorAddress, subscriptionId, threshold } from "../../subscription-config.dev.yml";
 const ABI = `[
     {
         "inputs": [
@@ -38,13 +38,10 @@ const ABI = `[
       }
   ]`;
 
-const subscriptionId = 8417;
-const minLink = "5"; //Minimum balance before funding with extra link
-
 //gets called once per block
-exports.handler = async function (event) {
+export async function handler(event) {
   console.log("Starting autotask...");
-  const threshold = ethers.utils.parseEther(minLink);
+  const thresholdInWei = ethers.utils.parseEther(threshold);
   const provider = new DefenderRelayProvider(event);
   const payload = event.request.body;
 
@@ -53,7 +50,7 @@ exports.handler = async function (event) {
   console.log(`Your balance is ${balance}`);
 
   const matches = [];
-  if (balance < threshold) {
+  if (balance < thresholdInWei) {
     const match = {
       hash: payload.events[0].transaction.transactionHash, //The actual hash is not important. We won't need it in the autotask notification
       metadata: {},
@@ -61,4 +58,4 @@ exports.handler = async function (event) {
     matches.push(match);
   }
   return { matches };
-};
+}

@@ -1,0 +1,23 @@
+{
+  "name": "auto-fund-chainlink-subscription",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c",
+    "fund": "node autotasks/fund-subscription/dist/index.js",
+    "defender": "rollup -c && serverless deploy"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-yaml": "^4.0.1",
+    "ethers": "^5.7.2",
+    "rollup": "^3.10.0"
+  },
+  "dependencies": {
+    "defender-relay-client": "^1.37.0",
+    "dotenv": "^16.0.3"
+  }
+}

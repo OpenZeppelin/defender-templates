@@ -1,3 +1,0 @@
-vrfCoordinator-address: "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D" #vrfCoordinatorV2 address on Goerli
-subscriptionId: 8417
-threshold: 5 #Minimum balance before funding with extra link

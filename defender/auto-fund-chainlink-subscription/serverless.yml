@@ -11,7 +11,7 @@ provider:
 custom:
   secrets: ${file(../secrets.${self:provider.stage}.yml)}
   config: ${file(../config.${self:provider.stage}.yml)}
-  addresses: ${file(./addresses.${self:provider.stage}.yml)}
+  addresses: ${file(./subscription-config.${self:provider.stage}.yml)}
 
 defender:
   key: ${self:custom.secrets.keys.api}
@@ -20,7 +20,7 @@ defender:
 functions:
   low-balance:
     name: "Detect low balance on chainlink subscription"
-    path: "./autotasks/detect-low-balance"
+    path: "./autotasks/detect-low-balance/dist"
     relayer: ${self:resources.Resources.relayers.relayer-1}
     trigger:
       type: "webhook"
@@ -28,7 +28,7 @@ functions:
 
   fund-subscription:
     name: "Funds chainlink subscription"
-    path: "./autotasks/fund-subscription"
+    path: "./autotasks/fund-subscription/dist"
     relayer: ${self:resources.Resources.relayers.relayer-1}
     trigger:
       type: "webhook"
@@ -53,7 +53,7 @@ resources:
         type: "BLOCK"
         network: "${self:custom.config.network}"
         addresses:
-          - "${self:custom.addresses.vrfCoordinator-address}"
+          - "${self:custom.addresses.vrfCoordinatorAddress}"
         abi: ${file(./abis/vrfCoordinator.json.abi)}
         paused: false
         autotask-condition: ${self:functions.low-balance}

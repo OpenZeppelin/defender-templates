@@ -1,6 +1,8 @@
-const { ethers } = require("ethers");
-const { DefenderRelaySigner, DefenderRelayProvider } = require("defender-relay-client/lib/ethers");
-
+import { ethers } from "ethers";
+import { DefenderRelaySigner, DefenderRelayProvider } from "defender-relay-client/lib/ethers";
+import { vrfCoordinatorAddress, subscriptionId, linkAddress, fundAmount } from "../../subscription-config.dev.yml";
+// import * as linkAbi from "../../abis/Link.json.abi";
+// import * as vrfCoordinatorAbi from "../../abis/vrfCoordinator.json.abi";
 const linkAbi = `[{
     "constant": false,
     "inputs": [
@@ -61,12 +63,7 @@ const vrfCoordinatorAbi = `[
     }
 ]`;
 
-const linkAddress = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
-const vrfCoordinatorAddress = "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D";
-const fundAmount = "0.1";
-const subscriptionId = 8417;
-
-exports.handler = async function (event) {
+export async function handler(event) {
   const provider = new DefenderRelayProvider(event);
   const signer = new DefenderRelaySigner(event, provider, { speed: "fast" });
 
@@ -88,4 +85,16 @@ exports.handler = async function (event) {
 
   ({ balance } = await vrfCoordinator.getSubscription(subscriptionId));
   console.log(`Subscription balance after funding: ${ethers.utils.formatEther(balance)}`);
-};
+}
+
+// To run locally (this code will not be executed in Autotasks)
+if (require.main === module) {
+  require("dotenv").config();
+  const { API_KEY: apiKey, API_SECRET: apiSecret } = process.env;
+  handler({ apiKey, apiSecret })
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error(error);
+      process.exit(1);
+    });
+}
