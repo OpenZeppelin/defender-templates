@@ -10,7 +10,7 @@ const ERC20Abi = require('../../../../abi/contracts/ERC20Mock.sol/ERC20Mock.json
 
 const domain = { name: 'OpenZeppelin POAP Autotask', version: '1', chainId: '5' };
 const types = {
-  atendee: [
+  attendee: [
     { name: 'name', type: 'string' },
     { name: 'wallet', type: 'address' },
   ],

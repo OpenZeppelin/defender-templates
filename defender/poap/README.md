@@ -12,7 +12,7 @@ run `sls deploy`
 
 Now you can log in to your defender account and copy webhook URL that can be used to mint tokens. Make sure relayer has funds and has mint permissions on the contract you are using! 
 
-To ease signature generation there is helper script availible:
+To ease signature generation there is helper script available:
 
 from root of repo `yarn ts-node scripts/signPOAPMessage.ts --name <AttendeeName>`
 

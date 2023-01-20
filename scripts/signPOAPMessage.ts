@@ -4,7 +4,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import * as yargs from 'yargs';
 const domain = { name: 'OpenZeppelin POAP Autotask', version: '1', chainId: '5' };
 const types = {
-  atendee: [
+  attendee: [
     { name: 'name', type: 'string' },
     { name: 'wallet', type: 'address' },
   ],

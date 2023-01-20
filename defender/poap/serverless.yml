@@ -14,7 +14,7 @@ defender:
   secret: ${self:custom.config.keys.defender-api-secret}
 
 functions:
-  refiller-autotask:
+  poap-autotask:
     name: 'Poap mint'
     path: './autotasks/mint-poap/dist'
     trigger:
