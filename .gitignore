@@ -24,6 +24,7 @@ coverageEnv
 *.log
 .DS_Store
 tsconfig.tsbuildinfo
+abi/
 
 .vscode
 

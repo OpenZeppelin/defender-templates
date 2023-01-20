@@ -2,7 +2,7 @@
 
 [Chainlink VRF](https://docs.chain.link/vrf/v2/introduction) is one of the most popular options for achieving provable randomness in a blockchain. It can be used for raffles, gaming and other use cases.  
 In order to fulfill randomness requests from your smart contracts you need to have LINK in your subscription.
-We use Defender to observe when funds are low on a Chainlink subscription and use an Autotask to take ETH from a Relayer, swap it for LINK on Uniswap and fund the subscription. All done automatically.
+We use Defender to observe when funds are low on a Chainlink subscription and use an Autotask to take ETH from a Relayer, swap it for LINK on UniswapV3 and fund the subscription. All done automatically.
 
 Config files:
 - **subscription-config.{env}.yml**: Configure your subscription id and thresholds [here](./subscription-config.dev.yml)
