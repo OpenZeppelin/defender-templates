@@ -46,6 +46,7 @@ exports.handler = async function (event) {
       tx = await contract.safeMint(address);
       console.log('Minted ERC721 token with tx:', tx.hash);
     }
+    if (tx?.hash) return tx.hash;
   } else {
     return 'Signature missmatch';
   }
