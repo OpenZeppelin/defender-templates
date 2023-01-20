@@ -36,7 +36,7 @@ if (require.main === module) {
   signPOAPMessage(cliOptions.name, signer)
     .then(signature => {
       console.log('Signature is:', signature);
-      process.exit(0);
+      return process.exit(0);
     })
     .catch(error => {
       console.error(error);
