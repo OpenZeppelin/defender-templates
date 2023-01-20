@@ -18,4 +18,14 @@ from root of repo `yarn ts-node scripts/signPOAPMessage.ts --name <AttendeeName>
 
 We encorauge you to experiment with this template, having address and attendee name or another details in autotasks you can forward them to your hubspot/backend and/or implement verification logic! 
 
+Example of request body:
+
+```
+{
+  "address": "0xe3eFcCF966921Ad291fdC31Fa57F9044F105bc98",
+  "signature": "0xd1ea49a0576519030eb92182b9aa7a0e27b97816f1427a1cee00b11de3156c58095ae2ee7fab13cea7bd3db6aaacfcef596e995d49b0100026bc927f84b0c1311c",
+  "message": { "name": "Tim", "wallet": "0xe3eFcCF966921Ad291fdC31Fa57F9044F105bc98" } 
+}
+```
+
 Have fun hacking! 
