@@ -2,7 +2,7 @@ import { ethers, upgrades, network } from "hardhat";
 import { networkConfig } from "../helper-hardhat-config";
 
 /**
- * Upgrades MyUpgradableToken to V2 verion.
+ * Upgrades MyUpgradableToken to V2 version.
  * Upgrading emits the Upgraded() event, which should trigger
  * Defender Sentinel if it's running on the same network.
  */
