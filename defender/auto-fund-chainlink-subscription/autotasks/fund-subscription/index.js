@@ -30,7 +30,7 @@ export async function handler(event) {
     `In order to get approximately ${fundAmount} of LINK you will need ${ethers.utils.formatEther(weiNeeded)} ETH`,
   );
 
-  // Do the actual swap WETH->LINK. We send ETH with the tx to avoid wraping first - the router does that for us.
+  // Do the actual swap WETH->LINK. We send ETH with the tx to avoid wrapping first - the router does that for us.
   const swapRouterContract = new ethers.Contract(swapRouterAddress, Router.abi, signer);
   const params = {
     tokenIn: wethAddress,
