@@ -9,13 +9,15 @@ export async function handler(event) {
   const thresholdInWei = ethers.utils.parseEther(threshold);
   const provider = new DefenderRelayProvider(event);
   const payload = event.request.body;
+  console.log(`Threshold is ${threshold} LINK`);
 
   const vrfCoordinator = new ethers.Contract(vrfCoordinatorAddress, ABI, provider);
   const { balance } = await vrfCoordinator.getSubscription(subscriptionId);
-  console.log(`Your balance is ${balance}`);
+  console.log(`Your subscription balance is ${ethers.utils.formatEther(balance)} LINK`);
 
   const matches = [];
-  if (balance < thresholdInWei) {
+  if (balance.lt(thresholdInWei)) {
+    console.log(`Balance is below threshold, emitting alert...`);
     const match = {
       hash: payload.events[0].transaction.transactionHash, //The actual hash is not important. We won't need it in the autotask notification
       metadata: {},
