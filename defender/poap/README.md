@@ -2,6 +2,13 @@
 
 This template will allow you to create simple POAP minting application quickly. 
 
+The only required action from client is to sign a message, in order to validate his ownership over an address. 
+
+When requesting a POAP mint, client can provide in request some details such as name of attendee, his contact details etc - can be pretty much anything. 
+
+This data can be received in Defender autotasks and used to validate that attendee is legit and/or can be forwarded to CMS.
+
+
 ### Setup
 
 cd in to `/autotasks/mint-poap`
