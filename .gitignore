@@ -24,6 +24,8 @@ coverageEnv
 *.log
 .DS_Store
 tsconfig.tsbuildinfo
+abi/@openzeppelin
+abi/contracts
 
 .vscode
 
@@ -32,3 +34,6 @@ tsconfig.tsbuildinfo
 
 #typechain - https://github.com/dethcrypto/TypeChain#q-should-i-commit-generated-files-to-my-repository
 types/**
+
+#rollup - https://stackoverflow.com/questions/47186472/do-you-have-commit-webpack-generated-files
+dist/

@@ -1,0 +1,87 @@
+service: defender-serverless-template
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: "${self:custom.config.network}-fund-chainlink-subscription" #prepend network name to separate between networks
+  ssot: false
+
+custom:
+  secrets: ${file(../secrets.${self:provider.stage}.yml)}
+  config: ${file(../config.${self:provider.stage}.yml)}
+  addresses: ${file(./subscription-config.${self:provider.stage}.yml)}
+
+defender:
+  key: ${self:custom.secrets.keys.api}
+  secret: ${self:custom.secrets.keys.secret}
+
+functions:
+  low-balance:
+    name: "Detect low balance on chainlink subscription"
+    path: "./autotasks/detect-low-balance/dist"
+    relayer: ${self:resources.Resources.relayers.relayer-1}
+    trigger:
+      type: "webhook"
+    paused: false
+
+  fund-subscription:
+    name: "Funds chainlink subscription"
+    path: "./autotasks/fund-subscription/dist"
+    relayer: ${self:resources.Resources.relayers.relayer-1}
+    trigger:
+      type: "webhook"
+    paused: false
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        eip1559-pricing: true
+
+    relayers:
+      relayer-1:
+        name: "Fund relayer"
+        network: "${self:custom.config.network}"
+        min-balance: 1000
+        policy: ${self:resources.Resources.policies.policy-1}
+
+    sentinels:
+      low-link-balance:
+        name: "Low Balance Chainlink Subscription"
+        type: "BLOCK"
+        network: "${self:custom.config.network}"
+        addresses:
+          - "${self:custom.addresses.vrfCoordinatorAddress}"
+        abi: ${file(../../abi/vrfCoordinator.json.abi)}
+        paused: false
+        autotask-condition: ${self:functions.low-balance}
+        autotask-trigger: ${self:functions.fund-subscription}
+        confirm-level: 1
+        notify-config:
+          channels:
+            - ${self:resources.Resources.notifications.slack-security}
+        conditions: # we monitor all transactions and filter with autotask condition
+          event:
+            - signature: ""
+          function:
+            - signature: ""
+
+    notifications:
+      slack-security:
+        type: "slack"
+        name: "Slack Security Channel"
+        paused: false
+        config:
+          url: "${self:custom.secrets.notifications.slack-webhook}"
+      email-security:
+        type: "email"
+        name: "Security Email"
+        paused: true
+        config:
+          emails:
+            - "${self:custom.secrets.notifications.email-address}"
+
+plugins:
+  - defender-serverless
