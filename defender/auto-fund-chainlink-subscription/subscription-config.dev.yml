@@ -1,0 +1,7 @@
+vrfCoordinatorAddress: "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D" #vrfCoordinatorV2 address on Goerli
+linkAddress: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
+wethAddress: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
+# Update with your subscription id and thresholds
+subscriptionId: 8417
+threshold: "5" #Minimum balance before funding with extra link
+fundAmount: "2"
