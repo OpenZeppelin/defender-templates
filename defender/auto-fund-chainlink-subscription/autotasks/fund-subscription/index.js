@@ -10,9 +10,9 @@ import {
 import { FeeAmount } from '@uniswap/v3-sdk';
 import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import Router from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json';
-import linkAbi from '../../abis/Link.json';
-import vrfCoordinatorAbi from '../../abis/vrfCoordinator.json';
-import erc20Abi from '../../abis/erc20.json';
+import linkAbi from '../../../../abi/Link.json';
+import vrfCoordinatorAbi from '../../../../abi/vrfCoordinator.json';
+import erc20Abi from '../../../../abi/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json';
 
 //These are the same across all networks - https://docs.uniswap.org/contracts/v3/reference/deployments
 const quoterAddress = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
@@ -27,7 +27,7 @@ export async function handler(event) {
   // Do a quote for LINK->WETH to calculate amount of ETH we need to send to get approximately fundAmount of LINK
   const weiNeeded = await getOutputQuote(linkAddress, wethAddress, fundAmountInWei, FeeAmount.MEDIUM, provider);
   console.log(
-    `In order to get approximately ${fundAmount} of LINK you will need ${ethers.utils.formatEther(weiNeeded)} ETH`,
+    `In order to get approximately ${fundAmount} LINK you will need ${ethers.utils.formatEther(weiNeeded)} ETH`,
   );
 
   // Do the actual swap WETH->LINK. We send ETH with the tx to avoid wrapping first - the router does that for us.
@@ -75,7 +75,7 @@ export async function handler(event) {
   await tx.wait(1);
 
   ({ balance } = await vrfCoordinator.getSubscription(subscriptionId));
-  console.log(`Subscription Funded. Balance after funding: ${ethers.utils.formatEther(balance)}`);
+  return `Subscription Funded. Balance after funding: ${ethers.utils.formatEther(balance)}`;
 }
 
 const getOutputQuote = async (tokenInAddress, tokenOutAddress, amountInWei, fee, provider) => {

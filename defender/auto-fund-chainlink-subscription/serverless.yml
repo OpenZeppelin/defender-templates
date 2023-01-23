@@ -54,7 +54,7 @@ resources:
         network: "${self:custom.config.network}"
         addresses:
           - "${self:custom.addresses.vrfCoordinatorAddress}"
-        abi: ${file(./abis/vrfCoordinator.json.abi)}
+        abi: ${file(../../abi/vrfCoordinator.json.abi)}
         paused: false
         autotask-condition: ${self:functions.low-balance}
         autotask-trigger: ${self:functions.fund-subscription}

@@ -24,7 +24,8 @@ coverageEnv
 *.log
 .DS_Store
 tsconfig.tsbuildinfo
-abi/
+abi/@openzeppelin
+abi/contracts
 
 .vscode
 
