@@ -23,6 +23,14 @@ This template shows how to monitor for administrative events in the multisig, su
 ### [Auto fund chainlink subscription when funds are low](defender/auto-fund-chainlink-subscription/Readme.md)
 [Chainlink VRF](https://docs.chain.link/vrf/v2/introduction) is one of the most popular options for achieving provable randomness in a blockchain. It can be used for raffles, gaming and other use cases. Wouldn't it be great if you can monitor when funds are running low and automatically fund the subscription?  
 
+### [Gasless POAP minting](defender/poap/Readme.md)
+Lightweight and effective Proof of Attendance Protocol implementation with Defender. The POAP can be ERC721/1555/20 depending on configuration.
+
+In This POAP user (client) first needs to sign a message trough his wallet such as metamask, that contains his address and some other typed message fields that developer can specify - name, email etc. 
+Then client can POST to autotask webhook with his message and signature in request body. 
+
+In autotask script, developer can verify that data and perhaps send it to CMS, and mint token with use of Relayer.  
+
 
 ---
 ## Additional Resources
