@@ -1,20 +1,9 @@
-const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const ethers = require('ethers');
-const TokenTypeEnum = { ERC20: 0, ERC721: 1, ERC1155: 2 };
-const TOKEN_TYPE = TokenTypeEnum.ERC721;
-const ERC1155ID = '1';
-const TOKEN_ADDRESS = ethers.constants.AddressZero;
+const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const ERC1155Abi = require('../../../../abi/contracts/ERC1155Mock.sol/ERC1155Mock.json');
 const ERC721Abi = require('../../../../abi/contracts/ERC721Mock.sol/ERC721Mock.json');
 const ERC20Abi = require('../../../../abi/contracts/ERC20Mock.sol/ERC20Mock.json');
-
-const domain = { name: 'OpenZeppelin POAP Autotask', version: '1', chainId: '5' };
-const types = {
-  attendee: [
-    { name: 'name', type: 'string' },
-    { name: 'wallet', type: 'address' },
-  ],
-};
+import { TokenTypeEnum, TOKEN_TYPE, ERC1155ID, TOKEN_ADDRESS, domain, types } from '../../constants';
 
 exports.handler = async function (event) {
   if (TOKEN_ADDRESS == ethers.constants.AddressZero) throw new Error('Token address not specified');
