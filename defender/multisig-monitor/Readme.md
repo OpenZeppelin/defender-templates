@@ -1,11 +1,26 @@
 # Multisig Monitor
 
-This template deploys a Defender Sentinel and other necessary Defender resources to monitor for the following events on a Safe multisig.
+This template deploys a Defender Sentinel and other necessary Defender resources to monitor for all events on a Safe multisig.
 
--   ChangedThreshold(uint256 threshold)
--   AddedOwner(address owner)
--   RemovedOwner(address owner)
+- ChangedThreshold(uint256)
+- AddedOwner(address)
+- RemovedOwner(address)
+- ApproveHash(bytes32,address)
+- DisabledModule(address)
+- EnabledModule(address)
+- ExecutionFailure(bytes32,uint256)
+- ExecutionFromModuleFailure(address)
+- ExecutionFromModuleSuccess(address)
+- ExecutionSuccess(bytes32,uint256)
+- SignMsg(bytes32)
+- ChangedFallbackHandler(address)
+- ChangedGuard(address)
+- SafeMultiSigTransaction(address,uint256,bytes,uint8,uint256,uint256,uint256,address,address,bytes,bytes)
+- SafeReceived(address,uint256)
+- SafeSetup(address,address[],uint256,address,address)
+- SafeModuleTransaction(address,address,uint256,bytes,uint8)
 
+If there are events you don't want to be notified on just comment/remove them from [serverless.yml](./serverless.yml)
 ### Deploy and test
 
 To test this part [spin up a new multisig](https://help.gnosis-safe.io/en/articles/3876461-creating-a-safe-on-a-web-browser) or use an existing one that you control.
