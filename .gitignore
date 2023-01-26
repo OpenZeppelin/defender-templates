@@ -24,16 +24,12 @@ coverageEnv
 *.log
 .DS_Store
 tsconfig.tsbuildinfo
-abi/@openzeppelin
-abi/contracts
-
+.secrets
 .vscode
 
-#openzeppelin upgrades plugin localhost json file(https://github.com/OpenZeppelin/openzeppelin-upgrades)
-**/.openzeppelin/*.json
-
-#typechain - https://github.com/dethcrypto/TypeChain#q-should-i-commit-generated-files-to-my-repository
+# Build artifacts
+**/.openzeppelin/
 types/**
-
-#rollup - https://stackoverflow.com/questions/47186472/do-you-have-commit-webpack-generated-files
 dist/
+abi/@openzeppelin
+abi/contracts
