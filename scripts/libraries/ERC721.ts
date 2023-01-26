@@ -1,7 +1,7 @@
 // import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { ethers } from 'ethers';
 import { ERC721Mock } from '../../types/typechain';
-const Erc721Abi = require('../../abi/contracts/ERC721Mock.sol/ERC721Mock.json');
+import Erc721Abi from '../../abi/contracts/ERC721Mock.sol/ERC721Mock.json';
 export const transferToken = async ({
   tokenAddress,
   tokenId,
