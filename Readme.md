@@ -31,6 +31,9 @@ Then client can POST to autotask webhook with his message and signature in reque
 
 In autotask script, developer can verify that data and perhaps send it to CMS, and mint token with use of Relayer.  
 
+### [Monitor ERC721 transfers](defender/monitor-erc721-transfers/README.md)
+This simple template adds ability to monitor for ERC721 token transfers and send notifications.
+BY Default we send notifications in slack, however you are free to use your custom webhook as well 
 
 ---
 ## Additional Resources
