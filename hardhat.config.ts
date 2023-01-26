@@ -7,14 +7,13 @@ import 'hardhat-contract-sizer';
 import '@openzeppelin/hardhat-upgrades';
 import { task } from 'hardhat/config';
 import { deploy } from './scripts/deployContract';
-import * as dotenv from "dotenv";
-
-dotenv.config({ path: __dirname + "/.env" });
-const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-goerli.alchemyapi.io/v2/your-api-key";
+import * as dotenv from 'dotenv';
+import { transferToken } from './scripts/libraries/ERC721';
+dotenv.config({ path: __dirname + '/.env' });
+const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || 'https://eth-goerli.alchemyapi.io/v2/your-api-key';
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 // Your API key for Etherscan, obtain one at https://etherscan.io/
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "Your etherscan API key";
-
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || 'Your etherscan API key';
 
 task('deployContract', 'Deploys contract')
   .addParam('contractName', 'contract name')
@@ -35,6 +34,23 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   }
 });
 
+task('transferERC721', 'Transfers ERC721 token')
+  .addParam('from', 'from address')
+  .addParam('to', 'to address')
+  .addParam('id', 'token id')
+  .addParam('contract', 'contract address')
+  .setAction(async (taskArgs, hre) => {
+    if (!PRIVATE_KEY) throw new Error('Private key was not exported');
+    const response = await transferToken({
+      tokenAddress: taskArgs.contract,
+      from: taskArgs.from,
+      to: taskArgs.to,
+      privateKey: PRIVATE_KEY,
+      rpcUrl: GOERLI_RPC_URL,
+      tokenId: taskArgs.id,
+    });
+    console.log('Transfer token tx hash:', response);
+  });
 export default {
   networks: {
     localhost: {
@@ -88,5 +104,5 @@ export default {
     format: 'json',
     spacing: 2,
     pretty: false,
-  }
+  },
 };
