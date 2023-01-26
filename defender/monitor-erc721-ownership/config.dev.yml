@@ -1,0 +1,2 @@
+token-address: ''
+token-chain: 'goerli' #enum, listed here: https://github.com/OpenZeppelin/defender-serverless/blob/main/src/types/docs/definitions-definitions-relayer.md#network-constraints

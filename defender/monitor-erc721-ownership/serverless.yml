@@ -1,0 +1,56 @@
+service: my-service
+configValidationMode: error
+frameworkVersion: '3'
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: 'monitor-erc721-ownership'
+  ssot: false
+custom:
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
+defender:
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
+
+resources:
+  Resources:
+    contracts:
+      token:
+        name: 'ERC721 Token'
+        address: '${self:custom.config.token-address}'
+        network: '${self:custom.config.token-chain}'
+        # optional
+        abi: ${file(../../abi/contracts/ERC721Mock.sol/ERC721Mock.json.abi)}
+        # optional
+        nat-spec: null
+    notifications:
+      slack-1:
+        type: 'slack'
+        name: 'Slack notification Channel - 1'
+        config:
+          url: ${self:custom.secrets.notifications.slack-webhook}
+        paused: false
+
+    sentinels:
+      erc721-ownership-monitor:
+        name: 'ERC721 token transfer monitor'
+        type: 'BLOCK'
+        network: 'goerli'
+        abi: '${self:resources.Resources.contracts.token.abi}'
+        conditions:
+          event:
+            - signature: 'Transfer(address,address,uint256)'
+          function:
+            - signature: ''
+        addresses:
+          - '${self:resources.Resources.contracts.token.address}'
+        confirm-level: 1
+        notify-config:
+          timeout: 0 # optional
+          channels:
+            - ${self:resources.Resources.notifications.slack-1}
+
+plugins:
+  - defender-serverless
