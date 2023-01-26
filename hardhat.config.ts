@@ -39,7 +39,7 @@ task('transferERC721', 'Transfers ERC721 token')
   .addParam('to', 'to address')
   .addParam('id', 'token id')
   .addParam('contract', 'contract address')
-  .setAction(async (taskArgs, hre) => {
+  .setAction(async (taskArgs) => {
     if (!PRIVATE_KEY) throw new Error('Private key was not exported');
     const response = await transferToken({
       tokenAddress: taskArgs.contract,
