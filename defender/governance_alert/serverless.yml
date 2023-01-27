@@ -1,0 +1,73 @@
+service: generated-service
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: dev
+  stackName: governance_alert
+  ssot: false
+
+custom:
+  config: ${file(secrets.yml)}
+
+  # Configure this section and rename secret-example.yml to secrets.yml
+  name: Governance Alert
+
+  # Contract Sentinel Settings
+  monitored-addresses:
+    - "0xc0da02939e1441f497fd74f78ce7decb17b66529"
+  # Possible Defender networks: https://github.com/OpenZeppelin/defender-client/blob/master/packages/base/src/utils/network.ts`
+  monitored-network: mainnet
+
+defender:
+  key: ${self:custom.config.keys.api}
+  secret: ${self:custom.config.keys.secret}
+
+functions:
+  autotask-1:
+    name: ${self:custom.name} Serverless Autotask
+    path: autotask-1
+    trigger:
+      type: schedule
+      frequency: 525600000
+    paused: false
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        gas-price-cap: 1000
+        whitelist-receivers:
+          - "0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2"
+        eip1559-pricing: true
+
+    secrets:
+
+    relayers:
+
+    sentinels:
+      sentinel-1:
+        name: ${self:custom.name} Serverless Sentinel
+        type: BLOCK
+        addresses: ${self:custom.monitored-addresses}
+        network: ${self:custom.monitored-network}
+        abi: ${file(abis/sentinel-1.json.yml):abi}
+        paused: false
+        autotask-trigger: ${self:functions.autotask-1}
+        confirm-level: 1
+        notify-config:
+          timeout: 0
+          channels: []
+        conditions:
+          event:
+            - signature: ProposalCanceled(uint256)
+            - signature: >-
+                ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)
+            - signature: ProposalExecuted(uint256)
+            - signature: ProposalQueued(uint256,uint256)
+            - signature: VoteCast(address,uint256,uint8,uint256,string)
+          function: []
+
+plugins:
+  - defender-serverless

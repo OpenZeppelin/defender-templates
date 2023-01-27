@@ -11,6 +11,7 @@ typechain
 #defender
 .defender/
 .serverless/
+secrets*.yml
 secrets.*.yml
 
 # coverage directory used by tools like istanbul
