@@ -1,3 +1,6 @@
+const stackName = 'governance_automation';
+const governanceAddressSecretName = `${stackName}_GOVERNANCE_CONTRACT_ADDRESS`;
+
 const ethers = require('ethers');
 
 const { KeyValueStoreClient } = require('defender-kvstore-client');
@@ -31,9 +34,7 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   // Governance address is defined in the serverless.yml file
-  const {
-    governance_automation_dev_GOVERNANCE_CONTRACT_ADDRESS: governanceAddress,
-  } = secrets;
+  const governanceAddress = secrets[governanceAddressSecretName];
 
   // ensure that the governanceAddress exists
   if (governanceAddress === undefined) {

@@ -1,6 +1,6 @@
 # Governance Automation
 
-This Autotask will check for proposal events that have been emitted by the Governance contract. If a proposal has been passed, then the Autotask will queue it a Timelock or Execute it directly. If the proposal is already queued in the Timelock, the Autotask will check the ETA and execute it if possible. 
+This Autotask will check for proposal events that have been emitted by an [OpenZepplin Governance](https://docs.openzeppelin.com/contracts/4.x/api/governance) contract. If a proposal has been passed, then the Autotask will queue it a Timelock or Execute it directly. If the proposal is already queued in the Timelock, the Autotask will check the ETA and execute it if possible. 
 
 ## Setting up
 - Install all packages in the `defender` folder `npm install`
@@ -11,4 +11,4 @@ This Autotask will check for proposal events that have been emitted by the Gover
 
 ## Optimizations
 
-During the first run of the Autotask, it will scan from block zero to the latest block. It will then track the earliest block that still has an Active, Pending, Queued proposal. This block number will be stored in the `startingBlock`variable using the Defender KVStore. Future scans will from `startingBlock` to `latest` to reduce the number of blockchain calls.
+During the first run of the Autotask, it will scan from block zero to the latest block. It will then track the earliest block that still has an Active, Pending, Queued proposal. This block number will be stored in the `startingBlock` variable using the Defender KVStore. Future scans will from `startingBlock` to `latest` to reduce the number of blockchain calls.

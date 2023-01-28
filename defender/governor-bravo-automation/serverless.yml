@@ -5,14 +5,14 @@ frameworkVersion: "3"
 provider:
   name: defender
   stage: dev
-  stackName: governance_automation
+  stackName: governor_bravo_automation
   ssot: false
 
 # Configure and rename secret.example.yml to secrets.yml
 custom:
   config: ${file(../secrets.dev.yml)}
   # Governance Contract that the autotask will automate
-  governance-contract-address: "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
+  governance-contract-address: "0xc0Da02939E1441F497fd74F78cE7Decb17B66529"
 
 defender:
   key: ${self:custom.config.keys.api}
@@ -20,7 +20,7 @@ defender:
 
 functions:
   autotask-1:
-    name: Governance Automation Autotask
+    name: Governor Bravo Automation Autotask
     path: autotask-1
     trigger:
       type: schedule
@@ -44,7 +44,7 @@ resources:
 
     relayers:
       relayer-1:
-        name: Governance Automation Relay
+        name: Governor Bravo Automation Relay
         network: mainnet
         min-balance: 100000000000000000
 
