@@ -11,4 +11,4 @@ This Autotask will query all proposals that have been created by a [Governor Bra
 
 ## Optimizations
 
-During the first run of the Autotask, it will scan from proposal zero to `proposalCount`. It will then check the status of each. Proposals in a terminal state (canceled, defeated, executed, or expired) will be stored in the `proposalIdsToIgnore` variable using the Defender KVStore. Future scans will skip over these proposals to reduce the number of blockchain calls.
+During the first run of the Autotask, it will scan from proposal zero to `proposalCount`. It will then check the status of each. Proposals in a terminal state (Canceled, Defeated, Executed, or Expired) will be stored in the `proposalIdsToIgnore` variable using the Defender KVStore. Future scans will skip over these proposals to reduce the number of blockchain calls.
