@@ -7,7 +7,7 @@ This Autotask will query all proposals that have been created by a [Governor Bra
 - Modify line `custom.governance-contract-address` in the `serverless.yml` file
 - Configure and rename `../secret.example.yml` to `../secrets.dev.yml`
 - Deploy serverless configuration with `serverless deploy`
-- Log in to Defender and add funds to your newly deployed Relayer
+- Log in to Defender and add funds to your newly deployed Relay
 
 ## Optimizations
 
