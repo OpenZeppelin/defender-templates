@@ -8,7 +8,7 @@ provider:
   stackName: governor_bravo_automation
   ssot: false
 
-# Configure and rename secret.example.yml to secrets.yml
+# Configure and rename secret.example.yml to secrets.dev.yml
 custom:
   config: ${file(../secrets.dev.yml)}
   # Governor contract that the Autotask will automate
