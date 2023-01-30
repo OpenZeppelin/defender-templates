@@ -8,7 +8,7 @@ If a proposal has been passed (has a state of Succeeded), then the Autotask will
 - Install all packages in the `defender` folder using `npm install`
 - Modify line `custom.governance-contract-address` in the `serverless.yml` file
 - Configure and rename `../secret.example.yml` to `../secrets.dev.yml`
-- Deploy serverless configuration with `serverless deploy`
+- Deploy Serverless configuration with `serverless deploy`
 - Log in to Defender and add funds to your newly deployed Relay
 
 ## Optimizations
