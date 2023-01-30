@@ -14,6 +14,7 @@ custom:
   # Governor contract that the Autotask will automate
   governance-contract-address: "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
 
+# make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
 defender:
   key: ${self:custom.config.keys.api}
   secret: ${self:custom.config.keys.secret}
