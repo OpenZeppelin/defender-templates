@@ -11,7 +11,7 @@ provider:
 # Configure and rename secret.example.yml to secrets.yml
 custom:
   config: ${file(../secrets.dev.yml)}
-  # Governance Contract that the autotask will automate
+  # Governor contract that the Autotask will automate
   governance-contract-address: "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
 
 defender:
