@@ -5,7 +5,7 @@ This Autotask will check for proposal events that have been emitted by an [OpenZ
 If a proposal has been passed (has a state of Succeeded), then the Autotask will queue it in a Timelock (if a Timelock exists) or execute it directly (if no Timelock exists). If the proposal is already queued in a Timelock, the Autotask will check when the proposal can be executed (by checking the ETA value) and execute it if possible. 
 
 ## Setting up
-- Install all packages in the `defender` folder `npm install`
+- Install all packages in the `defender` folder using `npm install`
 - Modify line `custom.governance-contract-address` in the `serverless.yml` file
 - Configure and rename `../secret.example.yml` to `../secrets.dev.yml`
 - Deploy serverless configuration with `serverless deploy`
