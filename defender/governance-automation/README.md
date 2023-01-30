@@ -1,6 +1,8 @@
 # Governance Automation
 
-This Autotask will check for proposal events that have been emitted by an [OpenZepplin Governance](https://docs.openzeppelin.com/contracts/4.x/api/governance) contract. If a proposal has been passed, then the Autotask will queue it in a Timelock or execute it directly. If the proposal is already queued in the Timelock, the Autotask will check the ETA and execute it if possible. 
+This Autotask will check for proposal events that have been emitted by an [OpenZepplin Governance](https://docs.openzeppelin.com/contracts/4.x/api/governance) contract.
+
+If a proposal has been passed (has a state of Succeeded), then the Autotask will queue it in a Timelock (if a Timelock exists) or execute it directly (if no Timelock exists). If the proposal is already queued in a Timelock, the Autotask will check when the proposal can be executed (by checking the ETA value) and execute it if possible. 
 
 ## Setting up
 - Install all packages in the `defender` folder `npm install`
