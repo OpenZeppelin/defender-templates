@@ -3,7 +3,7 @@
 A Defender Autotask to periodically check and display the status of active Governor Bravo contract proposals.
 
 ## Setting up
-1. Setup secrets in `../.secrets/dev.yml`, required keys:
+1. Setup secrets in `../secrets.dev.yml`, required keys:
 ```yaml 
 keys:
   api: <DEFENDER_API_KEY>

@@ -1,16 +1,8 @@
-const stackName = 'governance_alert';
 const votingTokenDecimals = 18;
 const votingTokenName = 'TOKEN';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-const axios = require('axios');
-
-function getRandomInt(min, max) {
-  return Math.floor((Math.random() * (max - min)) + min);
-}
-
 async function getProposalTitle(proposalId) {
-  title = `Proposal ${proposalId}`;
+  const title = `Proposal ${proposalId}`;
   return title;
 }
 
@@ -38,7 +30,6 @@ async function createDiscordMessage(eventName, params, transactionHash) {
   let reason;
   let proposalName;
   let message;
-  let displayName;
   let id;
   let supportEmoji;
   let eta;
@@ -174,7 +165,7 @@ exports.handler = async function (autotaskEvent) {
     }
 
     console.log(result.value);
-    return postToDiscord(discordUrl, result.value);
+    return
   });
 
   results = await Promise.allSettled(discordPromises);

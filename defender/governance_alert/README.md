@@ -8,7 +8,7 @@ A Defender Sentinel and Autotask to monitor and display the event activity in a 
 * VoteCast
 
 ## Setting up
-1. Setup secrets in `../.secrets/dev.yml`, required keys:
+1. Setup secrets in `../secrets.dev.yml`, required keys:
 ```yaml 
 keys:
   api: <DEFENDER_API_KEY>

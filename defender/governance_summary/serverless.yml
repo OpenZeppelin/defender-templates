@@ -9,7 +9,7 @@ provider:
   ssot: false
 
 custom:
-  config: ${file(secrets.yml)}
+  config: ${file(../secrets.dev.yml)}
 
   # Configure this section and rename secret-example.yml to secrets.yml
   name: Governance Summary
