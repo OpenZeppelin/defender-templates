@@ -10,10 +10,9 @@ const { DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const governanceAbi = [
   'event ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)',
   'function state(uint256 proposalId) view returns (uint8)',
-  'function proposalVotes(uint256) view returns (uint256 againstVotes, uint256 forVotes, uint256 abstainVotes)',
-  'function proposalSnapshot(uint256 proposalId) view returns (uint256 proposalSnapshot)',
+  'function proposals(uint256) view returns (uint256 id, address proposer, uint256 eta, uint256 startBlock, uint256 endBlock, uint256 forVotes, uint256 againstVotes, uint256 abstainVotes, bool canceled, bool executed)',
   'function token() view returns (address)',
-  'function quorum(uint256 blockNumber) view returns (uint256 quorum)',
+  'function quorumVotes() view returns (uint256)',
 ];
 
 const tokenAbi = [
@@ -49,7 +48,7 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   const currentBlock = await provider.getBlock('latest');
-  console.log(`latest: ${currentBlock.number}`);
+
   // Get topic hash of the ProposalCreated event
   const iface = new ethers.utils.Interface(governanceAbi);
   const eventTopic = iface.getEventTopic('ProposalCreated'); 
@@ -86,7 +85,6 @@ exports.handler = async function handler(autotaskEvent) {
   const results = await Promise.all(proposalsToCheck.map(async (proposalId) => {
     const state = await governanceContract.state(proposalId);
     switch (state) {
-      case 7: // Executed
       case 1: // Active
         console.debug(`Proposal ${proposalId} is active!`);
         return proposalId;
@@ -96,6 +94,7 @@ exports.handler = async function handler(autotaskEvent) {
       case 4: // Successful
       case 5: // Queued
       case 6: // Expired
+      case 7: // Executed
         // nothing to do
         break;
       default:
@@ -127,11 +126,11 @@ exports.handler = async function handler(autotaskEvent) {
   const tokenScale = ethers.BigNumber.from(10).pow(tokenDecimals);
 
   // Find how many votes are need to pass
-  const quorumVotes = await governanceContract.quorum(currentBlock.number-1);
-  console.log(`quorumVotes: ${quorumVotes}`);
+  const quorumVotes = await governanceContract.quorumVotes();
+
   // Get proposal info
   const proposalInfo = await Promise.all(pendingProposals
-    .map(async (proposalId) => governanceContract.proposalVotes(proposalId)));
+    .map(async (proposalId) => governanceContract.proposals(proposalId)));
 
   await Promise.all(proposalInfo.map(async (proposal) => {
     const forVotes = proposal.forVotes.div(tokenScale).toString();
