@@ -8,12 +8,13 @@ provider:
   stackName: governance_automation
   ssot: false
 
-# Configure and rename secret.example.yml to secrets.yml
+# Configure and rename secret.example.yml to secrets.dev.yml
 custom:
   config: ${file(../secrets.dev.yml)}
-  # Governance Contract that the autotask will automate
+  # Governor contract that the Autotask will automate
   governance-contract-address: "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
 
+# Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
 defender:
   key: ${self:custom.config.keys.api}
   secret: ${self:custom.config.keys.secret}
