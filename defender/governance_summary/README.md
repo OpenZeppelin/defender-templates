@@ -1,6 +1,6 @@
 # Governance summary template
 
-A Defender Autotask to periodically check and display the status of active Governor Bravo contract proposals.
+A Defender Autotask to periodically check and display the status of active proposals on an OpenZeppelin GovernorCompatibilityBravo contract.
 
 ## Setting up
 1. Setup secrets in `../secrets.dev.yml`, required keys:

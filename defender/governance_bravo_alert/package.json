@@ -1,0 +1,27 @@
+{
+  "name": "governance_alert",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.2.5",
+    "axios-retry": "^3.4.0",
+    "defender-relay-client": "^1.38.0",
+    "defender-serverless": "^1.0.4",
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
+    "serverless": "^3.26.0",
+    "sls-config-parser": "^1.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.32.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "jest": "^29.4.1"
+  }
+}

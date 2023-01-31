@@ -11,13 +11,14 @@ provider:
 custom:
   config: ${file(../secrets.dev.yml)}
 
-  # Configure this section and rename secret-example.yml to secrets.yml
+  # Configure this section and rename secret-example.yml to secrets.dev.yml
   name: Governance Summary
   defenderSecrets:
     # Public Variables
     # Governance Address
-    governanceAddress: "0xc0Da02939E1441F497fd74F78cE7Decb17B66529"
+    governanceAddress: "0xD63123527551F037fAAc74bf5fDA5B71569cf5af"
 
+# set up API keys in your Defender account and copy them to your secrets.dev.yml file
 defender:
   key: ${self:custom.config.keys.api}
   secret: ${self:custom.config.keys.secret}

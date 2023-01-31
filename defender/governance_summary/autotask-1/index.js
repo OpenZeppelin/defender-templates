@@ -3,7 +3,7 @@ require('dotenv').config();
 const stackName = 'governance_summary';
 const governanceAddressSecretName = `${stackName}_governanceAddress`;
 
-const ethers = require('ethers');
+const { ethers } = require('ethers');
 
 const { DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 
@@ -12,11 +12,11 @@ const governanceAbi = [
   'function proposalCount() view returns (uint256)',
   'function state(uint256 proposalId) view returns (uint8)',
   'function proposals(uint256) view returns (uint256 id, address proposer, uint256 eta, uint256 startBlock, uint256 endBlock, uint256 forVotes, uint256 againstVotes, uint256 abstainVotes, bool canceled, bool executed)',
-  'function comp() view returns (address)',
+  'function token() view returns (address)',
   'function quorumVotes() view returns (uint256)',
 ];
 
-const compAbi = [
+const tokenAbi = [
   'function decimals() view returns (uint8 decimals)',
 ];
 
@@ -77,27 +77,15 @@ exports.handler = async function handler(autotaskEvent) {
   const results = await Promise.all(proposalsToCheck.map(async (proposalId) => {
     const state = await governanceContract.state(proposalId);
     switch (state) {
-      case 0: // Pending
-        // nothing to do
-        break;
       case 1: // Active
         console.debug(`Proposal ${proposalId} is active!`);
         return proposalId;
+      case 0: // Pending
       case 2: // Canceled
-        // nothing to do
-        break;
       case 3: // Defeated
-        // nothing to do
-        break;
       case 4: // Successful
-        // nothing to do
-        break;
       case 5: // Queued
-        // nothing to do
-        break;
       case 6: // Expired
-        // nothing to do
-        break;
       case 7: // Executed
         // nothing to do
         break;
@@ -124,11 +112,11 @@ exports.handler = async function handler(autotaskEvent) {
   // Get vote info for each pending proposal
   console.debug('Gathering vote information');
 
-  // Get COMP's address to query for decimals.
-  const compAddress = await governanceContract.comp();
-  const compContract = new ethers.Contract(compAddress, compAbi, provider);
-  const compDecimals = await compContract.decimals();
-  const compScale = ethers.BigNumber.from(10).pow(compDecimals);
+  // Get TOKEN's address to query for decimals.
+  const tokenAddress = await governanceContract.token();
+  const tokenContract = new ethers.Contract(tokenAddress, tokenAbi, provider);
+  const tokenDecimals = await tokenContract.decimals();
+  const tokenScale = ethers.BigNumber.from(10).pow(tokenDecimals);
 
   // Find how many votes are need to pass
   const quorumVotes = await governanceContract.quorumVotes();
@@ -138,9 +126,9 @@ exports.handler = async function handler(autotaskEvent) {
     .map(async (proposalId) => governanceContract.proposals(proposalId)));
 
   await Promise.all(proposalInfo.map(async (proposal) => {
-    const forVotes = proposal.forVotes.div(compScale).toString();
-    const againstVotes = proposal.againstVotes.div(compScale).toString();
-    const abstainVotes = proposal.abstainVotes.div(compScale).toString();
+    const forVotes = proposal.forVotes.div(tokenScale).toString();
+    const againstVotes = proposal.againstVotes.div(tokenScale).toString();
+    const abstainVotes = proposal.abstainVotes.div(tokenScale).toString();
     const vsQuorum = proposal.forVotes.mul(100).div(quorumVotes).toString();
 
     const blocksLeft = proposal.endBlock - currentBlock.number;
