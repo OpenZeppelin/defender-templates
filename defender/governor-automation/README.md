@@ -31,3 +31,25 @@ In the `defender` directory, perform the following steps:
   - `cd governance-automation`
 - Modify the line with `custom.governance-contract-address` in the `serverless.yml` file
 - Run `serverless deploy` to deploy the stack to Defender
+
+## Local testing with Hardhat
+
+In order to run tests against a forked version of the mainnet, you will need a JSON RPC server with access to an archive node. Both Alchemy's and Infura's free plans will suffice.
+
+### Running the Hardhat node
+
+In the `defender` directory, perform the following steps:
+
+- Run `npm i` to install the necessary Node packages
+- Run `npx hardhat node` to start the node
+
+In another terminal, navigate to the `defender` directory and then:
+
+- Create or modify an `.env` file in this directory
+  - Add `ETHEREUM_MAINNET_JSON_RPC_URL=<JSON RPC URL>` to `.env` file, replacing the angle brackets `<>` with your actual RPC URL (ex. https://eth-mainnet.g.alchemy.com/v2/xxxx or https://mainnet.infura.io/v3/xxxx)
+- To test the Autotask against a generic Governor contract, run:
+  - `npx jest governor-automation/tests/generic-governor-automation.hh.spec.js`
+- To test the Autotask against a Governor Compatibility Bravo contract, run:
+- `npx jest governor-automation/tests/governor-bravo-automation.hh.spec.js`
+
+To stop the Hardhat node, switch back the first terminal and press `CTRL-C` or `Command-C` (for Mac OS).
