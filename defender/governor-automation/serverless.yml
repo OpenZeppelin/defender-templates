@@ -25,7 +25,7 @@ functions:
     path: autotask-1
     trigger:
       type: schedule
-      # Set to check for new proposals every 5 minutes
+      # Set to check for new proposals every 60 minutes
       frequency: 60
     paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
@@ -36,7 +36,7 @@ resources:
       policy-1:
         gas-price-cap: 1000
         whitelist-receivers:
-          - "0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2"
+          - ${self:custom.config.governance-contract-address}
         eip1559-pricing: true
 
     secrets:
