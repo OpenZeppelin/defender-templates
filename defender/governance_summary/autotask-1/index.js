@@ -2,9 +2,12 @@ require('dotenv').config();
 
 const stackName = 'governance_summary';
 const governanceAddressSecretName = `${stackName}_governanceAddress`;
+const nameLastBlockSearched = `${stackName}_lastBlockSearched`;
+const nameCurrentProposals = `${stackName}_currentProposals`;
 
 const { ethers } = require('ethers');
 
+const { KeyValueStoreClient } = require('defender-kvstore-client');
 const { DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 
 const governanceAbi = [
@@ -12,6 +15,7 @@ const governanceAbi = [
   'function state(uint256 proposalId) view returns (uint8)',
   'function proposalVotes(uint256) view returns (uint256 againstVotes, uint256 forVotes, uint256 abstainVotes)',
   'function proposalSnapshot(uint256 proposalId) view returns (uint256 proposalSnapshot)',
+  'function proposalDeadline(uint256 proposalId) view returns (uint256 proposalDeadline)',
   'function token() view returns (address)',
   'function quorum(uint256 blockNumber) view returns (uint256 quorum)',
 ];
@@ -41,36 +45,63 @@ exports.handler = async function handler(autotaskEvent) {
   console.debug('Creating DefenderRelayProvider');
   const provider = new DefenderRelayProvider(autotaskEvent);
 
+  // create the client to interact with the key-value store
+  console.debug('Creating KeyValueStoreClient');
+  const store = new KeyValueStoreClient(autotaskEvent);
+
+  // retrieving kvstore values
+  let lastBlockSearched = await store.get(nameLastBlockSearched);
+  let currentProposals = await store.get(nameCurrentProposals);
+
+  // initialize lastBlockSearched
+  if (lastBlockSearched === undefined || lastBlockSearched === null) {
+    lastBlockSearched = 0;
+  } else if (lastBlockSearched.length === 0) {
+    lastBlockSearched = 0;
+  } else {
+    lastBlockSearched = parseInt(lastBlockSearched, 10);
+  }
+
+  // initialize currentProposals list
+  if (currentProposals === undefined || currentProposals === null) {
+    currentProposals = [];
+  } else if (currentProposals.length === 0) {
+    currentProposals = [];
+  } else {
+    currentProposals = currentProposals.split(',').map((value) => value);
+  }
+
+  let currentBlock;
   try {
-    await provider.getBlock('latest');
+    currentBlock = await provider.getBlock('latest');
   } catch (error) {
     console.error('Error attempting to use Relay provider');
     throw error;
   }
 
-  const currentBlock = await provider.getBlock('latest');
-  console.log(`latest: ${currentBlock.number}`);
   // Get topic hash of the ProposalCreated event
   const iface = new ethers.utils.Interface(governanceAbi);
   const eventTopic = iface.getEventTopic('ProposalCreated'); 
   const logs = await provider.getLogs({
     address: governanceAddress,
-    fromBlock: 1,
+    fromBlock: lastBlockSearched,
     toBlock: currentBlock.number,
     topics: [eventTopic],
   });
 
-  // TODO: save current block to kvstore
-
-  console.debug(`Proposals Found: ${logs.length}`);
+  console.debug(`New Proposals Found: ${logs.length}`);
   // create the Array of proposal IDs to check
-  const proposalsToCheck = [];
+  let proposalsToCheck = [...currentProposals];
   for (const singleLog of logs) {
     try {
-      proposalsToCheck.push(iface.parseLog(singleLog)?.args?.[0]);
+      const bnProposalId = iface.parseLog(singleLog)?.args?.[0];
+      proposalsToCheck.push(bnProposalId.toString());
     }
     catch {}
   }
+
+  // remove duplicates
+  proposalsToCheck = [...new Set(proposalsToCheck)];
 
   // create an ethers.js Contract Object to interact with the on-chain smart contract
   console.debug('Creating governanceContract');
@@ -86,7 +117,6 @@ exports.handler = async function handler(autotaskEvent) {
   const results = await Promise.all(proposalsToCheck.map(async (proposalId) => {
     const state = await governanceContract.state(proposalId);
     switch (state) {
-      case 7: // Executed
       case 1: // Active
         console.debug(`Proposal ${proposalId} is active!`);
         return proposalId;
@@ -96,7 +126,7 @@ exports.handler = async function handler(autotaskEvent) {
       case 4: // Successful
       case 5: // Queued
       case 6: // Expired
-        // nothing to do
+      case 7: // Executed
         break;
       default:
         console.error(`Unexpected proposal state: ${state}`);
@@ -109,6 +139,9 @@ exports.handler = async function handler(autotaskEvent) {
   // End early if there is nothing to process
   if (pendingProposals.length === 0) {
     console.debug('No pending proposals found');
+    // saving kvstore values
+    await store.put(nameLastBlockSearched, currentBlock.number.toString());
+    await store.put(nameCurrentProposals, pendingProposals.toString());
     return true;
   }
 
@@ -126,20 +159,19 @@ exports.handler = async function handler(autotaskEvent) {
   const tokenDecimals = await tokenContract.decimals();
   const tokenScale = ethers.BigNumber.from(10).pow(tokenDecimals);
 
-  // Find how many votes are need to pass
-  const quorumVotes = await governanceContract.quorum(currentBlock.number-1);
-  console.log(`quorumVotes: ${quorumVotes}`);
   // Get proposal info
-  const proposalInfo = await Promise.all(pendingProposals
-    .map(async (proposalId) => governanceContract.proposalVotes(proposalId)));
-
-  await Promise.all(proposalInfo.map(async (proposal) => {
+  await Promise.all(pendingProposals.map(async (proposalId) => {
+    const proposal = await governanceContract.proposalVotes(proposalId);
     const forVotes = proposal.forVotes.div(tokenScale).toString();
     const againstVotes = proposal.againstVotes.div(tokenScale).toString();
     const abstainVotes = proposal.abstainVotes.div(tokenScale).toString();
+    // Find how many votes are need to pass
+    const snapshotBlock = await governanceContract.proposalSnapshot(proposalId);
+    const quorumVotes = await governanceContract.quorum(snapshotBlock);
     const vsQuorum = proposal.forVotes.mul(100).div(quorumVotes).toString();
 
-    const blocksLeft = proposal.endBlock - currentBlock.number;
+    const proposalDeadline = await governanceContract.proposalDeadline(proposalId);
+    const blocksLeft = proposalDeadline - currentBlock.number;
     let timeLeft = blocksLeft * timePerBlock;
     // 86400 seconds in a day. 60 * 60 * 24 = 86400
     const days = Math.trunc(timeLeft / 86400);
@@ -160,6 +192,11 @@ exports.handler = async function handler(autotaskEvent) {
       + `Time left to vote: ${days} day(s) ${hours} hour(s) ${minutes} minutes(s) ${seconds} seconds(s) `;
     console.log(outputMessage);
   }));
+
+  // saving kvstore values
+  await store.put(nameLastBlockSearched, currentBlock.number.toString());
+  await store.put(nameCurrentProposals, pendingProposals.toString());
+
   return true;
 };
 

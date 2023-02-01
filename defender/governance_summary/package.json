@@ -11,6 +11,7 @@
   "dependencies": {
     "axios": "^1.2.5",
     "axios-retry": "^3.4.0",
+    "defender-kvstore-client": "^1.38.0",
     "defender-relay-client": "^1.38.0",
     "defender-serverless": "^1.0.4",
     "dotenv": "^16.0.3",
