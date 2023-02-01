@@ -33,4 +33,3 @@ tsconfig.tsbuildinfo
 types/**
 dist/
 abi/@openzeppelin
-abi/contracts
