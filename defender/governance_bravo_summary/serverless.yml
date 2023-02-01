@@ -11,7 +11,7 @@ provider:
 custom:
   config: ${file(../secrets.dev.yml)}
 
-  # Configure this section and rename secret-example.yml to secrets.dev.yml
+  # Configure this section and rename ../example.secrets.yml to ../secrets.dev.yml
   name: Governance Summary
   defenderSecrets:
     # Public Variables

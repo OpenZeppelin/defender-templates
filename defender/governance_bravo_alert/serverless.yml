@@ -9,9 +9,9 @@ provider:
   ssot: false
 
 custom:
-  config: ${file(../secrets.dev.yml)}
+  config: ${file(../secrets.${stage}.yml)}
 
-  # Configure this section and rename secret-example.yml to secrets.dev.yml
+  # Configure this section and rename ../example.secrets.yml to ../secrets.dev.yml
   name: Governance Alert
 
   # Contract Sentinel Settings
@@ -45,6 +45,7 @@ resources:
         eip1559-pricing: true
 
     secrets:
+      block_explorer_base_url: "https://etherscan.io/tx"
 
     relayers:
 

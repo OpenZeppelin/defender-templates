@@ -1,6 +1,3 @@
-const votingTokenDecimals = 18;
-const votingTokenName = 'TOKEN';
-
 function getProposalTitle(proposalId) {
   const shortProposalId = `${proposalId.slice(0,4)}..${proposalId.slice(proposalId.length-4)}`
   const title = `Proposal ${shortProposalId}`;
@@ -21,7 +18,7 @@ function getProposalTitleFromDescription(description) {
   return proposalName;
 }
 
-async function createMessage(eventName, params, transactionHash) {
+async function createMessage(eventName, params, transactionHash, blockExplorerBaseUrl) {
   let description;
   let support;
   let proposalId;
@@ -41,8 +38,8 @@ async function createMessage(eventName, params, transactionHash) {
   const checkMarkEmoji = '✅';
   const speakNoEvilEmoji = '🙊';
 
-  // construct the Etherscan transaction link
-  const etherscanLink = `[TX](<https://etherscan.io/tx/${transactionHash}>)`;
+  // construct the block explorer transaction link
+  const blockExplorerLink = `[TX](<${blockExplorerBaseUrl}/${transactionHash}>)`;
 
   switch (eventName) {
     case 'ProposalCreated':
@@ -51,7 +48,7 @@ async function createMessage(eventName, params, transactionHash) {
       if (proposalName === undefined) {
         proposalName = getProposalTitle(id);
       }
-      message = `**New Proposal** ${proposalName} by ${proposer.slice(0, 6)} ${etherscanLink}`;
+      message = `**New Proposal** ${proposalName} by ${proposer.slice(0, 6)} ${blockExplorerLink}`;
       break;
     case 'VoteCast':
       ({
@@ -75,22 +72,10 @@ async function createMessage(eventName, params, transactionHash) {
         voteTypeString = '**Abstain**';
       }
 
-      // TODO: Figure out the correct decimal value
-      /*
-      if (weight.length > votingTokenDecimals) {
-        console.log('v');
-        weight = weight.slice(0, votes.length - votingTokenDecimals);
-      } else {
-        console.log('vv');
-        // do not display votes less than 1 TOKEN
-        console.debug(`Number of votes is less than 1 ${votingTokenName}, not displaying message: ${weight}`);
-        return undefined;
-      }
-      */      
       weight = internationalNumberFormat.format(weight);
 
       proposalName = getProposalTitle(proposalId);
-      message = `${voteTypeString} ${proposalName} ${supportEmoji} ${weight} by ${voter.slice(0, 6)} ${etherscanLink}`;
+      message = `${voteTypeString} ${proposalName} ${supportEmoji} ${weight} by ${voter.slice(0, 6)} ${blockExplorerLink}`;
 
       if (reason !== '') {
         message += `\n\`\`\`${reason}\`\`\``;
@@ -99,17 +84,17 @@ async function createMessage(eventName, params, transactionHash) {
     case 'ProposalCanceled':
       ({ proposalId } = params);
       proposalName = getProposalTitle(proposalId);
-      message = `**Canceled Proposal** ${proposalName} ${noEntryEmoji} ${etherscanLink}`;
+      message = `**Canceled Proposal** ${proposalName} ${noEntryEmoji} ${blockExplorerLink}`;
       break;
     case 'ProposalExecuted':
       ({ proposalId } = params);
       proposalName = getProposalTitle(proposalId);
-      message = `**Executed Proposal** ${proposalName} ${checkMarkEmoji} ${etherscanLink}`;
+      message = `**Executed Proposal** ${proposalName} ${checkMarkEmoji} ${blockExplorerLink}`;
       break;
     case 'ProposalQueued':
       ({ eta, proposalId } = params);
       proposalName = getProposalTitle(proposalId);
-      message = `**Queued Proposal** ${proposalName} ${checkMarkEmoji} available to execute at timestamp ${eta} ${etherscanLink}`;
+      message = `**Queued Proposal** ${proposalName} ${checkMarkEmoji} available to execute at timestamp ${eta} ${blockExplorerLink}`;
       break;
     default:
       return undefined;
@@ -128,6 +113,11 @@ exports.handler = async function (autotaskEvent) {
   const { secrets, request } = autotaskEvent;
   if (secrets === undefined) {
     throw new Error('secrets undefined');
+  }
+
+  let { block_explorer_base_url:blockExplorerBaseUrl } = secrets;
+  if (blockExplorerBaseUrl=== undefined) {
+    blockExplorerBaseUrl = 'https://etherscan.io/tx';
   }
 
   // ensure that the request key exists within the autotaskEvent Object
@@ -156,7 +146,7 @@ exports.handler = async function (autotaskEvent) {
     const { signature, params } = reason;
     const eventName = signature.slice(0, signature.indexOf('('));
     // craft the message
-    return createMessage(eventName, params, transactionHash);
+    return createMessage(eventName, params, transactionHash, blockExplorerBaseUrl);
   });
 
   // wait for the promises to settle
