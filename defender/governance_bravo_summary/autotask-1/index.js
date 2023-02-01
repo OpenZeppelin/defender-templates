@@ -2,8 +2,6 @@ require('dotenv').config();
 
 const stackName = 'governance_summary';
 const governanceAddressSecretName = `${stackName}_governanceAddress`;
-const nameLastBlockSearched = `${stackName}_lastBlockSearched`;
-const nameCurrentProposals = `${stackName}_currentProposals`;
 
 const { ethers } = require('ethers');
 
@@ -28,9 +26,13 @@ exports.handler = async function handler(autotaskEvent) {
     throw new Error('autotaskEvent undefined');
   }
 
-  const { secrets } = autotaskEvent;
+  const { autotaskId, secrets } = autotaskEvent;
   if (secrets === undefined) {
     throw new Error('secrets undefined');
+  }
+
+  if (autotaskId === undefined) {
+    throw new Error('autotaskId undefined');
   }
 
   // ensure that there is a governanceAddress secret
@@ -48,6 +50,8 @@ exports.handler = async function handler(autotaskEvent) {
   const store = new KeyValueStoreClient(autotaskEvent);
 
   // retrieving kvstore values
+  const nameLastBlockSearched = `${autotaskId}_lastBlockSearched`;
+  const nameCurrentProposals = `${autotaskId}_currentProposals`;
   let lastBlockSearched = await store.get(nameLastBlockSearched);
   let currentProposals = await store.get(nameCurrentProposals);
 
