@@ -5,7 +5,7 @@ frameworkVersion: '3'
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: 'monitor-erc721-ownership'
+  stackName: '${self:provider.stage}-monitor-erc721-ownership'
   ssot: false
 custom:
   secrets: ${file(../.secrets/${self:provider.stage}.yml)}
@@ -26,9 +26,9 @@ resources:
         # optional
         nat-spec: null
     notifications:
-      slack-1:
+      slack:
         type: 'slack'
-        name: 'Slack notification Channel - 1'
+        name: 'Slack notification Channel'
         config:
           url: ${self:custom.secrets.notifications.slack-webhook}
         paused: false
@@ -37,7 +37,7 @@ resources:
       erc721-ownership-monitor:
         name: 'ERC721 token transfer monitor'
         type: 'BLOCK'
-        network: 'goerli'
+        network: '${self:custom.config.token-chain}'
         abi: '${self:resources.Resources.contracts.token.abi}'
         conditions:
           event:
@@ -50,7 +50,7 @@ resources:
         notify-config:
           timeout: 0 # optional
           channels:
-            - ${self:resources.Resources.notifications.slack-1}
+            - ${self:resources.Resources.notifications.slack}
 
 plugins:
   - defender-serverless
