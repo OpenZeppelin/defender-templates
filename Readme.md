@@ -31,6 +31,11 @@ Then client can POST to autotask webhook with his message and signature in reque
 
 In autotask script, developer can verify that data and perhaps send it to CMS, and mint token with use of Relayer.  
 
+### [Governor Automation](defender/governor-automation/README.md)
+
+This Autotask will check for proposal events that have been emitted by an [OpenZepplin Governor](https://docs.openzeppelin.com/contracts/4.x/api/governance) or [OpenZepplin GovernorCompatibilityBravo](https://docs.openzeppelin.com/contracts/4.x/api/governance#GovernorCompatibilityBravo) contract.
+
+If a proposal has been passed (has a state of Succeeded), then the Autotask will queue it in a Timelock (if a Timelock exists) or execute it directly (if no Timelock exists). If the proposal is already queued in a Timelock, the Autotask will check when the proposal can be executed (by checking the ETA value) and execute it if possible.
 
 ---
 ## Additional Resources
