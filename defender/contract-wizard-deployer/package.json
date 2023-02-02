@@ -1,0 +1,25 @@
+{
+  "name": "contract-wizard-deployer",
+  "version": "1.0.0",
+  "description": "Scripts to deploy contracts that are created with Contract Wizard",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "4.8.1",
+    "defender-admin-client": "1.38.0",
+    "defender-relay-client": "1.38.0",
+    "dotenv": "16.0.3",
+    "hardhat": "^2.12.6"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "2.0.1",
+    "@nomiclabs/hardhat-etherscan": "3.1.5",
+    "eslint": "8.33.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.27.5"
+  }
+}
