@@ -1,12 +1,12 @@
-const stackName = 'governance_automation';
-const governanceAddressSecretName = `${stackName}_GOVERNANCE_CONTRACT_ADDRESS`;
+const stackName = 'governor_automation';
+const governorAddressSecretName = `${stackName}_GOVERNOR_CONTRACT_ADDRESS`;
 
 const ethers = require('ethers');
 
 const { KeyValueStoreClient } = require('defender-kvstore-client');
 const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-client/lib/ethers');
 
-const governanceAbi = [
+const governorAbi = [
   'event ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)',
   'function execute(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public payable returns (uint256)',
   'function hashProposal(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public pure returns (uint256)',
@@ -33,12 +33,12 @@ exports.handler = async function handler(autotaskEvent) {
     throw new Error('autotaskId undefined');
   }
 
-  // Governance address is defined in the serverless.yml file
-  const governanceAddress = secrets[governanceAddressSecretName];
+  // Governor address is defined in the serverless.yml file
+  const governorAddress = secrets[governorAddressSecretName];
 
-  // ensure that the governanceAddress exists
-  if (governanceAddress === undefined) {
-    throw new Error('GOVERNANCE_CONTRACT_ADDRESS must be defined in serverless.yml or Defender->AutoTask->Secrets');
+  // ensure that the governorAddress exists
+  if (governorAddress === undefined) {
+    throw new Error('GOVERNOR_CONTRACT_ADDRESS must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
   }
 
   // create the client to interact with the key-value store
@@ -72,14 +72,14 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   // create an ethers.js Contract Object to interact with the on-chain smart contract
-  console.debug('Creating governanceContract');
-  const governanceContract = new ethers.Contract(
-    governanceAddress,
-    governanceAbi,
+  console.debug('Creating governorContract');
+  const governorContract = new ethers.Contract(
+    governorAddress,
+    governorAbi,
     signer,
   );
 
-  const iface = new ethers.utils.Interface(governanceAbi);
+  const iface = new ethers.utils.Interface(governorAbi);
   const topicHash = iface.getEventTopic('ProposalCreated');
 
   const block = await provider.getBlock('latest');
@@ -91,7 +91,7 @@ exports.handler = async function handler(autotaskEvent) {
   // although the default toBlock value is 'latest',
   // be explicit about the toBlock to make it the current block
   const filter = {
-    address: governanceAddress,
+    address: governorAddress,
     topics: [topicHash],
     fromBlock: startBlock,
     toBlock: number,
@@ -103,7 +103,7 @@ exports.handler = async function handler(autotaskEvent) {
   let hasTimelock;
   try {
     console.debug('Calling timelock() on Governor contract to check for Timelock');
-    await governanceContract.timelock();
+    await governorContract.timelock();
     hasTimelock = true;
     console.debug('Timelock successfully called and returned address');
   } catch (err) {
@@ -135,7 +135,7 @@ exports.handler = async function handler(autotaskEvent) {
 
     const descriptionHash = ethers.utils.id(description);
 
-    const state = await governanceContract.state(proposalId);
+    const state = await governorContract.state(proposalId);
     console.debug(`proposalId state: ${state}`);
 
     let eta;
@@ -153,7 +153,7 @@ exports.handler = async function handler(autotaskEvent) {
           // Governor has a Timelock
           // Use Relay to call queue()
           console.debug(`Governor has a Timelock, calling queue() for proposal ID: ${proposalId}`);
-          await governanceContract.queue(targets, values, calldatas, descriptionHash);
+          await governorContract.queue(targets, values, calldatas, descriptionHash);
           console.debug('Done');
           return blockNumber;
         }
@@ -164,16 +164,18 @@ exports.handler = async function handler(autotaskEvent) {
         try {
           // check for the ability to call execute()
           console.debug(`Checking if proposal ID ${proposalId} is ready to execute`);
-          eta = await governanceContract.proposalEta(proposalId);
+          eta = await governorContract.proposalEta(proposalId);
+          // Explicitly cast to BN
+          eta = ethers.BigNumber.from(eta);
           console.debug(`proposalEta: ${eta}`);
           // eslint-disable-next-line no-empty
         } catch { }
 
-        if (!hasTimelock || eta === 0 || eta < timestamp) {
+        if (!hasTimelock || eta.eq(0) || eta.lt(timestamp)) {
           // if the correct amount of time has passed, execute
           // execute transaction with Relay to call execute()
           console.debug(`Calling execute for proposal ID ${proposalId}`);
-          await governanceContract.execute(targets, values, calldatas, descriptionHash);
+          await governorContract.execute(targets, values, calldatas, descriptionHash);
         } else {
           console.debug(`proposal ID ${proposalId} NOT ready to execute`);
         }

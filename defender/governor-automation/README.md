@@ -22,14 +22,16 @@ During the first run of the Autotask, it will scan from block zero to the latest
 
 In the `defender` directory, perform the following steps:
 
-- Run `npm i` to install the necessary Node packages
+- Run `yarn install` to install the necessary Node packages
 - A secrets file can be created for each stage of production. We will create one for development
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
   - Modify the two lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API key and secret key, as indicated:
   - `defender-api-key: <API Key goes here>`
   - `defender-api-secret: <API Secret goes here>`
 - Change directories to the stack that will be deployed
-  - `cd governance-automation`
-- Modify the `governor-contract-address` value in the `config.yml` file
-- Modify the `autotask-frequency` value in the `config.yml` file
+  - `cd governor-automation`
+- Modify the following values in the `config.yml` file:
+  - `governor-contract-address` 
+  - `network`
+  - `autotask-frequency`
 - Run `serverless deploy` to deploy the stack to Defender

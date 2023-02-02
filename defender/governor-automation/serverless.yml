@@ -1,16 +1,16 @@
-service: governance-automation
+service: governor-automation
 configValidationMode: error
 frameworkVersion: "3"
 
 provider:
   name: defender
   stage: dev
-  stackName: governance_automation
+  stackName: governor_automation
   ssot: false
 
 # Configure and rename secret.example.yml to secrets.dev.yml
 custom:
-  secrets:  ${file(../.secrets/${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
   config: ${file(./config.yml)}
 
 # Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
@@ -20,7 +20,7 @@ defender:
 
 functions:
   autotask-1:
-    name: Governance Automation Autotask
+    name: Governor Automation Autotask
     path: autotask-1
     trigger:
       type: schedule
@@ -44,8 +44,8 @@ resources:
 
     relayers:
       relayer-1:
-        name: Governance Automation Relay
-        network: mainnet
+        name: Governor Automation Relay
+        network: ${self:custom.config.network}
         min-balance: 100000000000000000
 
 plugins:
