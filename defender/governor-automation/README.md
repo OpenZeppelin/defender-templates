@@ -6,7 +6,7 @@ If a proposal has been passed (has a state of Succeeded), then the Autotask will
 
 ## Optimizations
 
-During the first run of the Autotask, it will scan from block zero to the latest block. It will then track the earliest block that still has an Active, Pending, Queued proposal. This block number will be stored in the `startingBlock` variable using the Defender KVStore. Future scans will from `startingBlock` to `latest` to reduce the number of blockchain calls.
+During the first run of the Autotask, it will scan from block zero to the latest block. It will then track the earliest block that still has an Active, Pending, or Queued proposal. This block number will be stored in a `startingBlock` variable using the Defender KVStore. The ID of the Autotask is prepended to the variable name to ensure that other Autotasks don't read from and write to the same KVStore value. Future scans will from `startingBlock` to `latest` to reduce the number of blockchain calls.
 
 ## Defender Account Setup
 

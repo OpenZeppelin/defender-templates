@@ -1,7 +1,7 @@
 const stackName = 'governor_automation';
 const governorAddressSecretName = `${stackName}_GOVERNOR_CONTRACT_ADDRESS`;
 
-const ethers = require('ethers');
+const { ethers } = require('ethers');
 
 const { KeyValueStoreClient } = require('defender-kvstore-client');
 const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-client/lib/ethers');
@@ -9,7 +9,6 @@ const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-c
 const governorAbi = [
   'event ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)',
   'function execute(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public payable returns (uint256)',
-  'function hashProposal(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public pure returns (uint256)',
   'function proposalEta(uint256 proposalId) public view returns (uint256)', // will not be present if there is no timelock on the contract
   'function queue(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public returns (uint256)', // will not be present if there is no timelock on the contract
   'function state(uint256 proposalId) public view returns (uint8)',
@@ -67,7 +66,7 @@ exports.handler = async function handler(autotaskEvent) {
   try {
     await signer.getAddress();
   } catch (error) {
-    console.error('Relay is not working, check if it is connected : ', error);
+    console.error('Relay is not working, check if it is connected: ', error);
     throw error;
   }
 
