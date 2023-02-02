@@ -1,18 +1,18 @@
-service: governance-automation
+service: governor-automation
 configValidationMode: error
 frameworkVersion: "3"
 
 provider:
   name: defender
   stage: dev
-  stackName: governance_automation
+  stackName: governor_automation
   ssot: false
 
 # Configure and rename secret.example.yml to secrets.dev.yml
 custom:
   config: ${file(../secrets.dev.yml)}
   # Governor contract that the Autotask will automate
-  governance-contract-address: "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
+  governor-contract-address: "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
 
 # Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
 defender:
@@ -36,12 +36,12 @@ resources:
       policy-1:
         gas-price-cap: 1000
         whitelist-receivers:
-          - ${self:custom.config.governance-contract-address}
+          - ${self:custom.governor-contract-address}
         eip1559-pricing: true
 
     secrets:
       stack:
-        GOVERNANCE_CONTRACT_ADDRESS: ${self:custom.governance-contract-address}
+        GOVERNOR_CONTRACT_ADDRESS: ${self:custom.governor-contract-address}
 
     relayers:
       relayer-1:

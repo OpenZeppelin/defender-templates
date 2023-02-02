@@ -1,5 +1,5 @@
-const stackName = 'governance_automation';
-const governanceAddressSecretName = `${stackName}_GOVERNANCE_CONTRACT_ADDRESS`;
+const stackName = 'governor_automation';
+const governanceAddressSecretName = `${stackName}_GOVERNOR_CONTRACT_ADDRESS`;
 
 const ethers = require('ethers');
 
