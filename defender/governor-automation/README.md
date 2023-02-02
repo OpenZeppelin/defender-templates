@@ -30,6 +30,6 @@ In the `defender` directory, perform the following steps:
   - `defender-api-secret: <API Secret goes here>`
 - Change directories to the stack that will be deployed
   - `cd governance-automation`
-- Modify the `governance-contract-address` value in the `config.yml` file
+- Modify the `governor-contract-address` value in the `config.yml` file
 - Modify the `autotask-frequency` value in the `config.yml` file
 - Run `serverless deploy` to deploy the stack to Defender
