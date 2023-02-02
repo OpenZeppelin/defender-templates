@@ -9,7 +9,6 @@ const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-c
 const governanceAbi = [
   'event ProposalCreated(uint256 proposalId, address proposer, address[] targets, uint256[] values, string[] signatures, bytes[] calldatas, uint256 startBlock, uint256 endBlock, string description)',
   'function execute(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public payable returns (uint256)',
-  'function hashProposal(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public pure returns (uint256)',
   'function proposalEta(uint256 proposalId) public view returns (uint256)', // will not be present if there is no timelock on the contract
   'function queue(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public returns (uint256)', // will not be present if there is no timelock on the contract
   'function state(uint256 proposalId) public view returns (uint8)',
