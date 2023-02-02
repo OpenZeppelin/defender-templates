@@ -9,7 +9,9 @@ provider:
   ssot: false
 
 custom:
-  config: ${file(../secrets.${stage}.yml)}
+  config: ${file(../secrets.${self:provider.stage}.yml)}
+  governanceSecrets:
+    block_explorer_base_url: "https://etherscan.io/tx"
 
   # Configure this section and rename ../example.secrets.yml to ../secrets.dev.yml
   name: Governance Alert
@@ -45,7 +47,7 @@ resources:
         eip1559-pricing: true
 
     secrets:
-      block_explorer_base_url: "https://etherscan.io/tx"
+      stack: ${self:custom.governanceSecrets}
 
     relayers:
 
@@ -55,7 +57,7 @@ resources:
         type: BLOCK
         addresses: ${self:custom.monitored-addresses}
         network: ${self:custom.monitored-network}
-        abi: ${file(abis/sentinel-1.json.yml):abi}
+        abi: ${file(../../abi/contracts/GovernorMock.sol/GovernorMock.json.abi)}
         paused: false
         autotask-trigger: ${self:functions.autotask-1}
         confirm-level: 1

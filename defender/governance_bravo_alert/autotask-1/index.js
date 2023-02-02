@@ -1,3 +1,6 @@
+const stackName = 'governance_alert';
+const blockExplorerSecretName = `${stackName}_block_explorer_base_url`;
+
 function getProposalTitle(proposalId) {
   const shortProposalId = `${proposalId.slice(0,4)}..${proposalId.slice(proposalId.length-4)}`
   const title = `Proposal ${shortProposalId}`;
@@ -115,7 +118,7 @@ exports.handler = async function (autotaskEvent) {
     throw new Error('secrets undefined');
   }
 
-  let { block_explorer_base_url:blockExplorerBaseUrl } = secrets;
+  let blockExplorerBaseUrl = secrets[blockExplorerSecretName];
   if (blockExplorerBaseUrl=== undefined) {
     blockExplorerBaseUrl = 'https://etherscan.io/tx';
   }
