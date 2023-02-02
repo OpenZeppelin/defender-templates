@@ -12,7 +12,7 @@ During the first run of the Autotask, it will scan from block zero to the latest
 
 - In your [Defender account](https://defender.openzeppelin.com/), select the Hamburger icon in the upper right corner and click on **Team API Keys**
 - In the Team API Keys screen, click **Create API Key**
-- Make sure that the options for **Manage Relayers**, **Manage Autotasks**, and **Manage Sentinels** are selected (we do not make use of the **Create Admin proposals and contracts** option)
+- Make sure that the options for **Manage Relayers**, **Manage Autotasks**, and **Manage Sentinels** are selected (we do not make use of the **Manage Proposals and Contracts** option)
 - Click **Save**
 - Copy your API key and Secret key to a local file (you will **NOT** be able to view your API secret again after this message box goes away)
 - Make sure that you really did copy your API key and Secret key to a local file
