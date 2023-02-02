@@ -51,5 +51,7 @@ resources:
         network: mainnet
         min-balance: 100000000000000000
 
+    catagories:
+
 plugins:
   - defender-serverless
