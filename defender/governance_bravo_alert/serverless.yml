@@ -12,7 +12,7 @@ custom:
   config: ${file(./config.yml)}
   secrets: ${file(.secrets/${self:provider.stage}.yml)} 
 
-  name: Governance Alert
+  name: Governance Bravo Alert
 
 # set up API keys in your Defender account and copy them to your .secrets/dev.yml file
 defender:

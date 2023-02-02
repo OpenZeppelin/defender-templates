@@ -2,7 +2,7 @@ const stackName = 'governance_alert';
 const blockExplorerSecretName = `${stackName}_block_explorer_base_url`;
 
 function getProposalTitle(proposalId) {
-  const shortProposalId = `${proposalId.slice(0,4)}..${proposalId.slice(proposalId.length-4)}`
+  const shortProposalId = `${proposalId.slice(0,4)}..${proposalId.slice(-4)}`
   const title = `Proposal ${shortProposalId}`;
   return title;
 }
