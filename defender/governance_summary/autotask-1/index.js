@@ -85,7 +85,7 @@ exports.handler = async function handler(autotaskEvent) {
 
   // Get topic hash of the ProposalCreated event
   const iface = new ethers.utils.Interface(governanceAbi);
-  const eventTopic = iface.getEventTopic('ProposalCreated'); 
+  const eventTopic = iface.getEventTopic('ProposalCreated');
   const logs = await provider.getLogs({
     address: governanceAddress,
     fromBlock: lastBlockSearched,
@@ -101,7 +101,7 @@ exports.handler = async function handler(autotaskEvent) {
       const bnProposalId = iface.parseLog(singleLog)?.args?.[0];
       proposalsToCheck.push(bnProposalId.toString());
     }
-    catch {}
+    catch { }
   }
 
   // remove duplicates
@@ -115,7 +115,7 @@ exports.handler = async function handler(autotaskEvent) {
     governanceAbi,
     provider,
   );
-  
+
   console.debug(`proposalsToCheck: ${proposalsToCheck}`);
 
   const results = await Promise.all(proposalsToCheck.map(async (proposalId) => {
@@ -194,14 +194,15 @@ exports.handler = async function handler(autotaskEvent) {
       + `👎 (against) votes: ${againstVotes}\n\t`
       + `🙊 (abstain) votes: ${abstainVotes}\n\t`
       + `Time left to vote: ${days} day(s) ${hours} hour(s) ${minutes} minutes(s) ${seconds} seconds(s) `;
+
+    // saving kvstore values
+    await store.put(nameLastBlockSearched, currentBlock.number.toString());
+    await store.put(nameCurrentProposals, pendingProposals.toString());
+
     console.log(outputMessage);
+    return outputMessage;
   }));
 
-  // saving kvstore values
-  await store.put(nameLastBlockSearched, currentBlock.number.toString());
-  await store.put(nameCurrentProposals, pendingProposals.toString());
-
-  return true;
 };
 
 // To run locally (this code will not be executed in Autotasks)

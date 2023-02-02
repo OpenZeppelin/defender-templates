@@ -169,7 +169,7 @@ exports.handler = async function handler(autotaskEvent) {
   const proposalInfo = await Promise.all(pendingProposals
     .map(async (proposalId) => governanceContract.proposals(proposalId)));
 
-  await Promise.all(proposalInfo.map(async (proposal) => {
+  const messages = await Promise.all(proposalInfo.map(async (proposal) => {
     const forVotes = proposal.forVotes.div(tokenScale).toString();
     const againstVotes = proposal.againstVotes.div(tokenScale).toString();
     const abstainVotes = proposal.abstainVotes.div(tokenScale).toString();
@@ -195,13 +195,14 @@ exports.handler = async function handler(autotaskEvent) {
       + `🙊 (abstain) votes: ${abstainVotes}\n\t`
       + `Time left to vote: ${days} day(s) ${hours} hour(s) ${minutes} minutes(s) ${seconds} seconds(s) `;
     console.log(outputMessage);
+    return outputMessage;
   }));
 
   // saving kvstore values
   await store.put(nameLastBlockSearched, currentBlock.number.toString());
   await store.put(nameCurrentProposals, pendingProposals.toString());
 
-  return true;
+  return messages;
 };
 
 // To run locally (this code will not be executed in Autotasks)
