@@ -99,6 +99,7 @@ exports.handler = async function handler(autotaskEvent) {
       const bnProposalId = iface.parseLog(singleLog)?.args?.[0];
       proposalsToCheck.push(bnProposalId.toString());
     }
+    // eslint-disable-next-line no-empty
     catch {}
   }
 
