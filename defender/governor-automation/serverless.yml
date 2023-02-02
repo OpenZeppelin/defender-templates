@@ -10,14 +10,13 @@ provider:
 
 # Configure and rename secret.example.yml to secrets.dev.yml
 custom:
-  config: ${file(../secrets.dev.yml)}
-  # Governor contract that the Autotask will automate
-  governance-contract-address: "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
+  secrets:  ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.yml)}
 
 # Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
 defender:
-  key: ${self:custom.config.keys.api}
-  secret: ${self:custom.config.keys.secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   autotask-1:
@@ -26,7 +25,7 @@ functions:
     trigger:
       type: schedule
       # Set to check for new proposals every 60 minutes
-      frequency: 60
+      frequency: ${self:custom.config.autotask-frequency}
     paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
 
@@ -36,12 +35,12 @@ resources:
       policy-1:
         gas-price-cap: 1000
         whitelist-receivers:
-          - ${self:custom.config.governance-contract-address}
+          - ${self:custom.config.governor-contract-address}
         eip1559-pricing: true
 
     secrets:
       stack:
-        GOVERNANCE_CONTRACT_ADDRESS: ${self:custom.governance-contract-address}
+        GOVERNOR_CONTRACT_ADDRESS: ${self:custom.config.governor-contract-address}
 
     relayers:
       relayer-1:
