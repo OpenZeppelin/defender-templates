@@ -1,7 +1,7 @@
 const stackName = 'governance_automation';
 const governanceAddressSecretName = `${stackName}_GOVERNANCE_CONTRACT_ADDRESS`;
 
-const ethers = require('ethers');
+const { ethers } = require('ethers');
 
 const { KeyValueStoreClient } = require('defender-kvstore-client');
 const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-client/lib/ethers');
