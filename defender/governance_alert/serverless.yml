@@ -9,24 +9,15 @@ provider:
   ssot: false
 
 custom:
-  config: ${file(../secrets.${self:provider.stage}.yml)}
-  governanceSecrets:
-    block_explorer_base_url: "https://etherscan.io/tx"
+  config: ${file(./config.yml)}
+  secrets: ${file(.secrets/${self:provider.stage}.yml)}
 
-  # Configure this section and rename ../example.secrets.yml to ../secrets.dev.yml
   name: Governance Alert
 
-  # Contract Sentinel Settings
-  monitored-addresses:
-    # Governance contract address
-    - "0x7F5CA8e9664D66Fc7c11d26C7D9B750988d5c8a7"
-  # Possible Defender networks: https://github.com/OpenZeppelin/defender-client/blob/master/packages/base/src/utils/network.ts`
-  monitored-network: mainnet
-
-# set up API keys in your Defender account and copy them to your secrets.dev.yml file
+# set up API keys in your Defender account and copy them to your .secrets/dev.yml file
 defender:
-  key: ${self:custom.config.keys.api}
-  secret: ${self:custom.config.keys.secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   autotask-1:
@@ -47,7 +38,8 @@ resources:
         eip1559-pricing: true
 
     secrets:
-      stack: ${self:custom.governanceSecrets}
+      stack:
+        block_explorer_base_url: ${self:custom.config.block_explorer_base_url}
 
     relayers:
 
@@ -55,8 +47,8 @@ resources:
       sentinel-1:
         name: ${self:custom.name} Serverless Sentinel
         type: BLOCK
-        addresses: ${self:custom.monitored-addresses}
-        network: ${self:custom.monitored-network}
+        addresses: ${self:custom.config.monitored-addresses}
+        network: ${self:custom.config.monitored-network}
         abi: ${file(../../abi/contracts/GovernorMock.sol/GovernorMock.json.abi)}
         paused: false
         autotask-trigger: ${self:functions.autotask-1}
@@ -73,8 +65,6 @@ resources:
             - signature: ProposalQueued(uint256,uint256)
             - signature: VoteCast(address,uint256,uint8,uint256,string)
           function: []
-
-    catagories:
 
 plugins:
   - defender-serverless

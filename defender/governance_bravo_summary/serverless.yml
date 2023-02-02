@@ -9,19 +9,15 @@ provider:
   ssot: false
 
 custom:
-  config: ${file(../secrets.${self:provider.stage}.yml)}
+  config: ${file(./config.yml)}
+  secrets: ${file(.secrets/${self:provider.stage}.yml)} 
 
-  # Configure this section and rename ../example.secrets.yml to ../secrets.dev.yml
   name: Governance Summary
-  defenderSecrets:
-    # Public Variables
-    # Governance Address
-    governanceAddress: "0xD63123527551F037fAAc74bf5fDA5B71569cf5af"
 
-# set up API keys in your Defender account and copy them to your secrets.dev.yml file
+# set up API keys in your Defender account and copy them to your .secrets/dev.yml file
 defender:
-  key: ${self:custom.config.keys.api}
-  secret: ${self:custom.config.keys.secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   autotask-1:
@@ -29,7 +25,7 @@ functions:
     path: autotask-1
     trigger:
       type: schedule
-      frequency: 1440
+      frequency: ${self:custom.config.autotask_run_frequency}
     paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
 
@@ -43,15 +39,14 @@ resources:
         eip1559-pricing: true
 
     secrets:
-      stack: ${self:custom.defenderSecrets}
+      stack:
+        governance_address: ${self:custom.config.governance_address}
 
     relayers:
       relayer-1:
         name: ${self:custom.name} Serverless Relay
         network: mainnet
         min-balance: 100000000000000000
-
-    catagories:
 
 plugins:
   - defender-serverless
