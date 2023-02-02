@@ -1,0 +1,6 @@
+# Contract address of the layer 2 address to monitor and network that the Autotask will automate
+layer2-contract-address: '0x1'
+layer2-relayer-address: '0x2'
+network: mainnet
+# How often should the Autotask run? (in minutes)
+autotask-frequency: 60
