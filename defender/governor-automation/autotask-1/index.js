@@ -67,7 +67,7 @@ exports.handler = async function handler(autotaskEvent) {
   try {
     await signer.getAddress();
   } catch (error) {
-    console.error('Relay is not working, check if it is connected : ', error);
+    console.error('Relay is not working, check if it is connected: ', error);
     throw error;
   }
 
