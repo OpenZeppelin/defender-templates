@@ -27,7 +27,7 @@ async function createMessage(eventName, params, transactionHash, blockExplorerBa
   let proposalId;
   let proposer;
   let voter;
-  let votes;
+  let weight;
   let reason;
   let proposalName;
   let message;

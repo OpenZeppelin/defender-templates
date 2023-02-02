@@ -188,7 +188,7 @@ exports.handler = async function handler(autotaskEvent) {
     timeLeft %= 60;
     const seconds = Math.trunc(timeLeft);
 
-    const outputMessage = `Governance: Proposal ID ${proposal.id} is active with:\n\t`
+    const outputMessage = `Governance: Proposal ID ${proposalId} is active with:\n\t`
       + `FOR votes vs quorum threshold: ${vsQuorum}%\n\t`
       + `👍 (for) votes:     ${forVotes}\n\t`
       + `👎 (against) votes: ${againstVotes}\n\t`
