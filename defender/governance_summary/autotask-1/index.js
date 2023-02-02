@@ -164,7 +164,7 @@ exports.handler = async function handler(autotaskEvent) {
   const tokenScale = ethers.BigNumber.from(10).pow(tokenDecimals);
 
   // Get proposal info
-  await Promise.all(pendingProposals.map(async (proposalId) => {
+  const messages = await Promise.all(pendingProposals.map(async (proposalId) => {
     const proposal = await governanceContract.proposalVotes(proposalId);
     const forVotes = proposal.forVotes.div(tokenScale).toString();
     const againstVotes = proposal.againstVotes.div(tokenScale).toString();
@@ -188,21 +188,21 @@ exports.handler = async function handler(autotaskEvent) {
     timeLeft %= 60;
     const seconds = Math.trunc(timeLeft);
 
-    const outputMessage = `Governance: Proposal ID ${proposal.id} is active with:\n\t`
+    const outputMessage = `Governance: Proposal ID ${proposalId} is active with:\n\t`
       + `FOR votes vs quorum threshold: ${vsQuorum}%\n\t`
       + `👍 (for) votes:     ${forVotes}\n\t`
       + `👎 (against) votes: ${againstVotes}\n\t`
       + `🙊 (abstain) votes: ${abstainVotes}\n\t`
       + `Time left to vote: ${days} day(s) ${hours} hour(s) ${minutes} minutes(s) ${seconds} seconds(s) `;
-
-    // saving kvstore values
-    await store.put(nameLastBlockSearched, currentBlock.number.toString());
-    await store.put(nameCurrentProposals, pendingProposals.toString());
-
     console.log(outputMessage);
     return outputMessage;
   }));
 
+  // saving kvstore values
+  await store.put(nameLastBlockSearched, currentBlock.number.toString());
+  await store.put(nameCurrentProposals, pendingProposals.toString());
+
+  return messages;
 };
 
 // To run locally (this code will not be executed in Autotasks)

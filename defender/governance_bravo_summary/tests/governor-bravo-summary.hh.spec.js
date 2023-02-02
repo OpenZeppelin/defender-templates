@@ -25,13 +25,6 @@ async function resetHardhat() {
   await provider.send('hardhat_reset');
 }
 
-async function mineBlocks(numberOfBlocks = 1, secondsPerBlock = 2) {
-  for (let blocks = 0; blocks < numberOfBlocks; blocks++) {
-    await provider.send('evm_increaseTime', [secondsPerBlock]);
-    await provider.send('evm_mine');
-  }
-}
-
 // mock the defender-kvstore-client package
 const mockKeyValueStoreClient = {
   get: jest.fn(),
@@ -79,14 +72,11 @@ describe('check autotask against forked mainnet', () => {
   const proposedBlock = 16245486;
   const startVoteBlock = 16258577;
   const endVoteBlock = 16304395;
-  const queuedBlock = 16320784;
 
   // Define proposal states
   const pendingState = 0; // Proposal was created but voting has not started yet
   const activeState = 1; // Voting has started
   const succeededState = 4; // Voting ended and the proposal was passed
-  const queuedState = 5; // Proposal was passed, and currently waiting in the timelock
-  const executedState = 7; // Proposal has already been executed
 
   beforeAll(async () => {
     // Check for RPC_URL
@@ -130,7 +120,7 @@ describe('check autotask against forked mainnet', () => {
       + '\n\t👍 (for) votes:     636'
       + '\n\t👎 (against) votes: 0'
       + '\n\t🙊 (abstain) votes: 0'
-      + '\n\tTime left to vote: 4 day(s) 20 hour(s) 13 minutes(s) 10 seconds(s) ' ];
+      + '\n\tTime left to vote: 4 day(s) 20 hour(s) 13 minutes(s) 10 seconds(s) '];
     const expectedCurrentProposals = '55762817791754168765552678355023904624381926322421134743858337467676020782044,43213436820610997532127661574404181302334166126907254457875855844882300126842';
 
     // Jump to the block where the proposal was created
@@ -142,11 +132,8 @@ describe('check autotask against forked mainnet', () => {
     // Run the autotask
     const results = await handler(autotaskEvent);
 
-    // Autotask exits successfully
+    // Check autotask results
     expect(results).toStrictEqual(expectedMessage);
-
-    // Proposal is still in a pending state (0)
-    expect(await governanceContract.state(proposalId)).toStrictEqual(pendingState);
 
     // KVStore is updated to the earliest Active or queued proposal
     expect(mockKeyValueStore).toStrictEqual({
@@ -155,7 +142,7 @@ describe('check autotask against forked mainnet', () => {
     });
   }, 120000); // 120 Second timeout
 
-  it('proposal is in an active state (1)', async () => {
+  it('proposal is in an active state (1) first block of voting', async () => {
     const expectedMessage = [
       'Governance: Proposal ID 55762817791754168765552678355023904624381926322421134743858337467676020782044 is active with:'
       + '\n\tFOR votes vs quorum threshold: 24%'
@@ -174,7 +161,7 @@ describe('check autotask against forked mainnet', () => {
       + '\n\t👍 (for) votes:     0'
       + '\n\t👎 (against) votes: 0'
       + '\n\t🙊 (abstain) votes: 0'
-      + '\n\tTime left to vote: 6 day(s) 8 hour(s) 52 minutes(s) 45 seconds(s) ' ];
+      + '\n\tTime left to vote: 6 day(s) 8 hour(s) 52 minutes(s) 45 seconds(s) '];
     const expectedCurrentProposals = '55762817791754168765552678355023904624381926322421134743858337467676020782044,43213436820610997532127661574404181302334166126907254457875855844882300126842,30548761488336017076913132844890548744842974272591293976782121047955082099721';
 
 
@@ -187,16 +174,42 @@ describe('check autotask against forked mainnet', () => {
     // Run the autotask
     const results = await handler(autotaskEvent);
 
-    // Autotask exits successfully
+    // Check autotask results
     expect(results).toStrictEqual(expectedMessage);
-
-    // Proposal is still in an active state (1)
-    expect(await governanceContract.state(proposalId)).toStrictEqual(activeState);
 
     // KVStore is updated to the earliest Active or queued proposal
     expect(mockKeyValueStore).toStrictEqual({
       '123_currentProposals': expectedCurrentProposals,
       '123_lastBlockSearched': startVoteBlock.toString(),
+    });
+  }, 120000); // 120 Second timeout
+
+  it('proposal is in an active state (1) last block of voting', async () => {
+    const expectedMessage = [
+      'Governance: Proposal ID 30548761488336017076913132844890548744842974272591293976782121047955082099721 is active with:'
+      + '\n\tFOR votes vs quorum threshold: 149%'
+      + '\n\t👍 (for) votes:     745'
+      + '\n\t👎 (against) votes: 0'
+      + '\n\t🙊 (abstain) votes: 0'
+      + '\n\tTime left to vote: 0 day(s) 0 hour(s) 0 minutes(s) 12 seconds(s) '];
+    const expectedCurrentProposals = '30548761488336017076913132844890548744842974272591293976782121047955082099721';
+
+    // Jump to the block before the proposal voting ended
+    await setBlockNumber(endVoteBlock - 1);
+
+    // Pre-check: Ensure that the proposal exists and is in an active state (1)
+    expect(await governanceContract.state(proposalId)).toStrictEqual(activeState);
+
+    // Run the autotask
+    const results = await handler(autotaskEvent);
+
+    // Check autotask results
+    expect(results).toStrictEqual(expectedMessage);
+
+    // KVStore is updated to the earliest Active or queued proposal
+    expect(mockKeyValueStore).toStrictEqual({
+      '123_currentProposals': expectedCurrentProposals,
+      '123_lastBlockSearched': (endVoteBlock - 1).toString(),
     });
   }, 120000); // 120 Second timeout
 
@@ -213,7 +226,7 @@ describe('check autotask against forked mainnet', () => {
     // Run the autotask
     const results = await handler(autotaskEvent);
 
-    // Autotask exits successfully
+    // Check autotask results
     expect(results).toStrictEqual(expectedMessage);
 
     // KVStore is updated to the earliest Active or queued proposal
