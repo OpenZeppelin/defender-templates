@@ -1,6 +1,6 @@
 # Governance Alert Template
 
-This Defender Sentinel and Autotask will monitor and display proposal events emitted by [OpenZepplin Governor](https://docs.openzeppelin.com/contracts/4.x/api/governance) contract.  This Autotask will display alerts for the following events:
+This Defender Sentinel and Autotask will monitor and display proposal events emitted by [OpenZepplin Governor](https://docs.openzeppelin.com/contracts/4.x/api/governance) and [OpenZepplin GovernorCompatibilityBravo](https://docs.openzeppelin.com/contracts/4.x/api/governance#GovernorCompatibilityBravo) contracts.  This Autotask will display alerts for the following events:
 * ProposalCanceled
 * ProposalCreated
 * ProposalExecuted
