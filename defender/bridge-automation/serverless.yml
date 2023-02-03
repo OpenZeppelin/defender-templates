@@ -28,15 +28,6 @@ functions:
       frequency: ${self:custom.config.autotask-frequency}
     paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
-  autotask-2:
-    name: Layer2 Relayer Monitor Autotask
-    path: autotask-1
-    trigger:
-      type: schedule
-      # Set to check for new proposals every 60 minutes
-      frequency: ${self:custom.config.autotask-frequency}
-    paused: false
-    relayer: ${self:resources.Resources.relayers.relayer-2}
 
 resources:
   Resources:
