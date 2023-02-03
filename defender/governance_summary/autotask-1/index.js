@@ -204,13 +204,3 @@ exports.handler = async function handler(autotaskEvent) {
 
   return true;
 };
-
-// To run locally (this code will not be executed in Autotasks)
-if (require.main === module) {
-  const { RELAYER_API_KEY: apiKey, RELAYER_SECRET_KEY: apiSecret } = process.env;
-  const secrets = {};
-
-  exports.handler({ apiKey, apiSecret, secrets })
-    .then(() => process.exit(0))
-    .catch((error) => { console.error(error); process.exit(1); });
-}
