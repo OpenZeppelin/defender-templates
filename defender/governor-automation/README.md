@@ -24,14 +24,16 @@ In the `defender` directory, perform the following steps:
 
 - Run `yarn install` to install the necessary Node packages
 - A secrets file can be created for each stage of production. We will create one for development
-  - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
+  - Copy and rename `sample.secrets.yml` to `.secrets/dev.yml`
   - Modify the two lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API key and secret key, as indicated:
-  - `defender-api-key: <API Key goes here>`
-  - `defender-api-secret: <API Secret goes here>`
+    - `defender-api-key: <API Key goes here>`
+    - `defender-api-secret: <API Secret goes here>`
 - Change directories to the stack that will be deployed
   - `cd governor-automation`
-- Modify the following values in the `config.yml` file:
-  - `governor-contract-address` 
-  - `network`
-  - `autotask-frequency`
-- Run `serverless deploy` to deploy the stack to Defender
+- A config file can be created for each stage of production. We will create one for development
+  - Copy and rename `sample.config.yml` to `config.dev.yml`
+  - Open the file and modify the following values:
+    - `governor-contract-address` 
+    - `network`
+    - `autotask-frequency`
+- Run `serverless deploy --stage dev` to deploy the stack to Defender

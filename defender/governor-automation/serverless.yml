@@ -11,7 +11,7 @@ provider:
 # Configure and rename sample.secrets.yml to secrets.dev.yml
 custom:
   secrets: ${file(../.secrets/${self:provider.stage}.yml)}
-  config: ${file(./config.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
 
 # Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
 defender:
