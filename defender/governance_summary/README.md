@@ -29,8 +29,10 @@ In the `defender` directory, perform the following steps:
   - `defender-api-secret: <API Secret goes here>`
 - Change directories to the stack that will be deployed
   - `cd governance_summary`
-- Modify the following values in the `config.yml` file:
-  - `governance_address` 
-  - `autotask_run_frequency`
-- Run `serverless deploy` to deploy the stack to Defender
+- A config file can be created for each stage of production. We will create one for development
+  - Copy and rename `sample.config.yml` to `config.dev.yml`
+  - Open the file and modify the following values:
+    - `governance_address` 
+    - `autotask_run_frequency`
+- Run `serverless deploy --stage dev` to deploy the stack to Defender
 - Watch for logs to appear in your Defender account.  Log into your Defender account, click on the `Governance Summary` Autotask.

@@ -1,6 +1,6 @@
-block_explorer_base_url: "https://etherscan.io/tx"
+block_explorer_base_url: 'https://etherscan.io/tx'
 monitored-addresses:
-    # Governance contract address
-    - "0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C"
+  # Governance contract address
+  - '0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C'
 # Possible Defender networks: https://github.com/OpenZeppelin/defender-client/blob/master/packages/base/src/utils/network.ts`
 monitored-network: mainnet
