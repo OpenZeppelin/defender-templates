@@ -1,17 +1,17 @@
 service: governance-bravo-summary
 configValidationMode: error
-frameworkVersion: "3"
+frameworkVersion: '3'
 
 provider:
   name: defender
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   stackName: governance_summary
   ssot: false
 
 # Configure and rename secret.example.yml to secrets.dev.yml
 custom:
-  config: ${file(./config.yml)}
-  secrets: ${file(../.secrets/${self:provider.stage}.yml)} 
+  config: ${file(./config.${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
 
   name: Governance Bravo Summary
 
@@ -36,7 +36,7 @@ resources:
       policy-1:
         gas-price-cap: 1000
         whitelist-receivers:
-          - "0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2"
+          - '0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2'
         eip1559-pricing: true
 
     secrets:
