@@ -1,4 +1,4 @@
-service: generated-service
+service: governance-bravo-summary
 configValidationMode: error
 frameworkVersion: "3"
 
@@ -8,13 +8,14 @@ provider:
   stackName: governance_summary
   ssot: false
 
+# Configure and rename secret.example.yml to secrets.dev.yml
 custom:
   config: ${file(./config.yml)}
-  secrets: ${file(.secrets/${self:provider.stage}.yml)} 
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)} 
 
   name: Governance Bravo Summary
 
-# set up API keys in your Defender account and copy them to your .secrets/dev.yml file
+# set up API keys in your Defender account and copy them to your ../.secrets/dev.yml file
 defender:
   key: ${self:custom.secrets.keys.defender-api-key}
   secret: ${self:custom.secrets.keys.defender-api-secret}
