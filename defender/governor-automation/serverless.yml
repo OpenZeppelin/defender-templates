@@ -4,7 +4,7 @@ frameworkVersion: "3"
 
 provider:
   name: defender
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   stackName: governor_automation
   ssot: false
 
