@@ -51,6 +51,9 @@ resources:
         addresses: ${self:custom.config.monitored-addresses}
         network: ${self:custom.config.monitored-network}
         abi: ${file(../../abi/contracts/GovernorMock.sol/GovernorMock.json.abi)}
+        # To specifically target GovernorCompatibilityBravo events, which are a subset of Governor events,
+        # comment out the previous line and uncomment the following line
+        # abi: ${file(../../abi/contracts/GovernorCompatibilityBravoMock.sol/GovernorCompatibilityBravoMock.json.abi)}
         paused: false
         autotask-trigger: ${self:functions.autotask-1}
         confirm-level: 1
@@ -65,6 +68,14 @@ resources:
             - signature: ProposalExecuted(uint256)
             - signature: ProposalQueued(uint256,uint256)
             - signature: VoteCast(address,uint256,uint8,uint256,string)
+            # The following events are emitted by Governor contract
+            # - signature: ProposalThresholdSet(uint256, uint256)
+            # - signature: QuorumNumeratorUpdated(uint256, uint256)
+            # - signature: TimelockChange(address, address)
+            # - signature: >-
+            #    VoteCastWithParams(address, uint256, uint8, uint256, string, bytes)
+            # - signature: VotingDelaySet(uint256, uint256)
+            # - signature: VotingPeriodSet(uint256, uint256)
           function: []
 
 plugins:
