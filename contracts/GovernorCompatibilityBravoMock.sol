@@ -6,10 +6,7 @@ import "@openzeppelin/contracts/governance/compatibility/GovernorCompatibilityBr
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesComp.sol";
 
 contract GovernorCompatibilityBravoMock is Governor, GovernorCompatibilityBravo, GovernorVotesComp {
-    constructor(ERC20VotesComp _token)
-        Governor("MockDAO")
-        GovernorVotesComp(_token)
-    {}
+    constructor(ERC20VotesComp _token) Governor("MockDAO") GovernorVotesComp(_token) {}
 
     function propose(
         address[] memory targets,
@@ -29,7 +26,7 @@ contract GovernorCompatibilityBravoMock is Governor, GovernorCompatibilityBravo,
     }
 
     function quorum(uint256 blockNumber) public pure virtual override returns (uint256) {
-        if (blockNumber == 0 ) {}
+        if (blockNumber == 0) {}
         return 0;
     }
 
@@ -52,10 +49,10 @@ contract GovernorCompatibilityBravoMock is Governor, GovernorCompatibilityBravo,
         bytes[] memory calldatas,
         bytes32 descriptionHash
     ) public virtual override returns (uint256) {
-        if(targets.length == 0) {}
-        if(values.length == 0) {}
-        if(calldatas.length == 0 ) {}
-        if(descriptionHash == 0) {}
+        if (targets.length == 0) {}
+        if (values.length == 0) {}
+        if (calldatas.length == 0) {}
+        if (descriptionHash == 0) {}
         return 0;
     }
 }
