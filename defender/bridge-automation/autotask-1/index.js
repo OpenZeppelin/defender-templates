@@ -78,7 +78,14 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   // minimum threshold is defined in the serverless.yml file
-  const threshold = secrets[thresholdSecretName];
+  // TODO does this value come in as a big number from defender??
+  let threshold = secrets[thresholdSecretName];
+
+  // ensure that the threshold exists
+  if (threshold === undefined) {
+    threshold = ethers.BigNumber.from('1000000000000000000');
+    console.debug('no threshold specified, setting threshold to 1 ether');
+  }
 
   // create new provider and signer on the L2 side
   // manually inject api key and secret because we need to connect 2 relayers
@@ -94,7 +101,7 @@ exports.handler = async function handler(autotaskEvent) {
   console.debug('Creating DefenderRelaySigner for L1');
   const signerL1 = new DefenderRelaySigner({ apiKey: API_KEY_L1, apiSecret: API_SECRET_L }, providerL1, { speed: 'fast' });
 
-  // get the balance of the multisig/DAO contract on the L2
+  // get the balance of contract address to monitor on the L2
   // if below threshold, bridge funds from L1 => L2
   const layer2ContractBalance = await providerL2.getBalance(layer2ContractAddress)
 
@@ -106,17 +113,22 @@ exports.handler = async function handler(autotaskEvent) {
   );
 
   // bridge funds if below threshold
+  // max submission cost set to .001 ether
+  if (layer2ContractBalance.lte(threshold)) {
+    await bridgeContract.depositEth(1000000000000000, {value: ethers.utils.parseEther('10')}); // TODO change to config, also require that relayer 1 balance > what we want to send
+  }
 
   // get balance of relayer - returns a big number
   const relayerBalance = await providerL2.getBalance(layer2RelayerAddress)
 
+  // auto sweep funds from relayer on L2 to target layer2 contract address
   if (relayerBalance.gt(0)) {
     // total amount of eth required to send a transaction = gasLimit * gasPrice + value
     // gasForTransaction should be 21000 because only transfering ether
     const gasPrice = await providerL2.getGasPrice();
     const gasForTranasction = await providerL2.estimateGas({
         to: layer2ContractAddress,
-        data: "",
+        data: '',
     })
     const totalGas = gasPrice * gasForTranasction;
     const amountToSend = relayerBalance.sub(totalGas)
@@ -126,7 +138,7 @@ exports.handler = async function handler(autotaskEvent) {
         gasPrice: gasPrice,
         gasLimit: gasForTranasction,
       }
-    // send all funds from relayer to contract address
-    await signer.sendTransaction(tx);
+    // send all funds from relayer on L2 to contract address
+    await signerL2.sendTransaction(tx);
   }
 }
