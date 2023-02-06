@@ -111,7 +111,7 @@ If you need to use any dependency not listed above, you can either use a javascr
 To understand more how to use autotask refer to [docs](https://docs.openzeppelin.com/defender/autotasks). To understand what kind of arguments you are getting in to autotask main function read [autotask type definitions](https://github.com/OpenZeppelin/defender-client/blob/ebfb74c29a3cb6509d32919c7a9ff6bfba6f24eb/packages/autotask-utils/src/types.ts)
 
 
-### Deploying 
+### Deploying serverless
 
 Once your project is well defined you can deploy your infra to Defender by hitting `sls deploy` or in some of the templates: `yarn defender` (will compile autotasks and deploy)
 
