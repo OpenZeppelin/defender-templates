@@ -12,7 +12,7 @@ const { ethers } = require('ethers');
 const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-client/lib/ethers');
 
 const arbitrumBridgeAbi = [
-    'function depositEth(uint256 maxSubmissionCost) external payable virtual override returns (uint256)'
+    'function depositEth(uint256 maxSubmissionCost) external payable returns (uint256)'
 ];
 const arbitrumBridgeAddress = '0x6BEbC4925716945D46F0Ec336D5C2564F419682C';
 
@@ -92,14 +92,14 @@ exports.handler = async function handler(autotaskEvent) {
   console.debug('Creating DefenderRelayProvider for L2');
   const providerL2 = new DefenderRelayProvider({ apiKey: layer2RelayerApiKey, apiSecret: layer2RelayerApiSecret });
   console.debug('Creating DefenderRelaySigner for L2');
-  const signerL2 = new DefenderRelaySigner({ apiKey: layer1RelayerApiKey, apiSecret: layer1RelayerApiSecret }, providerL2, { speed: 'fast' });
+  const signerL2 = new DefenderRelaySigner({ apiKey: layer2RelayerApiKey, apiSecret: layer2RelayerApiSecret }, providerL2, { speed: 'fast' });
 
   // create new provider and signer on the L1 side
   // manually inject api key and secret because we need to connect 2 relayers
   console.debug('Creating DefenderRelayProvider for L1');
-  const providerL1 = new DefenderRelayProvider({ apiKey: API_KEY_L1, apiSecret: API_SECRET_L1 });
+  const providerL1 = new DefenderRelayProvider({ apiKey: layer1RelayerApiKey, apiSecret: layer1RelayerApiSecret });
   console.debug('Creating DefenderRelaySigner for L1');
-  const signerL1 = new DefenderRelaySigner({ apiKey: API_KEY_L1, apiSecret: API_SECRET_L }, providerL1, { speed: 'fast' });
+  const signerL1 = new DefenderRelaySigner({ apiKey: layer1RelayerApiKey, apiSecret: layer1RelayerApiSecret }, providerL1, { speed: 'fast' });
 
   // get the balance of contract address to monitor on the L2
   // if below threshold, bridge funds from L1 => L2
@@ -115,7 +115,8 @@ exports.handler = async function handler(autotaskEvent) {
   // bridge funds if below threshold
   // max submission cost set to .001 ether
   if (layer2ContractBalance.lte(threshold)) {
-    await bridgeContract.depositEth(1000000000000000, {value: ethers.utils.parseEther('10')}); // TODO change to config, also require that relayer 1 balance > what we want to send
+    console.debug('Bridging funds to Arbitrum');
+    await bridgeContract.depositEth(1000000000000000, {value: ethers.utils.parseEther('.02')}); // TODO change to config, also require that relayer 1 balance > what we want to send
   }
 
   // get balance of relayer - returns a big number
@@ -139,6 +140,9 @@ exports.handler = async function handler(autotaskEvent) {
         gasLimit: gasForTranasction,
       }
     // send all funds from relayer on L2 to contract address
+    console.debug(`Funds detected in the L2 Relayer, sweeping funds to: ${tx.to}`);
     await signerL2.sendTransaction(tx);
   }
+
+  return true;
 }
