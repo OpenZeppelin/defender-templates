@@ -29,7 +29,15 @@ As well as auxuallary resources such as
  - **secrets**: Key value pairs that you can store safely in Defender platform
  - **notifications**: Configuration on how you want to receive notifications 
 
-### Setup
+### Working with smart contracts
+
+In order to orchistrate and monitor contracts defender will need to know addresses, chain and ABI's. 
+Best way to get ABI's compatible with serverless: First copy `sample.env`, fill it with required secrets and source it. Have your contracts in `/contracts` directory and run `yarn compile`. This will populate `./abi` directory 
+
+You can also run `yarn deploy` to deploy to various networks. We reccomend to store deployed addresses in JSON such as `./deployments/mainnet.json` such way you can import those in to autotasks or serverless configurations. 
+
+
+### Setup Defender
 In order to use these templates you first need to register on https://defender.openzeppelin.com . Starter account is quite powerful enough to get you running for a while. 
 
 Once you have your account, generate API key and secret from https://defender.openzeppelin.com/#/api-keys
