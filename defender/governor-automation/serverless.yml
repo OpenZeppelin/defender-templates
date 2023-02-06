@@ -1,0 +1,52 @@
+service: governor-automation
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: governor_automation
+  ssot: false
+
+# Configure and rename sample.secrets.yml to secrets.dev.yml
+custom:
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
+
+# Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
+defender:
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
+
+functions:
+  autotask-1:
+    name: Governor Automation Autotask
+    path: autotask-1
+    trigger:
+      type: schedule
+      # Set to check for new proposals every 60 minutes
+      frequency: ${self:custom.config.autotask-frequency}
+    paused: false
+    relayer: ${self:resources.Resources.relayers.relayer-1}
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        gas-price-cap: 1000
+        whitelist-receivers:
+          - ${self:custom.config.governor-contract-address}
+        eip1559-pricing: true
+
+    secrets:
+      stack:
+        GOVERNOR_CONTRACT_ADDRESS: ${self:custom.config.governor-contract-address}
+
+    relayers:
+      relayer-1:
+        name: Governor Automation Relay
+        network: ${self:custom.config.network}
+        min-balance: 100000000000000000
+
+plugins:
+  - defender-serverless
