@@ -19,15 +19,15 @@ Defender serverless is a way to have infra as code. With these templates you can
 ## Usage
 
 We have three basic building primitives:
- - Relayers: Send transactions via a regular HTTP API, and takes care of private key secure storage, transaction signing, nonce management, gas pricing estimation, and resubmissions. 
- - Sentinels: Monitor transactions to a contract by defining conditions on events, functions, transaction parameters.
- - Autotasks: Run code snippets on a regular basis, via webhooks, or in response to a transaction
+ - **Relayers**: Send transactions via a regular HTTP API, and takes care of private key secure storage, transaction signing, nonce management, gas pricing estimation, and resubmissions. 
+ - **Sentinels**: Monitor transactions to a contract by defining conditions on events, functions, transaction parameters.
+ - **Autotasks**: Run code snippets on a regular basis, via webhooks, or in response to a transaction
 
 As well as auxuallary resources such as 
- - contracts: Information about your smart contract and it's methods 
- - policies: Rules for Relayers on how to submit transactions
- - secrets: Key value pairs that you can store safely in Defender platform
- - notifications: Configuration on how you want to receive notifications 
+ - **contracts**: Information about your smart contract and it's methods 
+ - **policies**: Rules for Relayers on how to submit transactions
+ - **secrets**: Key value pairs that you can store safely in Defender platform
+ - **notifications**: Configuration on how you want to receive notifications 
 
 ### Setup
 In order to use these templates you first need to register on https://defender.openzeppelin.com . Starter account is quite powerful enough to get you running for a while. 
@@ -148,3 +148,5 @@ BY Default we send notifications in slack, however you are free to use your cust
 -   [Defender Serverless Docs](https://docs.openzeppelin.com/defender/serverless-plugin)
 -   [Defender Serverless Repo](https://github.com/OpenZeppelin/defender-serverless)
 -   [Defender Playlist](https://www.youtube.com/playlist?list=PLdJRkA9gCKOMdqVKrkYKT6ulDwDVG6_Ya)
+-   [Autotask type definitions](https://github.com/OpenZeppelin/defender-client/blob/ebfb74c29a3cb6509d32919c7a9ff6bfba6f24eb/packages/autotask-utils/src/types.ts)
+-   [Serverless types definition](https://github.com/OpenZeppelin/defender-serverless/blob/main/src/types/index.ts)
