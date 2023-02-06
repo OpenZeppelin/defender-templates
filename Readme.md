@@ -34,7 +34,7 @@ As well as auxuallary resources such as
 In order to orchistrate and monitor contracts defender will need to know addresses, chain and ABI's. 
 Best way to get ABI's compatible with serverless: First copy `sample.env`, fill it with required secrets and source it. Have your contracts in `/contracts` directory and run `yarn compile`. This will populate `./abi` directory 
 
-You can also run `yarn deploy` to deploy to various networks. We reccomend to store deployed addresses in JSON such as `./deployments/mainnet.json` such way you can import those in to autotasks or serverless configurations. 
+You can also run `yarn deploy` to deploy to various networks. We recommend to store deployed addresses in JSON such as `./deployments/mainnet.json` such way you can import those in to autotasks or serverless configurations. 
 
 
 ### Setup Defender
