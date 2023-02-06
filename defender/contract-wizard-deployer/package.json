@@ -4,16 +4,19 @@
   "description": "Scripts to deploy contracts that are created with Contract Wizard",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "deploy": "npx hardhat --config hardhat.config.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@openzeppelin/contracts": "4.8.1",
+    "commander": "^10.0.0",
     "defender-admin-client": "1.38.0",
     "defender-relay-client": "1.38.0",
     "dotenv": "16.0.3",
-    "hardhat": "^2.12.6"
+    "hardhat": "^2.12.6",
+    "simulate": "^0.0.6"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "2.0.1",
