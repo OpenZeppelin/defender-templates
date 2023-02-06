@@ -57,10 +57,10 @@ Autotasks are defined under `functions` property:
 functions:
   my-awesome-autotask:
     path: ${file(<file_path_to_the_script>)}
-    relayer: <relayer_object> #if you are using Relayer in Resources you can import it here, see /defender/poap/serverless.yml for exaple
+    relayer: <relayer_object> #if you are using Relayer in Resources you can import it here, see /defender/poap/serverless.yml for example
 
 ```
-Other resrouces defined in resources.Resources:
+Other resources defined in resources.Resources:
 ```yml
 resources:
   Resources:
@@ -71,10 +71,10 @@ resources:
     notifications:
 ```
 To understand more how to define your Defender infrastructure resources - best place is to refer to [types definition](https://github.com/OpenZeppelin/defender-serverless/blob/main/src/types/index.ts).
-Types used in serverless are prefixed by `Y`: `YSentinel` type descibes how to define sentinel.  
+Types used in serverless are prefixed by `Y`: `YSentinel` type describes how to define sentinel.  
 
 ### Building an autotask
-Autotasks are small code snippets that you can upload to Defender platform. You can call them from sentinel, via schedule, or via webhook. You can refer to those in serverless pluign as objects passed to sentinels. 
+Autotasks are small code snippets that you can upload to Defender platform. You can call them from sentinel, via schedule, or via webhook. You can refer to those in serverless plugin as objects passed to sentinels. 
 
 Autotasks are executed in a node 16 runtime with 256mb RAM and a 5-minute timeout. Code snippets are restricted to be smaller than 5mb in size.
 
