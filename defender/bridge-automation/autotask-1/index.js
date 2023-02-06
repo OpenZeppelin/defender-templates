@@ -1,6 +1,11 @@
 const stackName = 'bridge_automation';
-const layer2RelayerAddressSecretName = `${stackName}_layer2-relayer-address`;
-const layer2ContractAddressSecretName = `${stackName}_layer2-contract-address`;
+const layer2RelayerAddressSecretName = `${stackName}_LAYER2_RELAYER_ADDRESS`;
+const layer2ContractAddressSecretName = `${stackName}_LAYER2_CONTRACT_ADDRESS`;
+const layer2RelayerApiKeySecretName = `${stackName}_LAYER2_RELAYER_API_KEY`;
+const layer2RelayerApiSecretSecretName = `${stackName}_LAYER2_RELAYER_API_SECRET`;
+const layer1RelayerApiKeySecretName = `${stackName}_LAYER1_RELAYER_API_KEY`;
+const layer1RelayerApiSecretSecretName = `${stackName}_LAYER1_RELAYER_API_SECRET`;
+const thresholdSecretName = `${stackName}_THRESHOLD`;
 
 const { ethers } = require('ethers');
 
@@ -28,9 +33,12 @@ exports.handler = async function handler(autotaskEvent) {
     throw new Error('autotaskId undefined');
   }
 
-  // Layer 2 contract address is defined in the serverless.yml file
+  // layer2ContractAddress is defined in the serverless.yml file
   // this is the address of the balance we want to monitor (most likely a dao treasury/multisig)
   const layer2ContractAddress = secrets[layer2ContractAddressSecretName];
+
+  // layer2RelayerAddress is defined in the serverless.yml file
+  // this is the address of the L2 relayer used to send funds to the layer2ContractAddress
   const layer2RelayerAddress = secrets[layer2RelayerAddressSecretName];
 
   // ensure that the layer2ContractAddress exists
@@ -43,12 +51,41 @@ exports.handler = async function handler(autotaskEvent) {
     throw new Error('LAYER2_RELAYER_ADDRESS must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
   }
 
+  // relayer secrets are defined in the .secrets/dev.yml file
+  const layer2RelayerApiKey = secrets[layer2RelayerApiKeySecretName];
+  const layer2RelayerApiSecret = secrets[layer2RelayerApiSecretSecretName];
+  const layer1RelayerApiKey = secrets[layer1RelayerApiKeySecretName];
+  const layer1RelayerApiSecret = secrets[layer1RelayerApiSecretSecretName];
+
+  // ensure that the layer2RelayerApiKey exists
+  if (layer2RelayerApiKey === undefined) {
+    throw new Error('LAYER2_RELAYER_API_KEY must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+  }
+    
+  // ensure that the layer2RelayerApiSecret exists
+  if (layer2RelayerApiSecret === undefined) {
+    throw new Error('LAYER2_RELAYER_API_SECRET must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+  }
+
+  // ensure that the layer1RelayerApiKey exists
+  if (layer1RelayerApiKey === undefined) {
+    throw new Error('LAYER1_RELAYER_API_KEY must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+  }
+    
+  // ensure that the layer1RelayerApiSecret exists
+  if (layer1RelayerApiSecret === undefined) {
+    throw new Error('LAYER1_RELAYER_API_SECRET must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+  }
+
+  // minimum threshold is defined in the serverless.yml file
+  const threshold = secrets[thresholdSecretName];
+
   // create new provider and signer on the L2 side
   // manually inject api key and secret because we need to connect 2 relayers
   console.debug('Creating DefenderRelayProvider for L2');
-  const providerL2 = new DefenderRelayProvider({ apiKey: API_KEY_L2, apiSecret: API_SECRET_L2 });
+  const providerL2 = new DefenderRelayProvider({ apiKey: layer2RelayerApiKey, apiSecret: layer2RelayerApiSecret });
   console.debug('Creating DefenderRelaySigner for L2');
-  const signerL2 = new DefenderRelaySigner({ apiKey: API_KEY_L2, apiSecret: API_SECRET_L2 }, providerL2, { speed: 'fast' });
+  const signerL2 = new DefenderRelaySigner({ apiKey: layer1RelayerApiKey, apiSecret: layer1RelayerApiSecret }, providerL2, { speed: 'fast' });
 
   // create new provider and signer on the L1 side
   // manually inject api key and secret because we need to connect 2 relayers
@@ -59,23 +96,25 @@ exports.handler = async function handler(autotaskEvent) {
 
   // get the balance of the multisig/DAO contract on the L2
   // if below threshold, bridge funds from L1 => L2
-  const daoBalance = await providerL2.getBalance(layer2ContractAddress)
+  const layer2ContractBalance = await providerL2.getBalance(layer2ContractAddress)
 
-  // create Arbitrum bridge contract to bridge funds
+  // create instance of Arbitrum bridge contract to bridge funds
   const bridgeContract = new ethers.Contract(
     arbitrumBridgeAddress,
     arbitrumBridgeAbi,
     signerL1,
   );
 
+  // bridge funds if below threshold
+
   // get balance of relayer - returns a big number
-  const relayerBalance = await provider.getBalance(layer2RelayerAddress)
+  const relayerBalance = await providerL2.getBalance(layer2RelayerAddress)
 
   if (relayerBalance.gt(0)) {
     // total amount of eth required to send a transaction = gasLimit * gasPrice + value
     // gasForTransaction should be 21000 because only transfering ether
-    const gasPrice = await provider.getGasPrice();
-    const gasForTranasction = await provider.estimateGas({
+    const gasPrice = await providerL2.getGasPrice();
+    const gasForTranasction = await providerL2.estimateGas({
         to: layer2ContractAddress,
         data: "",
     })

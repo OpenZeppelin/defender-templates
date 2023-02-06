@@ -43,15 +43,20 @@ resources:
       stack:
         LAYER2_CONTRACT_ADDRESS: ${self:custom.config.layer2-contract-address}
         LAYER2_RELAYER_ADDRESS: ${self:custom.config.layer2-relayer-address}
+        LAYER2_RELAYER_API_KEY: ${self:custom.secrets.layer2-relayer-address}
+        LAYER2_RELAYER_API_SECRET: ${self:custom.secrets.layer2-relayer-address}
+        LAYER1_RELAYER_API_KEY: ${self:custom.secrets.layer2-relayer-address}
+        LAYER1_RELAYER_API_SECRET: ${self:custom.secrets.layer2-relayer-address}
+        THRESHOLD: ${self:custom.config.threshold}
 
     relayers:
       relayer-1:
         name: Bridge Automation Relay Layer 1
-        network: ${self:custom.config.network}
+        network: ${self:custom.config.relayer1-network}
         min-balance: 100000000000000000
       relayer-2:
         name: Bridge Automation Relay Layer 2
-        network: ${self:custom.config.network}
+        network: ${self:custom.config.relayer2-network}
         min-balance: 100000000000000000
 
 plugins:
