@@ -133,6 +133,9 @@ exports.handler = async function handler(autotaskEvent) {
     })
     const totalGas = gasPrice * gasForTranasction;
     const amountToSend = relayerBalance.sub(totalGas)
+    if (amountToSend.isNegative()) {
+      return 'Funds detected, but not enough to cover gas cost';
+    }
     const tx = {
         to: layer2ContractAddress,
         value: amountToSend,
