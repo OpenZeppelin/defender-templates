@@ -1,0 +1,5 @@
+name: Governance Summary
+# Governance address
+governance_address: '0xD63123527551F037fAAc74bf5fDA5B71569cf5af'
+# Autotask run frequency in minutes
+autotask_run_frequency: 1440

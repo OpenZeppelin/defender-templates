@@ -41,6 +41,14 @@ If a proposal has been passed (has a state of Succeeded), then the Autotask will
 This simple template adds ability to monitor for ERC721 token transfers and send notifications.
 BY Default we send notifications in slack, however you are free to use your custom webhook as well 
 
+### [Governance Alert](defender/governance_alert/README.md)
+This Autotask will monitor and alert on events emitted by a Governance contract.
+
+### [Governance Summary](defender/governance_summary/README.md)
+This Autotask will periodically check a Governance contract for active proposals and display the current vote count, quorum threshold status, and remaining time to vote.
+
+### [Governance(GovernorCompatibilityBravo) Summary](defender/governance_bravo_summary/README.md)
+This Autotask will periodically check a GovernanceCompatibilityBravo contract for active proposals and display the current vote count, quorum threshold status, and remaining time to vote.
 
 ---
 ## Additional Resources
