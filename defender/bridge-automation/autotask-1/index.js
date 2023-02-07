@@ -6,18 +6,18 @@ const layer1RelayerApiKeySecretName = `${stackName}_LAYER1_RELAYER_API_KEY`;
 const layer1RelayerApiSecretSecretName = `${stackName}_LAYER1_RELAYER_API_SECRET`;
 const thresholdSecretName = `${stackName}_THRESHOLD`;
 const amountSecretName = `${stackName}_AMOUNT`;
+const arbitrumBridgeAddressSecretName = `${stackName}_ARBITRUM_BRIDGE_ADDRESS`
 
 const { ethers } = require('ethers');
 
 const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-client/lib/ethers');
 
 const arbitrumBridgeAbi = [
-    'function depositEth(uint256 maxSubmissionCost) external payable returns (uint256)'
+  'function depositEth(uint256 maxSubmissionCost) external payable returns (uint256)'
 ];
-const arbitrumBridgeAddress = '0x6BEbC4925716945D46F0Ec336D5C2564F419682C';
 
 exports.handler = async function handler(autotaskEvent) {
-    // ensure that the autotaskEvent Object exists
+  // ensure that the autotaskEvent Object exists
   if (autotaskEvent === undefined) {
     throw new Error('autotaskEvent undefined');
   }
@@ -33,6 +33,8 @@ exports.handler = async function handler(autotaskEvent) {
     throw new Error('autotaskId undefined');
   }
 
+  const arbitrumBridgeAddress = secrets[arbitrumBridgeAddressSecretName]
+
   // layer2WalletAddress is defined in the serverless.yml file
   // this is the address of the balance we want to monitor (most likely a dao treasury/multisig)
   const layer2WalletAddress = secrets[layer2WalletAddressSecretName];
@@ -41,7 +43,6 @@ exports.handler = async function handler(autotaskEvent) {
   if (layer2WalletAddress === undefined) {
     throw new Error('LAYER2_WALLET_ADDRESS must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
   }
-  
 
   // relayer secrets are defined in the .secrets/dev.yml file
   const layer2RelayerApiKey = secrets[layer2RelayerApiKeySecretName];
@@ -53,7 +54,7 @@ exports.handler = async function handler(autotaskEvent) {
   if (layer2RelayerApiKey === undefined) {
     throw new Error('LAYER2_RELAYER_API_KEY must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
   }
-    
+
   // ensure that the layer2RelayerApiSecret exists
   if (layer2RelayerApiSecret === undefined) {
     throw new Error('LAYER2_RELAYER_API_SECRET must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
@@ -63,7 +64,7 @@ exports.handler = async function handler(autotaskEvent) {
   if (layer1RelayerApiKey === undefined) {
     throw new Error('LAYER1_RELAYER_API_KEY must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
   }
-    
+
   // ensure that the layer1RelayerApiSecret exists
   if (layer1RelayerApiSecret === undefined) {
     throw new Error('LAYER1_RELAYER_API_SECRET must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
@@ -118,9 +119,9 @@ exports.handler = async function handler(autotaskEvent) {
     const layer1RelayerAddress = await signerL1.getAddress()
     const layer1RelayerBalance = await providerL1.getBalance(layer1RelayerAddress)
     if (layer1RelayerBalance.lt(amount)) {
-      console.debug('Relayer balance is too low to bridge specified amount, please update funds')
+      console.debug('Relayer balance is too low to bridge specified amount, please load funds')
     } else {
-      await bridgeContract.depositEth(1000000000000000, {value: ethers.BigNumber.from(amount)});
+      await bridgeContract.depositEth(1000000000000000, { value: ethers.BigNumber.from(amount) });
     }
   }
 
@@ -133,9 +134,9 @@ exports.handler = async function handler(autotaskEvent) {
     // gasForTransaction should be close to 21000 because only transfering ether
     const gasPrice = await providerL2.getGasPrice();
     const gasForTranasction = await providerL2.estimateGas({
-        to: layer2WalletAddress,
-        data: '',
-        value: relayerBalance,
+      to: layer2WalletAddress,
+      data: '',
+      value: relayerBalance,
     })
     const totalGas = gasPrice * gasForTranasction;
     const amountToSend = relayerBalance.sub(totalGas)
@@ -143,11 +144,11 @@ exports.handler = async function handler(autotaskEvent) {
       return 'Funds detected, but not enough to cover gas cost';
     }
     const tx = {
-        to: layer2WalletAddress,
-        value: amountToSend,
-        gasPrice: gasPrice,
-        gasLimit: gasForTranasction,
-      }
+      to: layer2WalletAddress,
+      value: amountToSend,
+      gasPrice: gasPrice,
+      gasLimit: gasForTranasction,
+    }
     // send all funds from relayer on L2 to contract address
     console.debug(`Funds detected in the L2 Relayer, sweeping funds to: ${tx.to}`);
     await signerL2.sendTransaction(tx);

@@ -1,7 +1,9 @@
-# Contract address of the layer 2 address to monitor
+# Address of the layer 2 address to monitor
 layer2-wallet-address: '0xdDbd8Ba27B66e57FD1D09b7CEe7Fb0470cac32Fd'
+arbitrum-bridge-address: '0x6BEbC4925716945D46F0Ec336D5C2564F419682C'
+# Amount of Wei, if monitored address falls below, will trigger automatically sending funds
 threshold: 1000000000000000000
-# Amount of Ether you want to automatically bridge and send to the monitored address
+# Amount of Wei you want to automatically bridge and send to the monitored address
 amount: 20000000000000000
 # How often should the Autotask run? (in minutes)
 autotask-frequency: 60

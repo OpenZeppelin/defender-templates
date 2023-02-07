@@ -39,6 +39,7 @@ resources:
         LAYER1_RELAYER_API_SECRET: ${self:custom.secrets.keys.layer1-relayer-api-secret}
         THRESHOLD: ${self:custom.config.threshold}
         AMOUNT: ${self:custom.config.amount}
+        ARBITRUM_BRIDGE_ADDRESS: ${self:custom.config.arbitrum-bridge-address}
 
 plugins:
   - defender-serverless
