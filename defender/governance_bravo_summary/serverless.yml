@@ -5,15 +5,13 @@ frameworkVersion: '3'
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: governance_summary
+  stackName: governance_bravo_summary
   ssot: false
 
 # Configure and rename secret.example.yml to secrets.dev.yml
 custom:
   config: ${file(./config.${self:provider.stage}.yml)}
   secrets: ${file(../.secrets/${self:provider.stage}.yml)}
-
-  name: Governance Bravo Summary
 
 # set up API keys in your Defender account and copy them to your ../.secrets/dev.yml file
 defender:
@@ -22,7 +20,7 @@ defender:
 
 functions:
   autotask-1:
-    name: ${self:custom.name} Serverless Autotask
+    name: ${self:custom.config.name} Serverless Autotask
     path: autotask-1
     trigger:
       type: schedule
@@ -35,8 +33,6 @@ resources:
     policies:
       policy-1:
         gas-price-cap: 1000
-        whitelist-receivers:
-          - '0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2'
         eip1559-pricing: true
 
     secrets:
@@ -45,7 +41,7 @@ resources:
 
     relayers:
       relayer-1:
-        name: ${self:custom.name} Serverless Relay
+        name: ${self:custom.config.name} Serverless Relay
         network: mainnet
         min-balance: 100000000000000000
 

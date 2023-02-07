@@ -13,8 +13,6 @@ custom:
   config: ${file(./config.${self:provider.stage}.yml)}
   secrets: ${file(../.secrets/${self:provider.stage}.yml)}
 
-  name: Governance Alert
-
 # set up API keys in your Defender account and copy them to your ../.secrets/dev.yml file
 defender:
   key: ${self:custom.secrets.keys.defender-api-key}
@@ -22,7 +20,7 @@ defender:
 
 functions:
   autotask-1:
-    name: ${self:custom.name} Serverless Autotask
+    name: ${self:custom.config.name} Serverless Autotask
     path: autotask-1
     trigger:
       type: schedule
@@ -34,8 +32,6 @@ resources:
     policies:
       policy-1:
         gas-price-cap: 1000
-        whitelist-receivers:
-          - '0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2'
         eip1559-pricing: true
 
     secrets:
@@ -46,7 +42,7 @@ resources:
 
     sentinels:
       sentinel-1:
-        name: ${self:custom.name} Serverless Sentinel
+        name: ${self:custom.config.name} Serverless Sentinel
         type: BLOCK
         addresses: ${self:custom.config.monitored-addresses}
         network: ${self:custom.config.monitored-network}

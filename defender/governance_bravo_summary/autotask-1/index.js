@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const stackName = 'governance_summary';
+const stackName = 'governance_bravo_summary';
 const governanceAddressSecretName = `${stackName}_governance_address`;
 
 const { ethers } = require('ethers');

@@ -1,3 +1,4 @@
+name: Governance Alert
 block_explorer_base_url: 'https://etherscan.io/tx'
 monitored-addresses:
   # Governance contract address
