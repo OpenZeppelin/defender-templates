@@ -1,11 +1,11 @@
 const stackName = 'bridge_automation';
-const layer2RelayerAddressSecretName = `${stackName}_LAYER2_RELAYER_ADDRESS`;
-const layer2ContractAddressSecretName = `${stackName}_LAYER2_CONTRACT_ADDRESS`;
+const layer2WalletAddressSecretName = `${stackName}_LAYER2_WALLET_ADDRESS`;
 const layer2RelayerApiKeySecretName = `${stackName}_LAYER2_RELAYER_API_KEY`;
 const layer2RelayerApiSecretSecretName = `${stackName}_LAYER2_RELAYER_API_SECRET`;
 const layer1RelayerApiKeySecretName = `${stackName}_LAYER1_RELAYER_API_KEY`;
 const layer1RelayerApiSecretSecretName = `${stackName}_LAYER1_RELAYER_API_SECRET`;
 const thresholdSecretName = `${stackName}_THRESHOLD`;
+const amountSecretName = `${stackName}_AMOUNT`;
 
 const { ethers } = require('ethers');
 
@@ -33,23 +33,15 @@ exports.handler = async function handler(autotaskEvent) {
     throw new Error('autotaskId undefined');
   }
 
-  // layer2ContractAddress is defined in the serverless.yml file
+  // layer2WalletAddress is defined in the serverless.yml file
   // this is the address of the balance we want to monitor (most likely a dao treasury/multisig)
-  const layer2ContractAddress = secrets[layer2ContractAddressSecretName];
+  const layer2WalletAddress = secrets[layer2WalletAddressSecretName];
 
-  // layer2RelayerAddress is defined in the serverless.yml file
-  // this is the address of the L2 relayer used to send funds to the layer2ContractAddress
-  const layer2RelayerAddress = secrets[layer2RelayerAddressSecretName];
-
-  // ensure that the layer2ContractAddress exists
-  if (layer2ContractAddress === undefined) {
-    throw new Error('LAYER2_CONTRACT_ADDRESS must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+  // ensure that the layer2WalletAddress exists
+  if (layer2WalletAddress === undefined) {
+    throw new Error('LAYER2_WALLET_ADDRESS must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
   }
   
-  // ensure that the layer2RelayerAddress exists
-  if (layer2RelayerAddress === undefined) {
-    throw new Error('LAYER2_RELAYER_ADDRESS must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
-  }
 
   // relayer secrets are defined in the .secrets/dev.yml file
   const layer2RelayerApiKey = secrets[layer2RelayerApiKeySecretName];
@@ -78,13 +70,18 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   // minimum threshold is defined in the serverless.yml file
-  // TODO does this value come in as a big number from defender??
-  let threshold = secrets[thresholdSecretName];
+  let threshold = ethers.BigNumber.from(secrets[thresholdSecretName]);
 
   // ensure that the threshold exists
   if (threshold === undefined) {
     threshold = ethers.BigNumber.from('1000000000000000000');
     console.debug('no threshold specified, setting threshold to 1 ether');
+  }
+
+  const amount = secrets[amountSecretName]
+  // ensure that the amount exists
+  if (amount === undefined) {
+    throw new Error('AMOUNT must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
   }
 
   // create new provider and signer on the L2 side
@@ -101,9 +98,11 @@ exports.handler = async function handler(autotaskEvent) {
   console.debug('Creating DefenderRelaySigner for L1');
   const signerL1 = new DefenderRelaySigner({ apiKey: layer1RelayerApiKey, apiSecret: layer1RelayerApiSecret }, providerL1, { speed: 'fast' });
 
+  const layer2RelayerAddress = await signerL2.getAddress()
+
   // get the balance of contract address to monitor on the L2
   // if below threshold, bridge funds from L1 => L2
-  const layer2ContractBalance = await providerL2.getBalance(layer2ContractAddress)
+  const layer2ContractBalance = await providerL2.getBalance(layer2WalletAddress)
 
   // create instance of Arbitrum bridge contract to bridge funds
   const bridgeContract = new ethers.Contract(
@@ -116,7 +115,13 @@ exports.handler = async function handler(autotaskEvent) {
   // max submission cost set to .001 ether
   if (layer2ContractBalance.lte(threshold)) {
     console.debug('Bridging funds to Arbitrum');
-    await bridgeContract.depositEth(1000000000000000, {value: ethers.utils.parseEther('.02')}); // TODO change to config, also require that relayer 1 balance > what we want to send
+    const layer1RelayerAddress = await signerL1.getAddress()
+    const layer1RelayerBalance = await providerL1.getBalance(layer1RelayerAddress)
+    if (layer1RelayerBalance.lt(amount)) {
+      console.debug('Relayer balance is too low to bridge specified amount, please update funds')
+    } else {
+      await bridgeContract.depositEth(1000000000000000, {value: ethers.BigNumber.from(amount)});
+    }
   }
 
   // get balance of relayer - returns a big number
@@ -125,11 +130,12 @@ exports.handler = async function handler(autotaskEvent) {
   // auto sweep funds from relayer on L2 to target layer2 contract address
   if (relayerBalance.gt(0)) {
     // total amount of eth required to send a transaction = gasLimit * gasPrice + value
-    // gasForTransaction should be 21000 because only transfering ether
+    // gasForTransaction should be close to 21000 because only transfering ether
     const gasPrice = await providerL2.getGasPrice();
     const gasForTranasction = await providerL2.estimateGas({
-        to: layer2ContractAddress,
+        to: layer2WalletAddress,
         data: '',
+        value: relayerBalance,
     })
     const totalGas = gasPrice * gasForTranasction;
     const amountToSend = relayerBalance.sub(totalGas)
@@ -137,7 +143,7 @@ exports.handler = async function handler(autotaskEvent) {
       return 'Funds detected, but not enough to cover gas cost';
     }
     const tx = {
-        to: layer2ContractAddress,
+        to: layer2WalletAddress,
         value: amountToSend,
         gasPrice: gasPrice,
         gasLimit: gasForTranasction,

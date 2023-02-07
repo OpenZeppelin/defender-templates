@@ -8,9 +8,9 @@ provider:
   stackName: bridge_automation
   ssot: false
 
-# Configure and rename secret.secrets.yml to secrets.dev.yml
+# Configure and rename sample.secrets.yml to secrets.dev.yml
 custom:
-  secrets: ${file(../.secrets.${self:provider.stage}.yml)}
+  secrets: ${file(../secrets.${self:provider.stage}.yml)}
   config: ${file(./config.yml)}
 
 # Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
@@ -24,40 +24,21 @@ functions:
     path: autotask-1
     trigger:
       type: schedule
-      # Set to check for new proposals every 60 minutes
+      # Set to check for funds every 60 minutes
       frequency: ${self:custom.config.autotask-frequency}
     paused: false
-    relayer: ${self:resources.Resources.relayers.relayer-1}
 
 resources:
   Resources:
-    policies:
-      policy-1:
-        gas-price-cap: 1000
-        whitelist-receivers:
-          - ${self:custom.config.layer2-contract-address}
-          - ${self:custom.config.layer2-relayer-address}
-        eip1559-pricing: true
-
     secrets:
       stack:
-        LAYER2_CONTRACT_ADDRESS: ${self:custom.config.layer2-contract-address}
-        LAYER2_RELAYER_ADDRESS: ${self:custom.config.layer2-relayer-address}
-        LAYER2_RELAYER_API_KEY: ${self:custom.secrets.layer2-relayer-address}
-        LAYER2_RELAYER_API_SECRET: ${self:custom.secrets.layer2-relayer-address}
-        LAYER1_RELAYER_API_KEY: ${self:custom.secrets.layer2-relayer-address}
-        LAYER1_RELAYER_API_SECRET: ${self:custom.secrets.layer2-relayer-address}
+        LAYER2_WALLET_ADDRESS: ${self:custom.config.layer2-wallet-address}
+        LAYER2_RELAYER_API_KEY: ${self:custom.secrets.keys.layer2-relayer-api-key}
+        LAYER2_RELAYER_API_SECRET: ${self:custom.secrets.keys.layer2-relayer-api-secret}
+        LAYER1_RELAYER_API_KEY: ${self:custom.secrets.keys.layer1-relayer-api-key}
+        LAYER1_RELAYER_API_SECRET: ${self:custom.secrets.keys.layer1-relayer-api-secret}
         THRESHOLD: ${self:custom.config.threshold}
-
-    relayers:
-      relayer-1:
-        name: Bridge Automation Relay Layer 1
-        network: ${self:custom.config.relayer1-network}
-        min-balance: 100000000000000000
-      relayer-2:
-        name: Bridge Automation Relay Layer 2
-        network: ${self:custom.config.relayer2-network}
-        min-balance: 100000000000000000
+        AMOUNT: ${self:custom.config.amount}
 
 plugins:
   - defender-serverless
