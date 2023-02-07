@@ -14,8 +14,8 @@ custom:
   addresses: ${file(./addresses.${self:provider.stage}.yml)}
 
 defender:
-  key: ${self:custom.secrets.keys.api}
-  secret: ${self:custom.secrets.keys.secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 resources:
   Resources:
