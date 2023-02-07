@@ -35,13 +35,18 @@ exports.handler = async function handler(autotaskEvent) {
 
   const arbitrumBridgeAddress = secrets[arbitrumBridgeAddressSecretName]
 
+  // ensure that the autotaskId exists
+  if (arbitrumBridgeAddress === undefined) {
+    throw new Error('arbitrum-bridge-address must be defined in config.dev.yml file or Defender->AutoTask->Secrets');
+  }
+
   // layer2WalletAddress is defined in the serverless.yml file
   // this is the address of the balance we want to monitor (most likely a dao treasury/multisig)
   const layer2WalletAddress = secrets[layer2WalletAddressSecretName];
 
   // ensure that the layer2WalletAddress exists
   if (layer2WalletAddress === undefined) {
-    throw new Error('LAYER2_WALLET_ADDRESS must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+    throw new Error('layer2-wallet-address must be defined in config.dev.yml file or Defender->AutoTask->Secrets');
   }
 
   // relayer secrets are defined in the .secrets/dev.yml file
@@ -82,7 +87,7 @@ exports.handler = async function handler(autotaskEvent) {
   const amount = secrets[amountSecretName]
   // ensure that the amount exists
   if (amount === undefined) {
-    throw new Error('AMOUNT must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+    throw new Error('amount must be defined in config.dev.yml file or Defender->AutoTask->Secrets');
   }
 
   // create new provider and signer on the L2 side
