@@ -7,7 +7,27 @@ const req = require('require-yml');
 const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { AdminClient } = require('defender-admin-client');
+const { task } = require('hardhat/config');
 require('dotenv').config();
+
+// eslint-disable-next-line object-curly-newline
+async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
+  let result;
+  const contractInfo = {
+    abi: JSON.stringify(contract.abi),
+    // name,
+    network,
+    address,
+  };
+  console.log(contractInfo);
+  try {
+    result = await client.addContract(contractInfo);
+  } catch (error) {
+    console.error(`Error adding contract ${name} to Defender Admin: ${error}`);
+    throw error;
+  }
+  return result;
+}
 
 // eslint-disable-next-line no-undef
 subtask('verifySecrets', 'Validates all stored secrets and returns signer')
@@ -16,7 +36,7 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
     // Set default stage
     const { stage = 'dev' } = taskArgs;
     // Deployment requires Defender Admin and Relay
-    if (taskArgs.simulate === false) {
+    if (taskArgs.simulate !== true) {
       const secrets = req(`../.secrets/${stage}.yml`);
       const {
         'defender-api-key': defenderApiKey,
@@ -43,13 +63,13 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       }
 
       // Test Defender Admin
-      const client = new AdminClient({
+      const adminClient = new AdminClient({
         apiKey: defenderApiKey,
         apiSecret: defenderSecretKey,
       });
 
       try {
-        await client.listContracts();
+        await adminClient.listContracts();
       } catch (error) {
         throw new Error(`Issue with Defender Admin: ${error}`);
       }
@@ -90,7 +110,9 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
         throw new Error('Relay balance is zero, add some funds and try again');
       }
 
-      return { signer, signerAddress, signerNetwork };
+      return {
+        signer, signerAddress, signerNetwork, adminClient,
+      };
     }
 
     // If simulate flag is enabled
@@ -109,6 +131,7 @@ task('contract', 'Deploys contract')
   .setAction(async (taskArgs, hre) => {
     // Validate secrets and retrieve a provider and signer
     const {
+      adminClient,
       signer,
       signerNetwork,
     } = await hre.run('verifySecrets', taskArgs);
@@ -117,7 +140,20 @@ task('contract', 'Deploys contract')
     console.log(`Deploying ${taskArgs.contractName} to ${signerNetwork} network`);
     const contract = await contractFactory.connect(signer).deploy();
     console.log(`Deployed contract to ${contract.address} on ${signerNetwork} network`);
-    console.log('Done');
+
+    if (taskArgs.simulate === false) {
+      // Add token to Defender
+      const tokenObject = {
+        contract,
+        name: taskArgs.tokenName,
+        client: adminClient,
+        network: signerNetwork,
+        address: contract.address,
+      };
+      await addContractToDefenderAdmin(tokenObject);
+      console.log(`Added ${tokenObject.name} to Defender`);
+    }
+
     return contract;
   });
 
@@ -133,6 +169,7 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
   .setAction(async (taskArgs, hre) => {
     // Validate secrets and retrieve a provider and signer
     const {
+      adminClient,
       signer,
       signerNetwork,
       signerAddress,
@@ -150,6 +187,19 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
     const token = await tokenFactory.connect(signer).deploy();
     await token.deployed();
     console.log(`Deployed token to ${token.address} on ${signerNetwork} network`);
+
+    if (taskArgs.simulate === true) {
+      // Add token to Defender
+      const tokenObject = {
+        contract: token,
+        name: taskArgs.tokenName,
+        client: adminClient,
+        network: signerNetwork,
+        address: token.address,
+      };
+      await addContractToDefenderAdmin({ tokenObject });
+      console.log(`Added ${tokenObject.name} to Defender`);
+    }
 
     // --------
     // Timelock contract deployment
@@ -178,6 +228,34 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
       .deploy(token.address, timelock.address);
     await governor.deployed();
     console.log(`Deployed governor to ${governor.address} on ${signerNetwork} network`);
+  });
+
+// eslint-disable-next-line no-undef
+task('to-defender', 'Adds specified contract to Defender')
+  .addParam('contractName', 'Contract name')
+  .addParam('contractAddress', 'Address of deployed contract')
+  .addParam('contractNetwork', 'Network that contract is deployed to')
+  .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
+  .setAction(async (taskArgs, hre) => {
+    // Validate secrets and retrieve a provider and signer
+    const {
+      adminClient: client,
+    } = await hre.run('verifySecrets', taskArgs);
+
+    const contractFactory = await hre.ethers.getContractFactory(taskArgs.contractName);
+    // console.log(contractFactory.abi);
+    const contract = await contractFactory.deploy();
+
+    const {
+      contractName: name,
+      contractAddress: address,
+      contractNetwork: network,
+    } = taskArgs;
+
+    const result = await addContractToDefenderAdmin({
+      contract, name, client, network, address,
+    });
+    console.log(`Successfully added ${name} to Defender with contract ID: ${result.contractId}`);
   });
 
 // eslint-disable-next-line no-undef
