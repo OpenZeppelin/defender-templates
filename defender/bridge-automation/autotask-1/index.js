@@ -148,7 +148,7 @@ exports.handler = async function handler(autotaskEvent) {
   // auto sweep funds from relayer on L2 to target layer2 wallet address
   if (relayerBalance.gt(0)) {
     // total amount of eth required to send a transaction = (gasLimit * gasPrice) + value
-    // gasForTransaction should be close to 21000 because only transfering ether
+    // gasForTransaction should be close to 21000 because only transferring ether
     const gasPrice = await providerL2.getGasPrice();
     const gasForTranasction = await providerL2.estimateGas({
       to: layer2WalletAddress,
