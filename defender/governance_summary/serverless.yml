@@ -1,0 +1,49 @@
+service: governance-summary
+configValidationMode: error
+frameworkVersion: '3'
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: governance_summary
+  ssot: false
+
+# Configure and rename secret.example.yml to secrets.dev.yml
+custom:
+  config: ${file(./config.${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+
+# set up API keys in your Defender account and copy them to your ../.secrets/dev.yml file
+defender:
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
+
+functions:
+  autotask-1:
+    name: ${self:custom.config.name} Serverless Autotask
+    path: autotask-1
+    trigger:
+      type: schedule
+      frequency: ${self:custom.config.autotask_run_frequency}
+    paused: false
+    relayer: ${self:resources.Resources.relayers.relayer-1}
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        gas-price-cap: 1000
+        eip1559-pricing: true
+
+    secrets:
+      stack:
+        governance_address: ${self:custom.config.governance_address}
+
+    relayers:
+      relayer-1:
+        name: ${self:custom.config.name} Serverless Relay
+        network: mainnet
+        min-balance: 100000000000000000
+
+plugins:
+  - defender-serverless
