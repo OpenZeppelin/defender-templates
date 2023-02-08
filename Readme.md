@@ -1,29 +1,21 @@
-# ETHDenver - OpenZeppelin Defender Integration
+# OpenZeppelin Defender Templates
 
-This repository contains templates for all tracks of the 2023 BUIDLathon. They are meant to be a place to get inspiration and kickstart your project. 
-
--   DeFi
--   NFTs, Gaming & the Metaverse
--   Infrastructure & Scalability
--   Impact + Public Goods
--   DAOs + Community
-
-The templates are structured by use case, which matches to one or more tracks.
+This repository contains Defender templates build in preparation for the ETHDenver hackathon to be used for projects participating in the OpenZeppelin Defender Bounty. These templates are meant to be a place to get inspiration and kickstart your project. 
 
 ---
 ## What is defender serverless? 
 
-Defender serverless is a way to have infra as code. With these templates you can build complex monitoring and automation workflow and perhaps even escape need of building any backend at all! 
+Defender serverless is a way to build your off-chain infrastructure as code. With these templates you can build complex monitoring and automation workflow and perhaps even escape the need of building a stand-alone backend at all! 
 
 
 ## Usage
 
 We have three basic building primitives:
- - **Relayers**: Send transactions via a regular HTTP API, and takes care of private key secure storage, transaction signing, nonce management, gas pricing estimation, and resubmissions. 
- - **Sentinels**: Monitor transactions to a contract by defining conditions on events, functions, transaction parameters.
- - **Autotasks**: Run code snippets on a regular basis, via webhooks, or in response to a transaction
+ - **Relayers**: Send transactions via a regular HTTP API with secure private key storage, transaction signing, nonce management, gas pricing estimation, and resubmissions. 
+ - **Sentinels**: Monitor transactions to a contract by defining conditions on events, functions, and transaction parameters.
+ - **Autotasks**: Run serverless JS code on a regular basis, via webhooks, or in response to a transaction
 
-As well as auxuallary resources such as 
+As well as auxuallary resources such as:
  - **contracts**: Information about your smart contract and it's methods 
  - **policies**: Rules for Relayers on how to submit transactions
  - **secrets**: Key value pairs that you can store safely in Defender platform
@@ -31,22 +23,25 @@ As well as auxuallary resources such as
 
 ### Working with smart contracts
 
-In order to orchistrate and monitor contracts defender will need to know addresses, chain and ABI's. 
-Best way to get ABI's compatible with serverless: First copy `sample.env`, fill it with required secrets and source it. Have your contracts in `/contracts` directory and run `yarn compile`. This will populate `./abi` directory 
+In order to orchistrate and monitor smart contracts, Defender will need to know addresses, chain and ABI's. 
+The best way to get ABI's compatible with serverless is to:
+1. Copy `sample.env`, fill it with required secrets and source it
+2. Place your contracts in the `/contracts` directory 
+3. Run `yarn compile`. This will populate the `./abi` directory 
 
-You can also run `yarn deploy` to deploy to various networks. We recommend to store deployed addresses in JSON such as `./deployments/mainnet.json` such way you can import those in to autotasks or serverless configurations. 
+You can also run `yarn deploy` to deploy to various networks. We recommend storing deployed addresses in a JSON file such as `./deployments/mainnet.json`so that you can import those in to autotasks or serverless configurations. 
 
 
 ### Setup Defender
-In order to use these templates you first need to register on https://defender.openzeppelin.com . Starter account is quite powerful enough to get you running for a while. 
+In order to use these templates you must first register an account on https://defender.openzeppelin.com. A free trial account is quite powerful enough to get you running for a hackatohn or PoC. *Note: You can only have one email per Defender account.* 
 
-Once you have your account, generate API key and secret from https://defender.openzeppelin.com/#/api-keys
+Once you have your account, generate API key and secrets from https://defender.openzeppelin.com/#/api-keys
 
-You can invite your teammates to collaborate at [user management dashboard](https://defender.openzeppelin.com/#/user-roles). Take note that for this to work invitee email shall be not yet registered at Defender. WIP! 
+You can invite your teammates to collaborate at [user management dashboard](https://defender.openzeppelin.com/#/user-roles). Take note that the invitee email cannot yet be registered to a Defender account in order to be invited.
 
-In `./defender` directory you will find `sample.secrets.yaml`! copy it to `./defender/.secrets/dev.yml` and fill it with API key and secret. Webhooks that you are going to use to post notifications to are to be added there as well! 
+In the `./defender` directory you will find `sample.secrets.yaml`. Copy it to `./defender/.secrets/dev.yml` and fill it with your API key and secret. Any webhooks that you are going to use to post notifications should be added there as well. 
 
-### Structure of serverless plugin 101
+### Serverless Plugin Structure 101
 
 Each serverless file must have `provider` and `defender` properties defined:
 ```yml
@@ -58,7 +53,7 @@ defender:
   key: <API key>
   secret: <API Secret>
 ```
-Everything rest is optional. 
+Everything else is optional. 
 
 Autotasks are defined under `functions` property:
 ```yml
@@ -82,7 +77,7 @@ To understand more how to define your Defender infrastructure resources - best p
 Types used in serverless are prefixed by `Y`: `YSentinel` type describes how to define sentinel.  
 
 ### Building an autotask
-Autotasks are small code snippets that you can upload to Defender platform. You can call them from sentinel, via schedule, or via webhook. You can refer to those in serverless plugin as objects passed to sentinels. 
+Autotasks are small JS code snippets that you can upload to the Defender platform. You can call them from a sentinel trigger, via schedule, or via webhook. You can refer to those in serverless plugin as objects passed to sentinels. 
 
 Autotasks are executed in a node 16 runtime with 256mb RAM and a 5-minute timeout. Code snippets are restricted to be smaller than 5mb in size.
 
@@ -146,8 +141,6 @@ If a proposal has been passed (has a state of Succeeded), then the Autotask will
 ### [Monitor ERC721 transfers](defender/monitor-erc721-transfers/README.md)
 This simple template adds ability to monitor for ERC721 token transfers and send notifications.
 BY Default we send notifications in slack, however you are free to use your custom webhook as well 
-
-
 
 ---
 ## Additional Resources
