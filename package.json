@@ -54,7 +54,7 @@
     "@types/yargs": "^17.0.19",
     "@typescript-eslint/parser": "^5.48.1",
     "chai": "^4.3.7",
-    "defender-serverless": "^1.0.3",
+    "defender-serverless": "1.0.3",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-promise": "^6.1.1",
