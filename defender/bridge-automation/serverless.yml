@@ -8,19 +8,19 @@ provider:
   stackName: bridge_automation
   ssot: false
 
-# Configure and rename sample.secrets.yml to secrets.dev.yml
+# Configure and rename sample.secrets.yml to .secrets/dev.yml
 custom:
   secrets: ${file(../.secrets/${self:provider.stage}.yml)}
   config: ${file(./config.yml)}
 
-# Make sure that you have created keys in your Defender account and added them to your secrets.dev.yml file
+# Make sure that you have created keys in your Defender account and added them to your .secrets/dev.yml file
 defender:
   key: ${self:custom.secrets.keys.defender-api-key}
   secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   autotask-1:
-    name: Layer2 Contract Monitor Autotask
+    name: Layer2 Address Monitor Autotask
     path: autotask-1
     trigger:
       type: schedule

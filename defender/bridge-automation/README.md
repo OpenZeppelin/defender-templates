@@ -1,13 +1,13 @@
 # Bridge Automation
 
 This Defender Autotask will periodically check for the balance of a specific address to monitor on Arbitrum. 
-The Autotask can be used to monitor a multisig address, a DAO treasury, or just an EOA.
+The Autotask can be used to monitor a multisig address, a DAO treasury, or an EOA.
 
-If the balance of the specified address falls below a specified threshold, then the Autotask will automatically bridge
+If the balance of the monitored address falls below a specified threshold, then the Autotask will automatically bridge
 Ether from the L1 side (Mainnet) to the L2 side (Arbitrum).
 
-There is a Defender Relayer setup on the L1 side (Mainnet) and another Defender Relayer that is setup on
-the L2 side (Arbitrum), both with the same address. Because of [address aliasing](https://developer.arbitrum.io/arbos/l1-to-l2-messaging#eth-deposits), 
+There is a Defender Relayer setup on the L1 side and another Defender Relayer that is setup on
+the L2 side, both with the same address. Because of [address aliasing](https://developer.arbitrum.io/arbos/l1-to-l2-messaging#eth-deposits), 
 the two Defender Relayers are needed to bridge from EOA to EOA.
 
 Once funds are bridged onto Arbitrum, the Autotask will also act as a "sweeper" and automatically transfer all funds from the L2 Relayer to the 
@@ -25,10 +25,10 @@ specified monitored address. This extra step is necessary because of address ali
 
 ### Relayer Setup
 - In your [Defender account](https://defender.openzeppelin.com/), select the Relay tab on the left hand side and click on **Create Relayer**
-- Specify a name for your Relayer, connect to the Arbitrum network, and then click on **create**
+- Specify a name for your Relayer, connect to the Arbitrum network, and then click on **Create**
 - Click on your newly created Relayer, select the settings gear icon and click on **Clone to another network** and select **Mainnet** as the network
 - You should now have two Relayers in your Defender account with the same address, but different networks (one on Arbitrum and one on Mainnet)
-- Click on your Arbitrum Relayer and, select the settings gear icon and click on **Create new API key**
+- Click on your Arbitrum Relayer and select the settings gear icon and click on **Create new API key**
 - Copy your API key and Secret key to a local file (you will **NOT** be able to view your API secret again after this message box goes away)
 - Follow the same instructions for the Mainnet Relayer to get the API and Secret key
 - Make sure to have these API and Secret keys saved, as you will need to use them for the steps below
