@@ -12,7 +12,7 @@ require('dotenv').config();
 
 // Etherscan API Key
 let apiKey;
-// RPC URLs
+// RPC URLs use with etherscan-verify
 let mainnetUrl = 'http://localhost/';
 let goerliUrl = 'http://localhost/';
 
@@ -20,7 +20,7 @@ let goerliUrl = 'http://localhost/';
 async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
   let result;
   const contractInfo = {
-    abi: JSON.stringify(contract.abi),
+    abi: JSON.stringify(contract.interface.format(ethers.utils.FormatTypes.json)),
     name,
     network,
     address,
@@ -210,7 +210,6 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
   .addParam('governorName', 'Governor contract name')
   .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
   .addFlag('simulate', 'Only simulates the blockchain effects')
-  .addFlag('verify', 'Verifies contract on Etherscan')
   .addOptionalVariadicPositionalParam('constructorArgs', 'Constructor arguments')
   .setAction(async (taskArgs, hre) => {
     // Validate secrets and retrieve a provider and signer
@@ -234,7 +233,7 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
     await token.deployed();
     console.log(`Deployed token to ${token.address} on ${signerNetwork} network`);
 
-    if (taskArgs.simulate === true) {
+    if (taskArgs.simulate === false) {
       // Add token to Defender
       const tokenObject = {
         contract: token,
@@ -319,7 +318,7 @@ task('to-defender', 'Adds specified contract to Defender and verifies it on Ethe
     // Verify on Etherscan
     // hre.run('verify', {
     //   address: contractAddress,
-    //   contract: `contracts/${contractName}.sol:${contractName}`, // <path-to-contract>:<contract-name>
+    //   contract: `contracts/${contractName}.sol:${contractName}`,
     // });
   });
 
