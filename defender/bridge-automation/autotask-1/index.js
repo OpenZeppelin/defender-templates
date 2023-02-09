@@ -21,14 +21,9 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   // ensure that the secrets Object exists
-  const { autotaskId, secrets } = autotaskEvent;
+  const { secrets } = autotaskEvent;
   if (secrets === undefined) {
     throw new Error('secrets undefined');
-  }
-
-  // ensure that the autotaskId exists
-  if (autotaskId === undefined) {
-    throw new Error('autotaskId undefined');
   }
 
   const arbitrumBridgeAddress = secrets[arbitrumBridgeAddressSecretName];
@@ -38,6 +33,10 @@ exports.handler = async function handler(autotaskEvent) {
     throw new Error('arbitrum-bridge-address must be defined in config.dev.yml file or Defender->AutoTask->Secrets');
   }
 
+  if (ethers.utils.isAddress(arbitrumBridgeAddress) === false) {
+    throw new Error(`Invalid value provided for arbitrum-bridge-address: ${arbitrumBridgeAddress}`);
+  }
+
   // layer2WalletAddress is defined in the serverless.yml file
   // this is the address of the balance we want to monitor (most likely a dao treasury/multisig)
   const layer2WalletAddress = secrets[layer2WalletAddressSecretName];
@@ -45,6 +44,10 @@ exports.handler = async function handler(autotaskEvent) {
   // ensure that the layer2WalletAddress exists
   if (layer2WalletAddress === undefined) {
     throw new Error('layer2-wallet-address must be defined in config.dev.yml file or Defender->AutoTask->Secrets');
+  }
+
+  if (ethers.utils.isAddress(layer2WalletAddress) === false) {
+    throw new Error(`Invalid value provided for layer2-wallet-address: ${layer2WalletAddress}`);
   }
 
   // relayer secrets are defined in the .secrets/dev.yml file
@@ -82,20 +85,24 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   // minimum threshold is defined in the serverless.yml file
-  // convert to BigNumber because the value is in wei
-  let threshold = ethers.BigNumber.from(secrets[thresholdSecretName]);
+  let threshold = secrets[thresholdSecretName];
 
   // ensure that the threshold exists
   if (threshold === undefined) {
-    threshold = ethers.BigNumber.from('1000000000000000000');
-    console.debug('no threshold specified, setting threshold to 1 ether');
+    throw new Error('threshold must be defined in .secret/<stage>.yml file or Defender->AutoTask->Secrets');
+  } else {
+    // if threshold is defined, we can safely convert it to a BigNumber
+    threshold = ethers.BigNumber.from(threshold);
   }
 
-  const amount = secrets[amountSecretName];
+  let amount = secrets[amountSecretName];
 
   // ensure that the amount exists
   if (amount === undefined) {
     throw new Error('amount must be defined in config.dev.yml file or Defender->AutoTask->Secrets');
+  } else {
+    // if amount is defined, we can safely convert it to a BigNumber
+    amount = ethers.BigNumber.from(amount);
   }
 
   // create new provider and signer on the L2 side
@@ -129,34 +136,45 @@ exports.handler = async function handler(autotaskEvent) {
   // create instance of Arbitrum bridge contract to bridge funds
   const bridgeContract = new ethers.Contract(arbitrumBridgeAddress, arbitrumBridgeAbi, signerL1);
 
-  // bridge funds if below or at threshold
-  if (layer2WalletBalance.lte(threshold)) {
+  // bridge funds if below threshold
+  if (layer2WalletBalance.lt(threshold)) {
     console.debug('Bridging funds to Arbitrum');
     const layer1RelayerAddress = await signerL1.getAddress();
     const layer1RelayerBalance = await providerL1.getBalance(layer1RelayerAddress);
-    if (layer1RelayerBalance.lt(amount)) {
-      console.debug('Relayer balance is too low to bridge specified amount, please load funds');
+    // calculate allowance for gas costs
+    // depositEth() consumes about 92,000 units of gas, using 100,000 units as conservative estimate
+    const gasPrice = await providerL1.getGasPrice();
+    const transactionGasUnits = ethers.BigNumber.from('100000');
+    const totalGas = gasPrice.mul(transactionGasUnits);
+    const fundsAvailableToSend = amount.sub(totalGas);
+
+    if (layer1RelayerBalance.lt(fundsAvailableToSend)) {
+      throw new Error('Relayer balance is too low to bridge specified amount, please load funds');
     } else {
-      // max submission cost set to .001 ether as first parameter
-      await bridgeContract.depositEth(1000000000000000, { value: ethers.BigNumber.from(amount) });
+      // maxSubmissionCost set to .001 ether as first parameter
+      const maxSubmissionCost = ethers.utils.parseUnits('0.001', 'ether');
+      await bridgeContract.depositEth(maxSubmissionCost, { value: amount });
     }
   }
 
   // get balance of relayer - return BigNumber
   const relayerBalance = await providerL2.getBalance(layer2RelayerAddress);
 
-  // auto sweep funds from relayer on L2 to target layer2 wallet address
+  /* 
+    Auto sweep funds from relayer on L2 to target layer2 wallet address.
+    note that the sweeping of funds from L2 relayer -> target L1 wallet address 
+    is expected to happen in a different transaction than the initial bridging/transfer.
+    It takes ~10 mintues for the initial bridge transfer from L1 EOA -> L2 EOA to confirm, 
+    so we must run this autotask again to execute the sweep functionality 
+  */
   if (relayerBalance.gt(0)) {
+    // calculate allowance for gas costs
     // total amount of eth required to send a transaction = (gasLimit * gasPrice) + value
-    // gasForTransaction should be close to 21000 because only transferring ether
+    // Ether transfer consumes ~21,000 uints of gas, using 50,000 units as conservative estiamte
     const gasPrice = await providerL2.getGasPrice();
-    const gasForTranasction = await providerL2.estimateGas({
-      to: layer2WalletAddress,
-      data: '',
-      value: relayerBalance,
-    });
-    const totalGas = gasPrice * gasForTranasction;
-    const amountToSend = relayerBalance.sub(totalGas); // ensure gas cost is covered
+    const transactionGasUnits = ethers.BigNumber.from('50000');
+    const totalGas = gasPrice.mul(transactionGasUnits);
+    const amountToSend = relayerBalance.sub(totalGas);
     if (amountToSend.isNegative()) {
       return 'Funds detected, but not enough to cover gas cost';
     }
@@ -164,7 +182,7 @@ exports.handler = async function handler(autotaskEvent) {
       to: layer2WalletAddress,
       value: amountToSend,
       gasPrice: gasPrice,
-      gasLimit: gasForTranasction,
+      gasLimit: transactionGasUnits,
     };
     // send all funds from relayer on L2 to contract address
     console.debug(`Funds detected in the L2 Relayer, sweeping funds to: ${tx.to}`);

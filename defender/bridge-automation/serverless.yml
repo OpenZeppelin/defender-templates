@@ -20,11 +20,10 @@ defender:
 
 functions:
   autotask-1:
-    name: Layer2 Address Monitor Autotask
+    name: Arbitrum (Layer2) Address Monitor Autotask
     path: autotask-1
     trigger:
       type: schedule
-      # Set to check for funds every 60 minutes
       frequency: ${self:custom.config.autotask-frequency}
     paused: false
 
