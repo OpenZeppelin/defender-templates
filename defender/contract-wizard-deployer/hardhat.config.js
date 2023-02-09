@@ -8,7 +8,14 @@ const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { AdminClient } = require('defender-admin-client');
 const { task } = require('hardhat/config');
+const { verify } = require('crypto');
 require('dotenv').config();
+
+// Etherscan API Key
+let apiKey;
+// RPC URLs
+let mainnetUrl;
+let goerliUrl;
 
 // eslint-disable-next-line object-curly-newline
 async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
@@ -27,6 +34,24 @@ async function addContractToDefenderAdmin({ contract, name, client, network, add
     throw error;
   }
   return result;
+}
+
+function formatArgs(inputArgs) {
+  let args = [];
+  if (inputArgs) {
+    args = inputArgs.map((arg) => {
+      try {
+        // Parse numbers and arrays from inputs. Double quoted inputs will be treated as strings
+        // '1' = number 1
+        // '"1"' = string '1'
+        // '[ 123, "0x0000" ]' will be passed as an array containing a number and a string.
+        return JSON.parse(arg);
+      } catch (error) {
+        return arg;
+      }
+    });
+  }
+  return args;
 }
 
 // eslint-disable-next-line no-undef
@@ -101,6 +126,8 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       const api = etherscanApi.init(etherscanApiKey, signerNetwork);
       try {
         ({ result: relayBalance } = await api.account.balance(signerAddress));
+        // Update global key
+        apiKey = etherscanApiKey;
       } catch (error) {
         throw new Error(`Issue with Etherscan: ${error}`);
       }
@@ -136,22 +163,27 @@ task('contract', 'Deploys contract')
       signerNetwork,
     } = await hre.run('verifySecrets', taskArgs);
 
+    const args = formatArgs(taskArgs.constructorArgs);
+
     const contractFactory = await hre.ethers.getContractFactory(taskArgs.contractName);
     console.log(`Deploying ${taskArgs.contractName} to ${signerNetwork} network`);
-    const contract = await contractFactory.connect(signer).deploy();
+    if (args.length > 0) {
+      console.log(`with arguments ${JSON.stringify(args)}`);
+    }
+    const contract = await contractFactory.connect(signer).deploy(...args);
     console.log(`Deployed contract to ${contract.address} on ${signerNetwork} network`);
 
     if (taskArgs.simulate === false) {
-      // Add token to Defender
-      const tokenObject = {
+      // Add contract to Defender
+      const contractObject = {
         contract,
-        name: taskArgs.tokenName,
+        name: taskArgs.contractName,
         client: adminClient,
         network: signerNetwork,
         address: contract.address,
       };
-      await addContractToDefenderAdmin(tokenObject);
-      console.log(`Added ${tokenObject.name} to Defender`);
+      await addContractToDefenderAdmin(contractObject);
+      console.log(`Added ${contractObject.name} to Defender`);
     }
 
     return contract;
@@ -197,7 +229,7 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
         network: signerNetwork,
         address: token.address,
       };
-      await addContractToDefenderAdmin({ tokenObject });
+      await addContractToDefenderAdmin(tokenObjectc);
       console.log(`Added ${tokenObject.name} to Defender`);
     }
 
@@ -231,31 +263,45 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
   });
 
 // eslint-disable-next-line no-undef
-task('to-defender', 'Adds specified contract to Defender')
+task('to-defender', 'Adds specified contract to Defender and verifies it on Etherscan')
   .addParam('contractName', 'Contract name')
   .addParam('contractAddress', 'Address of deployed contract')
-  .addParam('contractNetwork', 'Network that contract is deployed to')
+  // .addParam('contractNetwork', 'Network that contract is deployed to')
   .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
+  .addOptionalVariadicPositionalParam('constructorArgs', 'Constructor arguments')
   .setAction(async (taskArgs, hre) => {
     // Validate secrets and retrieve a provider and signer
-    const {
-      adminClient: client,
-    } = await hre.run('verifySecrets', taskArgs);
+    // const {
+    //   adminClient: client,
+    // } = await hre.run('verifySecrets', taskArgs);
+    const signerNetwork = 'hardhat';
+
+    const args = formatArgs(taskArgs.constructorArgs);
 
     const contractFactory = await hre.ethers.getContractFactory(taskArgs.contractName);
-    // console.log(contractFactory.abi);
-    const contract = await contractFactory.deploy();
+    console.log('Testing deployment arguments');
+    console.log(`Deploying ${taskArgs.contractName} to ${signerNetwork} network`);
+    if (args.length > 0) {
+      console.log(`with arguments ${JSON.stringify(args)}`);
+    }
+    const contract = await contractFactory.deploy(...args);
+    console.log(`Deployed contract to ${contract.address} on ${signerNetwork} network`);
 
     const {
-      contractName: name,
-      contractAddress: address,
-      contractNetwork: network,
+      contractName,
+      contractAddress,
+      contractNetwork,
     } = taskArgs;
 
-    const result = await addContractToDefenderAdmin({
-      contract, name, client, network, address,
+    // const result = await addContractToDefenderAdmin({
+    //   contract, name, client, network, address,
+    // });
+    // console.log(`Successfully added ${name} to Defender with contract ID: ${result.contractId}`);
+    hre.run('verify', {
+      network: contractNetwork,
+      address: contractAddress,
+      contract: `contracts/${contractName}.sol:${contractName}`, // <path-to-contract>:<contract-name>
     });
-    console.log(`Successfully added ${name} to Defender with contract ID: ${result.contractId}`);
   });
 
 // eslint-disable-next-line no-undef
@@ -284,6 +330,14 @@ module.exports = {
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey,
   },
+  networks: {
+    mainnet: {
+      url: mainnetUrl,
+    },
+    goerli: {
+      url: goerliUrl,
+    },
+  }
 };
