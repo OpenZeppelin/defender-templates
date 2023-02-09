@@ -1,6 +1,8 @@
 # Address of the layer 2 address to monitor
 layer2-wallet-address: '0xL2WALLETADDRESSHERE'
 # Address of the Arbitrum bridge (can use Testnet or Mainnet)
+# 0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f - Address for Arbitrum Mainnet
+# 0x6BEbC4925716945D46F0Ec336D5C2564F419682C - Address for Arbitrum goerli testnet
 arbitrum-bridge-address: '0x6BEbC4925716945D46F0Ec336D5C2564F419682C'
 # Amount of Wei, if monitored address falls below, will trigger automatically sending funds
 threshold: 1000000000000000000
