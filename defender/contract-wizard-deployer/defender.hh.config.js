@@ -2,7 +2,7 @@
 require('@nomicfoundation/hardhat-toolbox');
 require('@nomiclabs/hardhat-etherscan');
 
-const etherscanApi = require('etherscan-api');
+// const etherscanApi = require('etherscan-api');
 const req = require('require-yml');
 const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
@@ -12,7 +12,7 @@ require('dotenv').config();
 
 // Etherscan API Key
 let apiKey;
-// RPC URLs use with etherscan-verify
+// RPC URLs to be uses with etherscan-verify
 let mainnetUrl = 'http://localhost/';
 let goerliUrl = 'http://localhost/';
 
@@ -40,8 +40,9 @@ function formatArgs(inputArgs) {
     args = inputArgs.map((arg) => {
       try {
         // Parse numbers and arrays from inputs. Double quoted inputs will be treated as strings
+        // 1 = number 1
         // '1' = number 1
-        // '"1"' = string '1'
+        // "1" = string '1'
         // '[ 123, "0x0000" ]' will be passed as an array containing a number and a string.
         return JSON.parse(arg);
       } catch (error) {
@@ -228,10 +229,15 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
     // --------
     // Token contract deployment
     // --------
+    const tokenArgs = [];
+
     console.log(`Deploying ${taskArgs.tokenName} to ${signerNetwork} network`);
-    const token = await tokenFactory.connect(signer).deploy();
+    if (tokenArgs.length > 0) {
+      console.log(`with arguments ${JSON.stringify(tokenArgs)}`);
+    }
+    const token = await tokenFactory.connect(signer).deploy(...tokenArgs);
     await token.deployed();
-    console.log(`Deployed token to ${token.address} on ${signerNetwork} network`);
+    console.log(`Successfully deployed token to ${token.address} on ${signerNetwork} network`);
 
     if (taskArgs.simulate === false) {
       // Add token to Defender
@@ -258,21 +264,54 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
     const admin = signerAddress;
 
     // deploy the DemoTimelock contract
-    console.log(`Deploying ${taskArgs.timelockName} to ${signerNetwork} network`);
-    const timelock = await timelockFactory.connect(signer)
-      .deploy(minDelay, proposers, executors, admin);
-    await timelock.deployed();
-    console.log(`Deployed timelock to ${timelock.address} on ${signerNetwork} network`);
+    const timelockArgs = [minDelay, proposers, executors, admin];
 
+    console.log(`Deploying ${taskArgs.timelockName} to ${signerNetwork} network`);
+    if (timelockArgs.length > 0) {
+      console.log(`with arguments ${JSON.stringify(timelockArgs)}`);
+    }
+    const timelock = await timelockFactory.connect(signer).deploy(...timelockArgs);
+    await timelock.deployed();
+    console.log(`Successfully deployed timelock to ${timelock.address} on ${signerNetwork} network`);
+
+    if (taskArgs.simulate === false) {
+      // Add timelock to Defender
+      const timelockObject = {
+        contract: timelock,
+        name: taskArgs.timelockName,
+        client: adminClient,
+        network: signerNetwork,
+        address: timelock.address,
+      };
+      await addContractToDefenderAdmin(timelockObject);
+      console.log(`Added ${timelockObject.name} to Defender`);
+    }
     // --------
     // Governor contract deployment
     // expects arguments: address token, address timelock
     // --------
+    const governorArgs = [token.address, timelock.address];
+
     console.log(`Deploying ${taskArgs.governorName} to ${signerNetwork} network`);
-    const governor = await governorFactory.connect(signer)
-      .deploy(token.address, timelock.address);
+    if (governorArgs.length > 0) {
+      console.log(`with arguments ${JSON.stringify(governorArgs)}`);
+    }
+    const governor = await governorFactory.connect(signer).deploy(...governorArgs);
     await governor.deployed();
-    console.log(`Deployed governor to ${governor.address} on ${signerNetwork} network`);
+    console.log(`Successfully deployed governor to ${governor.address} on ${signerNetwork} network`);
+
+    if (taskArgs.simulate === false) {
+      // Add governor to Defender
+      const governorObject = {
+        contract: governor,
+        name: taskArgs.governorName,
+        client: adminClient,
+        network: signerNetwork,
+        address: governor.address,
+      };
+      await addContractToDefenderAdmin(governorObject);
+      console.log(`Added ${governorObject.name} to Defender`);
+    }
   });
 
 // eslint-disable-next-line no-undef
