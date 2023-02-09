@@ -8,25 +8,23 @@ const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { AdminClient } = require('defender-admin-client');
 const { task } = require('hardhat/config');
-const { verify } = require('crypto');
 require('dotenv').config();
 
 // Etherscan API Key
 let apiKey;
 // RPC URLs
-let mainnetUrl;
-let goerliUrl;
+let mainnetUrl = 'http://localhost/';
+let goerliUrl = 'http://localhost/';
 
 // eslint-disable-next-line object-curly-newline
 async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
   let result;
   const contractInfo = {
     abi: JSON.stringify(contract.abi),
-    // name,
+    name,
     network,
     address,
   };
-  console.log(contractInfo);
   try {
     result = await client.addContract(contractInfo);
   } catch (error) {
@@ -60,6 +58,7 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
   .setAction(async (taskArgs, hre) => {
     // Set default stage
     const { stage = 'dev' } = taskArgs;
+
     // Deployment requires Defender Admin and Relay
     if (taskArgs.simulate !== true) {
       const secrets = req(`../.secrets/${stage}.yml`);
@@ -68,7 +67,10 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
         'defender-api-secret': defenderSecretKey,
         'relay-api-key': relayApiKey,
         'relay-api-secret': relaySecretKey,
-        'etherscan-api-key': etherscanApiKey,
+        // 'etherscan-api-key': etherscanApiKey,
+        // 'rpc-url': rpcUrl,
+        // 'alchemy-api-key': alchemyApiKey,
+        // 'infura-api-key': infuraApiKey,
       } = secrets.keys;
 
       if (defenderApiKey === undefined) {
@@ -83,9 +85,12 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       if (relaySecretKey === undefined) {
         throw new Error('Could not find Defender Secret Key in defender/.secrets/<stage>.yml');
       }
-      if (etherscanApiKey === undefined) {
-        throw new Error('Could not find Etherscan API Key in defender/.secrets/<stage>.yml');
-      }
+      // if (etherscanApiKey === undefined) {
+      //   throw new Error('Could not find Etherscan API Key in defender/.secrets/<stage>.yml');
+      // }
+      // if (!rpcUrl && !alchemyApiKey && !infuraApiKey) {
+      //   throw new Error('Could not find RPC URL, Alchemy API Key, nor Infura API key in defender/.secrets/<stage>.yml');
+      // }
 
       // Test Defender Admin
       const adminClient = new AdminClient({
@@ -121,22 +126,33 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       }
       console.log(`Defender Relay is on ${signerNetwork} using address: ${signerAddress}`);
 
-      // Test Etherscan
-      let relayBalance;
-      const api = etherscanApi.init(etherscanApiKey, signerNetwork);
-      try {
-        ({ result: relayBalance } = await api.account.balance(signerAddress));
-        // Update global key
-        apiKey = etherscanApiKey;
-      } catch (error) {
-        throw new Error(`Issue with Etherscan: ${error}`);
-      }
-      console.log('Etherscan is working');
-      relayBalance = ethers.BigNumber.from(relayBalance);
-      if (relayBalance.eq(0)) {
-        throw new Error('Relay balance is zero, add some funds and try again');
-      }
+      // // Test Etherscan
+      // let relayBalance;
+      // const api = etherscanApi.init(etherscanApiKey, signerNetwork);
+      // try {
+      //   ({ result: relayBalance } = await api.account.balance(signerAddress));
+      //   // Update global key
+      //   apiKey = etherscanApiKey;
+      // } catch (error) {
+      //   throw new Error(`Issue with Etherscan: ${error}`);
+      // }
+      // console.log('Etherscan is working');
+      // relayBalance = ethers.BigNumber.from(relayBalance);
+      // if (relayBalance.eq(0)) {
+      //   throw new Error('Relay balance is zero, add some funds and try again');
+      // }
 
+      // // Test RPC keys (for Etherscan verifications)
+      // if (rpcUrl) {
+      //   mainnetUrl = rpcUrl;
+      //   goerliUrl = rpcUrl;
+      // } else if (alchemyApiKey) {
+      //   mainnetUrl = `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
+      //   goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${alchemyApiKey}`;
+      // } else {
+      //   mainnetUrl = `https://eth-mainnet.g.alchemy.com/v2/${infuraApiKey}`;
+      //   goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${infuraApiKey}`;
+      // }
       return {
         signer, signerAddress, signerNetwork, adminClient,
       };
@@ -185,8 +201,6 @@ task('contract', 'Deploys contract')
       await addContractToDefenderAdmin(contractObject);
       console.log(`Added ${contractObject.name} to Defender`);
     }
-
-    return contract;
   });
 
 // eslint-disable-next-line no-undef
@@ -229,7 +243,7 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
         network: signerNetwork,
         address: token.address,
       };
-      await addContractToDefenderAdmin(tokenObjectc);
+      await addContractToDefenderAdmin(tokenObject);
       console.log(`Added ${tokenObject.name} to Defender`);
     }
 
@@ -266,14 +280,14 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
 task('to-defender', 'Adds specified contract to Defender and verifies it on Etherscan')
   .addParam('contractName', 'Contract name')
   .addParam('contractAddress', 'Address of deployed contract')
-  // .addParam('contractNetwork', 'Network that contract is deployed to')
+  .addParam('contractNetwork', 'Network that contract is deployed to')
   .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
   .addOptionalVariadicPositionalParam('constructorArgs', 'Constructor arguments')
   .setAction(async (taskArgs, hre) => {
     // Validate secrets and retrieve a provider and signer
-    // const {
-    //   adminClient: client,
-    // } = await hre.run('verifySecrets', taskArgs);
+    const {
+      adminClient: client,
+    } = await hre.run('verifySecrets', taskArgs);
     const signerNetwork = 'hardhat';
 
     const args = formatArgs(taskArgs.constructorArgs);
@@ -293,29 +307,20 @@ task('to-defender', 'Adds specified contract to Defender and verifies it on Ethe
       contractNetwork,
     } = taskArgs;
 
-    // const result = await addContractToDefenderAdmin({
-    //   contract, name, client, network, address,
-    // });
-    // console.log(`Successfully added ${name} to Defender with contract ID: ${result.contractId}`);
-    hre.run('verify', {
+    const result = await addContractToDefenderAdmin({
+      contract,
+      name: contractName,
+      client,
       network: contractNetwork,
       address: contractAddress,
-      contract: `contracts/${contractName}.sol:${contractName}`, // <path-to-contract>:<contract-name>
     });
-  });
+    console.log(`Successfully added ${contractName} to Defender with contract ID: ${result.contractId}`);
 
-// eslint-disable-next-line no-undef
-task('verify-etherscan', 'Verify deployed contract on Etherscan')
-  .addParam('contractAddress', 'Contract address deployed')
-  .setAction(async (contractAddress, hre) => {
-    try {
-      await hre.run('verify:verify', {
-        address: contractAddress,
-        contract: 'contracts/NFT.sol:NFT', // <path-to-contract>:<contract-name>
-      });
-    } catch ({ message }) {
-      console.error(message);
-    }
+    // Verify on Etherscan
+    // hre.run('verify', {
+    //   address: contractAddress,
+    //   contract: `contracts/${contractName}.sol:${contractName}`, // <path-to-contract>:<contract-name>
+    // });
   });
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -339,5 +344,8 @@ module.exports = {
     goerli: {
       url: goerliUrl,
     },
-  }
+    localhost: {
+      url: 'http://127.0.0.1:8545',
+    },
+  },
 };
