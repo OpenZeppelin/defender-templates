@@ -50,6 +50,9 @@ This Autotask will periodically check a Governance contract for active proposals
 ### [Governance(GovernorCompatibilityBravo) Summary](defender/governance_bravo_summary/README.md)
 This Autotask will periodically check a GovernanceCompatibilityBravo contract for active proposals and display the current vote count, quorum threshold status, and remaining time to vote.
 
+### [Contract Wizard Deployer](defender/contract-wizard-deployer/README.md)
+This Hardhat script enables developers to take Solidity files that are downloaded from Open Zeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), then deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and finally, upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
+
 ---
 ## Additional Resources
 
