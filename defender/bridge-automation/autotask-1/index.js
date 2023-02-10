@@ -152,9 +152,9 @@ exports.handler = async function handler(autotaskEvent) {
     const layer1RelayerAddress = await signerL1.getAddress();
     const layer1RelayerBalance = await providerL1.getBalance(layer1RelayerAddress);
     // calculate allowance for gas costs
-    // depositEth() consumes about 92,000 units of gas, using 100,000 units as a conservative estimate
+    // depositEth() consumes about 92,000 units of gas, using 200,000 units as a conservative estimate
     const gasPrice = await providerL1.getGasPrice();
-    const transactionGasUnits = ethers.BigNumber.from('100000');
+    const transactionGasUnits = ethers.BigNumber.from('200000');
     const totalGas = gasPrice.mul(transactionGasUnits);
     const fundsNeededToSend = amount.add(totalGas);
 
