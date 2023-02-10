@@ -34,7 +34,7 @@ In the `defender/contract-wizard-deployer` directory, perform the following step
 
 - A secrets file can be created for each stage of production. We will create one for development
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
-  - Modify the four lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API keys and secret keys, as indicated:
+  - Modify the four lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API keys and Secret keys, as indicated:
   - `defender-api-key: <API Key goes here>`
   - `defender-api-secret: <Secret key goes here>`
   - `relay-api-key: <Relay API Key goes here>`
