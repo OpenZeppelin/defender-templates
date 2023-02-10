@@ -32,7 +32,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
 
 In the `defender/contract-wizard-deployer` directory, perform the following steps:
 
-- A secrets file can be created for each stage of production. We will create one for development
+- A secrets file can be created for each stage of production. We will create one for development:
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
   - Modify the four lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API keys and Secret keys, as indicated:
   - `defender-api-key: <API Key goes here>`
