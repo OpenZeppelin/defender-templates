@@ -16,7 +16,11 @@ we can then safely transfer it to any address the user has specified, hence why 
 Once funds are safely bridged onto Arbitrum, the Autotask will also act as a "sweeper" to automatically transfer all funds from the L2 Relay to the 
 specified monitored address. Because it may take a few minutes for the transaction to finalize when bridging funds, it will likely be one of the 
 subsequent executions of the Autotask that will sweep the funds. Again, this extra step is necessary because of address aliasing, as the entire "sweeping" 
-transaction occurs on the L2 side, we can safely transfer from our L2 EOA to any address specified by the user.
+transaction occurs on the L2 side, we can safely transfer from our L2 EOA to any address specified by the user. 
+
+Please note that a caveat here is that although unlikely, a misbehaving [Sequencer](https://developer.offchainlabs.com/inside-arbitrum-nitro#inboxes-fast-and-slow) 
+could result in the submitted transaction to sit in the Delayed Inbox for 24 hours before someone else can force it through. Ideally, a well behaved Sequencer 
+will result in the initial bridging transaction to be confirmed within 10 minutes.
 
 ## Defender Account Setup
 
@@ -29,7 +33,7 @@ transaction occurs on the L2 side, we can safely transfer from our L2 EOA to any
 - Check the box for **I’ve written down the secret key** and select **Close**
 
 ### Relayer Setup
-- In your [Defender account](https://defender.openzeppelin.com/), select the Relay tab on the left hand side and click on **Create Relayer**
+- In your [Defender account](https://defender.openzeppelin.com/), select the Relay tab on the left-hand side and click on **Create Relayer**
 - Specify a name for your Relayer, connect to the Arbitrum network, and then click on **Create**
 - Click on your newly created Relayer, select the settings gear icon and click on **Clone to another network** and select **Mainnet** as the network
 - You should now have two Relayers in your Defender account with the same address, but different networks (one on Arbitrum Mainnet and one on Ethereum Mainnet)

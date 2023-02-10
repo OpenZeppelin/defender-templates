@@ -42,3 +42,4 @@ resources:
 
 plugins:
   - defender-serverless
+  

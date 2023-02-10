@@ -1,16 +1,16 @@
 # Address of the layer 2 address to monitor
 layer2-wallet-address: '0xL2WALLETADDRESSHERE'
 # Address of the Arbitrum bridge (can use Testnet or Mainnet)
-# 0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f - Address for Arbitrum Mainnet
-# 0x6BEbC4925716945D46F0Ec336D5C2564F419682C - Address for Arbitrum goerli testnet
+# 0x4Dbd4fc535Ac27206064B68FfCf827b0A60BAB3f - Address on Ethereum Mainnet for Arbitrum Delayed Inbox, used for bridging Ether
+# 0x6BEbC4925716945D46F0Ec336D5C2564F419682C - Address on Ethereum Goerli Testnet for Arbitrum Delayed Inbox, used for bridging Goerli Ether
 arbitrum-bridge-address: '0x6BEbC4925716945D46F0Ec336D5C2564F419682C'
 # Amount of Wei, if monitored address falls below, will trigger automatically sending funds
-threshold: 1000000000000000000
+threshold: 1_000_000_000_000_000_000
 # Amount of Wei you want to automatically bridge and send to the monitored address
-amount: 20000000000000000
+amount: 20_000_000_000_000_000
 # How often should the Autotask run? (in minutes)
 # It can take about 10 minutes for the bridge transaction from L1 Relay -> L2 Relay to confirm
 # Setting the frequency lower may mean running the Autotask when the bridge transaction has not settled
 # Setting the frequency too high may mean that the full transfer from L2 Relay -> L2 monitored address is not punctual
-# Defaults to 15 mintues to allow for first Autotask run to bridge funds, and second Autotask run to transfer to monitored address
+# Defaults to 15 minutes to allow for first Autotask run to bridge funds, and second Autotask run to transfer to monitored address
 autotask-frequency: 15

@@ -146,9 +146,9 @@ exports.handler = async function handler(autotaskEvent) {
     const gasPrice = await providerL1.getGasPrice();
     const transactionGasUnits = ethers.BigNumber.from('100000');
     const totalGas = gasPrice.mul(transactionGasUnits);
-    const fundsAvailableToSend = amount.sub(totalGas);
+    const fundsNeededToSend = amount.add(totalGas);
 
-    if (layer1RelayerBalance.lt(fundsAvailableToSend)) {
+    if (layer1RelayerBalance.lt(fundsNeededToSend)) {
       throw new Error('L1 Relayer balance is too low to bridge specified amount, please load funds');
     } else {
       // maxSubmissionCost set to .001 ether as first parameter
@@ -158,14 +158,13 @@ exports.handler = async function handler(autotaskEvent) {
   }
 
   /* 
-    Auto sweep funds from relayer on L2 to target layer2 wallet address.
-    note that the sweeping of funds from L2 relayer -> target L1 wallet address 
-    is expected to happen in a different transaction than the initial bridging/transfer.
-    It takes ~10 mintues for the initial bridge transfer from L1 EOA -> L2 EOA to confirm, 
-    so we must run this autotask again to execute the sweep functionality 
+    Automatically sweep funds from the L2 Relayer to the target L2 wallet address.
+    Note that the sweeping is expected to happen in a different transaction than the initial bridging/transfer.
+    It takes ~10 minutes for the initial bridge transfer from L1 EOA -> L2 EOA to confirm, 
+    so we must run this Autotask again to execute the sweep functionality.
   */
 
-  // get balance of relayer - returns BigNumber
+  // get balance of Relayer - returns ethers.BigNumber
   const relayerBalance = await providerL2.getBalance(layer2RelayerAddress);
 
   if (relayerBalance.gt(0)) {
