@@ -5,7 +5,7 @@ This repository contains Defender templates built in preparation for the ETHDenv
 ---
 ## What is defender serverless? 
 
-Defender serverless is a way to build your off-chain infrastructure as code. With these templates you can build complex monitoring and automation workflow and perhaps even escape the need of building a stand-alone backend at all! 
+Defender Serverless is a way to build your off-chain infrastructure as code. With these templates you can build complex monitoring and automation workflows and perhaps even escape the need of building a stand-alone backend at all! 
 
 
 ## Usage
