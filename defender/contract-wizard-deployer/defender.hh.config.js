@@ -1,20 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 require('@nomicfoundation/hardhat-toolbox');
-require('@nomiclabs/hardhat-etherscan');
 
-// const etherscanApi = require('etherscan-api');
 const req = require('require-yml');
 const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { AdminClient } = require('defender-admin-client');
 const { task } = require('hardhat/config');
 require('dotenv').config();
-
-// Etherscan API Key
-let apiKey;
-// RPC URLs to be uses with etherscan-verify
-let mainnetUrl = 'http://localhost/';
-let goerliUrl = 'http://localhost/';
 
 // eslint-disable-next-line object-curly-newline
 async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
@@ -68,10 +60,6 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
         'defender-api-secret': defenderSecretKey,
         'relay-api-key': relayApiKey,
         'relay-api-secret': relaySecretKey,
-        // 'etherscan-api-key': etherscanApiKey,
-        // 'rpc-url': rpcUrl,
-        // 'alchemy-api-key': alchemyApiKey,
-        // 'infura-api-key': infuraApiKey,
       } = secrets.keys;
 
       if (defenderApiKey === undefined) {
@@ -86,12 +74,6 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       if (relaySecretKey === undefined) {
         throw new Error('Could not find Relay Secret key in defender/.secrets/<stage>.yml');
       }
-      // if (etherscanApiKey === undefined) {
-      //   throw new Error('Could not find Etherscan API Key in defender/.secrets/<stage>.yml');
-      // }
-      // if (!rpcUrl && !alchemyApiKey && !infuraApiKey) {
-      //   throw new Error('Could not find RPC URL, Alchemy API Key, nor Infura API key in defender/.secrets/<stage>.yml');
-      // }
 
       // Test Defender Admin
       const adminClient = new AdminClient({
@@ -127,33 +109,6 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       }
       console.log(`Defender Relay is on ${signerNetwork} using address: ${signerAddress}`);
 
-      // // Test Etherscan
-      // let relayBalance;
-      // const api = etherscanApi.init(etherscanApiKey, signerNetwork);
-      // try {
-      //   ({ result: relayBalance } = await api.account.balance(signerAddress));
-      //   // Update global key
-      //   apiKey = etherscanApiKey;
-      // } catch (error) {
-      //   throw new Error(`Issue with Etherscan: ${error}`);
-      // }
-      // console.log('Etherscan is working');
-      // relayBalance = ethers.BigNumber.from(relayBalance);
-      // if (relayBalance.eq(0)) {
-      //   throw new Error('Relay balance is zero, add some funds and try again');
-      // }
-
-      // // Test RPC keys (for Etherscan verifications)
-      // if (rpcUrl) {
-      //   mainnetUrl = rpcUrl;
-      //   goerliUrl = rpcUrl;
-      // } else if (alchemyApiKey) {
-      //   mainnetUrl = `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
-      //   goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${alchemyApiKey}`;
-      // } else {
-      //   mainnetUrl = `https://eth-mainnet.g.alchemy.com/v2/${infuraApiKey}`;
-      //   goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${infuraApiKey}`;
-      // }
       return {
         signer, signerAddress, signerNetwork, adminClient,
       };
@@ -353,12 +308,6 @@ task('to-defender', 'Adds specified contract to Defender and verifies it on Ethe
       address: contractAddress,
     });
     console.log(`Successfully added ${contractName} to Defender with contract ID: ${result.contractId}`);
-
-    // Verify on Etherscan
-    // hre.run('verify', {
-    //   address: contractAddress,
-    //   contract: `contracts/${contractName}.sol:${contractName}`,
-    // });
   });
 
 /** @type import('hardhat/config').HardhatUserConfig */
@@ -370,20 +319,6 @@ module.exports = {
         enabled: true,
         runs: 1000,
       },
-    },
-  },
-  etherscan: {
-    apiKey,
-  },
-  networks: {
-    mainnet: {
-      url: mainnetUrl,
-    },
-    goerli: {
-      url: goerliUrl,
-    },
-    localhost: {
-      url: 'http://127.0.0.1:8545',
     },
   },
 };
