@@ -132,7 +132,7 @@ Examples:
 
 ### Adding previously deployed contracts to Defender Admin
 
-Any previously deployed contracts will be can be added to Defender admin with the task `to-defender`.
+Any previously deployed contracts can be added to Defender admin with the task `to-defender`.
 
 - `yarn run deploy -- to-defender <arguments>` - General usage
 - `yarn run deploy -- help to-defender` - View help information in CLI
