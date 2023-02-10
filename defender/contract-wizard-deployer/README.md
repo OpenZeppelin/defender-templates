@@ -130,7 +130,7 @@ Examples:
 
 - `yarn run deploy -- governance --timelock-name DemoTimelock --token-name DemoToken --governor-name DemoGovernor --simulate`
 
-### Adding previously deployed contracts to Defender Admin
+### Adding Previously Deployed Contracts to Defender Admin
 
 Any previously deployed contracts can be added to Defender admin with the task `to-defender`.
 
