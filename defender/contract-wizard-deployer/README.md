@@ -1,6 +1,6 @@
 # Contract Wizard Deployer
 
-This Hardhat script enables developers to take Solidity files that are downloaded from Open Zeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
+This Hardhat script enables developers to take Solidity files that are downloaded from OpenZeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
 
 ## Setup
 
@@ -12,7 +12,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
 - Click **Save**
 - Copy your API key and Secret key to a local file (you will **NOT** be able to view your Secret key again after this message box goes away)
 - Make sure that you really did copy your API key and Secret key to a local file
-- Check the box for **I’ve written down the secret key** and select **Close**
+- Check the box for **I’ve written down the Secret key** and select **Close**
 
 ### Relay API Keys
 
@@ -82,6 +82,7 @@ To get CLI help for any of the tasks, run `yarn run deploy -- help <task>` and i
 
 **Notes on constructor arguments:**
 
+- Arguments are space-separated (`1 2 3 4`)
 - Arrays must be single-quoted. (`'[1,2]'`)
 - Strings must be double-quoted (`"token"`)
 - Addresses should be treated as strings (`"0x0000"`)
