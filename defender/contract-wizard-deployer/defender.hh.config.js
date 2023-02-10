@@ -134,6 +134,9 @@ task('contract', 'Deploys contract')
       signerNetwork,
     } = await hre.run('verifySecrets', taskArgs);
 
+    // Compile all contracts
+    await hre.run('compile');
+
     const args = formatArgs(taskArgs.constructorArgs);
 
     const contractFactory = await hre.ethers.getContractFactory(taskArgs.contractName);
@@ -175,7 +178,9 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
       signerAddress,
     } = await hre.run('verifySecrets', taskArgs);
 
-    // Compile contracts
+    // Compile all contracts
+    await hre.run('compile');
+
     const tokenFactory = await hre.ethers.getContractFactory(taskArgs.tokenName);
     const timelockFactory = await hre.ethers.getContractFactory(taskArgs.timelockName);
     const governorFactory = await hre.ethers.getContractFactory(taskArgs.governorName);
@@ -281,6 +286,9 @@ task('to-defender', 'Adds specified contract to Defender and verifies it on Ethe
       adminClient: client,
     } = await hre.run('verifySecrets', taskArgs);
     const signerNetwork = 'hardhat';
+
+    // Compile all contracts first
+    await hre.run('compile');
 
     const args = formatArgs(taskArgs.constructorArgs);
 

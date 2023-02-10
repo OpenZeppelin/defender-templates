@@ -68,9 +68,9 @@ contract-wizard-deployer/
 
 ## General Usage
 
-These scripts use Hardhat tasks. The command "`yarn run deploy --`" is an alias for "`yarn hardhat --config defender.hh.config.js`". Either command can be used, but this guide will use `yarn run deploy --` from this point on.
+These scripts use Hardhat tasks. The command "`yarn run deploy`" is an alias for "`yarn hardhat --config defender.hh.config.js`". Either command can be used, but this guide will use `yarn run deploy` from this point on.
 
-Usage: `yarn run deploy -- <task> <arguments>`
+Usage: `yarn run deploy <task> <arguments>`
 
 Defender-specific Hardhat tasks:
 
@@ -78,7 +78,7 @@ Defender-specific Hardhat tasks:
 - governance
 - to-defender
 
-To get CLI help for any of the tasks, run `yarn run deploy -- help <task>` and it will provide a list of required and optional arguments.
+To get CLI help for any of the tasks, run `yarn run deploy help <task>` and it will provide a list of required and optional arguments.
 
 **Notes on constructor arguments:**
 
@@ -93,8 +93,8 @@ To get CLI help for any of the tasks, run `yarn run deploy -- help <task>` and i
 
 Deploy any individual contract to Ethereum Mainnet or Goerli Testnet network and add the deployed contracts to Defender Admin.
 
-- `yarn run deploy -- contract <arguments>` - General usage
-- `yarn run deploy -- help contract` - View help information in CLI
+- `yarn run deploy contract <arguments>` - General usage
+- `yarn run deploy help contract` - View help information in CLI
 
   Required Arguments:
 
@@ -106,17 +106,17 @@ Deploy any individual contract to Ethereum Mainnet or Goerli Testnet network and
 
 Examples:
 
-- `yarn run deploy -- contract --contract-name DemoToken --stage dev --simulate`
-- `yarn run deploy -- contract --contract-name DemoTimelock --simulate 0 '["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]' '["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]' "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"`
-- `yarn run deploy -- contract --contract-name DemoGovernor --simulate "0x5FbDB2315678afecb367f032d93F642f64180aa3" "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"`
-- `yarn run deploy -- contract --contract-name DemoToken` **--Warning-- This is an actual deployment**
+- `yarn run deploy contract --contract-name DemoToken --stage dev --simulate`
+- `yarn run deploy contract --contract-name DemoTimelock --simulate 0 '["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]' '["0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"]' "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"`
+- `yarn run deploy contract --contract-name DemoGovernor --simulate "0x5FbDB2315678afecb367f032d93F642f64180aa3" "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"`
+- `yarn run deploy contract --contract-name DemoToken` **--Warning-- This is an actual deployment**
 
 ### Deploying a Governance suite ([Token](https://docs.openzeppelin.com/contracts/4.x/governance#token), [Timelock](https://docs.openzeppelin.com/contracts/4.x/governance#timelock) and [Governor](https://docs.openzeppelin.com/contracts/4.x/governance#governor))
 
 Deploy the OpenZeppelin Governance Suite with the deployer (Defender Relay) set as proposer, executor, admin and owner of the deployed contracts. After deployment, tokens can manually be minted and roles reassigned as desired. All contracts are also added to Defender Admin.
 
-- `yarn run deploy -- governance <arguments>` - General usage
-- `yarn run deploy -- help governance` - View help information in CLI
+- `yarn run deploy governance <arguments>` - General usage
+- `yarn run deploy help governance` - View help information in CLI
 
   Required Arguments:
 
@@ -129,14 +129,14 @@ Deploy the OpenZeppelin Governance Suite with the deployer (Defender Relay) set 
 
 Examples:
 
-- `yarn run deploy -- governance --timelock-name DemoTimelock --token-name DemoToken --governor-name DemoGovernor --simulate`
+- `yarn run deploy governance --timelock-name DemoTimelock --token-name DemoToken --governor-name DemoGovernor --simulate`
 
 ### Adding Previously Deployed Contracts to Defender Admin
 
 Any previously deployed contracts can be added to Defender admin with the task `to-defender`.
 
-- `yarn run deploy -- to-defender <arguments>` - General usage
-- `yarn run deploy -- help to-defender` - View help information in CLI
+- `yarn run deploy to-defender <arguments>` - General usage
+- `yarn run deploy help to-defender` - View help information in CLI
 
   Required Arguments:
 
@@ -149,9 +149,9 @@ Any previously deployed contracts can be added to Defender admin with the task `
 
 Examples:
 
-- `yarn run deploy -- to-defender --contract-network goerli --contract-name DemoToken --contract-address "0xa2e87B88D805222bf950f81601f43e794a73F481"`
-- `yarn run deploy -- to-defender --contract-network goerli --contract-name DemoTimelock --contract-address "0xACC0b2A0Ee8445983a8EDA6294c1660C6C0Aa330" 0 '["0x5b46d575f4a5302250233dbbf456d15e6353b7bd"]' '["0x5b46d575f4a5302250233dbbf456d15e6353b7bd"]' "0x5b46d575f4a5302250233dbbf456d15e6353b7bd"`
-- `yarn run deploy -- to-defender --contract-network goerli --contract-name DemoToken --contract-address "0xEa6CdeD4c27892528C144554624bc28A4da6Ac5C" "0xa2e87B88D805222bf950f81601f43e794a73F481" "0xACC0b2A0Ee8445983a8EDA6294c1660C6C0Aa330"`
+- `yarn run deploy to-defender --contract-network goerli --contract-name DemoToken --contract-address "0xa2e87B88D805222bf950f81601f43e794a73F481"`
+- `yarn run deploy to-defender --contract-network goerli --contract-name DemoTimelock --contract-address "0xACC0b2A0Ee8445983a8EDA6294c1660C6C0Aa330" 0 '["0x5b46d575f4a5302250233dbbf456d15e6353b7bd"]' '["0x5b46d575f4a5302250233dbbf456d15e6353b7bd"]' "0x5b46d575f4a5302250233dbbf456d15e6353b7bd"`
+- `yarn run deploy to-defender --contract-network goerli --contract-name DemoToken --contract-address "0xEa6CdeD4c27892528C144554624bc28A4da6Ac5C" "0xa2e87B88D805222bf950f81601f43e794a73F481" "0xACC0b2A0Ee8445983a8EDA6294c1660C6C0Aa330"`
 
 ## TODO:
 
