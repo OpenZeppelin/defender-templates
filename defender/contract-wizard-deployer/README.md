@@ -24,7 +24,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
   - Pick a meaningful name, choose the network that you want to deploy to, and click **Create**
 - Click on the the existing Relay that you would like to use for deployments
 - Click on the gear/cog **⚙** at the top middle and choose **+ Create new API key**
-- Copy your Ethereum Address, API key, and Secret key to a local file (you will **NOT** be able to view your API secret again after this message box goes away)
+- Copy your Ethereum Address, API key, and Secret key to a local file (you will **NOT** be able to view your Secret key again after this message box goes away)
 - Make sure that you really did copy your API key and Secret key to a local file
 - Check the box for **I’ve written down the secret key** and select **Close**
 
