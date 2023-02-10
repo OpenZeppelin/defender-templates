@@ -11,10 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "@openzeppelin/contracts": "4.8.1",
-    "commander": "10.0.0",
     "defender-admin-client": "1.38.0",
     "defender-relay-client": "1.38.0",
-    "dotenv": "16.0.3",
     "hardhat": "2.12.6",
     "require-yml": "2.0.0",
     "simulate": "0.0.6"

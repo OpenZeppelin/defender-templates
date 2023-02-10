@@ -6,7 +6,6 @@ const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { AdminClient } = require('defender-admin-client');
 const { task } = require('hardhat/config');
-require('dotenv').config();
 
 // eslint-disable-next-line object-curly-newline
 async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
