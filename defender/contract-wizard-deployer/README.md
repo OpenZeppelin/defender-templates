@@ -1,6 +1,6 @@
 # Contract Wizard Deployer
 
-This Hardhat script enables developers to take Solidity files that are downloaded from Open Zeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), then deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and finally, upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
+This Hardhat script enables developers to take Solidity files that are downloaded from Open Zeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
 
 ## Setup
 
