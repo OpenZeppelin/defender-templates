@@ -90,7 +90,7 @@ To get CLI help for any of the tasks, run `yarn run deploy -- help <task>` and i
 
 ### Deploying an individual contract
 
-Deploy any individual contract to Ethereum mainnet or Goerli network and add the deployed contracts to Defender Admin.
+Deploy any individual contract to Ethereum Mainnet or Goerli Testnet network and add the deployed contracts to Defender Admin.
 
 - `yarn run deploy -- contract <arguments>` - General usage
 - `yarn run deploy -- help contract` - View help information in CLI
