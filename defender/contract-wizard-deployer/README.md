@@ -72,7 +72,7 @@ These scripts use Hardhat tasks. The command "`yarn run deploy --`" is an alias 
 
 Usage: `yarn run deploy -- <task> <arguments>`
 
-Defender Specific Hardhat tasks:
+Defender-specific Hardhat tasks:
 
 - contract
 - governance
