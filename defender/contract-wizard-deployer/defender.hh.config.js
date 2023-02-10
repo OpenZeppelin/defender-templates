@@ -78,7 +78,7 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
         throw new Error('Could not find Defender API key in defender/.secrets/<stage>.yml');
       }
       if (defenderSecretKey === undefined) {
-        throw new Error('Could not find Defender Secret Key in defender/.secrets/<stage>.yml');
+        throw new Error('Could not find Defender Secret key in defender/.secrets/<stage>.yml');
       }
       if (relayApiKey === undefined) {
         throw new Error('Could not find Defender API key in defender/.secrets/<stage>.yml');
