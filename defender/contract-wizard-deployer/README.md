@@ -66,7 +66,7 @@ contract-wizard-deployer/
 - Only supports Ethereum Mainnet and Goerli Testnet networks
 - Structs are not supported as a constructor argument
 
-## General usage
+## General Usage
 
 These scripts use Hardhat tasks. The command "`yarn run deploy --`" is an alias for "`yarn hardhat --config defender.hh.config.js`". Either command can be used, but this guide will use `yarn run deploy --` from this point on.
 
