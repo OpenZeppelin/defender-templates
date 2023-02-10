@@ -16,7 +16,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
 
 ### Relay API Keys
 
-(Currently, only Ethereum Mainnet and Goerli networks are supported by this script)
+(Currently, only Ethereum Mainnet and Goerli Testnet networks are supported by this script)
 
 - In your [Defender account](https://defender.openzeppelin.com/), select the **◎ Relay** link on the upper left side to get to the Relay Dashboard
 - If you do not have a Relay on the network that you want to deploy to, create one:
