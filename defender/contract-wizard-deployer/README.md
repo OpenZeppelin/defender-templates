@@ -88,7 +88,7 @@ To get CLI help for any of the tasks, run `yarn run deploy -- help <task>` and i
 - Strings in an array will use both quotes (`'[1,"token"]'`)
 - Example of passing 3 arguments (`1 "token" '[1,"token"]'`)
 
-### Deploying an individual contract
+### Deploying an Individual Contract
 
 Deploy any individual contract to Ethereum Mainnet or Goerli Testnet network and add the deployed contracts to Defender Admin.
 
