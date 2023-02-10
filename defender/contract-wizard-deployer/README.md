@@ -36,7 +36,7 @@ In the `defender/contract-wizard-deployer` directory, perform the following step
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
   - Modify the four lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API keys and secret keys, as indicated:
   - `defender-api-key: <API Key goes here>`
-  - `defender-api-secret: <API Secret goes here>`
+  - `defender-api-secret: <Secret key goes here>`
   - `relay-api-key: <Relay API Key goes here>`
   - `relay-api-secret: <Relay API Secret goes here>`
 - Change directories to the Contract Wizard Deployer
