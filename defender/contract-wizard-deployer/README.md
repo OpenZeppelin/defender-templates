@@ -63,7 +63,7 @@ contract-wizard-deployer/
 
 ## Limitations
 
-- Only supports Ethereum Mainnet and Goerli networks
+- Only supports Ethereum Mainnet and Goerli Testnet networks
 - Structs are not supported as a constructor argument
 
 ## General usage
