@@ -142,23 +142,20 @@ exports.handler = async function handler(autotaskEvent) {
     const layer1RelayerAddress = await signerL1.getAddress();
     const layer1RelayerBalance = await providerL1.getBalance(layer1RelayerAddress);
     // calculate allowance for gas costs
-    // depositEth() consumes about 92,000 units of gas, using 100,000 units as conservative estimate
+    // depositEth() consumes about 92,000 units of gas, using 100,000 units as a conservative estimate
     const gasPrice = await providerL1.getGasPrice();
     const transactionGasUnits = ethers.BigNumber.from('100000');
     const totalGas = gasPrice.mul(transactionGasUnits);
     const fundsAvailableToSend = amount.sub(totalGas);
 
     if (layer1RelayerBalance.lt(fundsAvailableToSend)) {
-      throw new Error('Relayer balance is too low to bridge specified amount, please load funds');
+      throw new Error('L1 Relayer balance is too low to bridge specified amount, please load funds');
     } else {
       // maxSubmissionCost set to .001 ether as first parameter
       const maxSubmissionCost = ethers.utils.parseUnits('0.001', 'ether');
       await bridgeContract.depositEth(maxSubmissionCost, { value: amount });
     }
   }
-
-  // get balance of relayer - return BigNumber
-  const relayerBalance = await providerL2.getBalance(layer2RelayerAddress);
 
   /* 
     Auto sweep funds from relayer on L2 to target layer2 wallet address.
@@ -167,16 +164,20 @@ exports.handler = async function handler(autotaskEvent) {
     It takes ~10 mintues for the initial bridge transfer from L1 EOA -> L2 EOA to confirm, 
     so we must run this autotask again to execute the sweep functionality 
   */
+
+  // get balance of relayer - returns BigNumber
+  const relayerBalance = await providerL2.getBalance(layer2RelayerAddress);
+
   if (relayerBalance.gt(0)) {
     // calculate allowance for gas costs
     // total amount of eth required to send a transaction = (gasLimit * gasPrice) + value
-    // Ether transfer consumes ~21,000 uints of gas, using 50,000 units as conservative estiamte
+    // Ether transfer consumes ~21,000 uints of gas, using 50,000 units as a conservative estimate
     const gasPrice = await providerL2.getGasPrice();
     const transactionGasUnits = ethers.BigNumber.from('50000');
     const totalGas = gasPrice.mul(transactionGasUnits);
     const amountToSend = relayerBalance.sub(totalGas);
     if (amountToSend.isNegative()) {
-      return 'Funds detected, but not enough to cover gas cost';
+      return 'Funds detected on L2 Relayer, but not enough to cover gas cost';
     }
     const tx = {
       to: layer2WalletAddress,
