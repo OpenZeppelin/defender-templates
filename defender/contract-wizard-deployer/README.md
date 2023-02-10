@@ -38,7 +38,7 @@ In the `defender/contract-wizard-deployer` directory, perform the following step
   - `defender-api-key: <API Key goes here>`
   - `defender-api-secret: <Secret key goes here>`
   - `relay-api-key: <Relay API Key goes here>`
-  - `relay-api-secret: <Relay API Secret goes here>`
+  - `relay-api-secret: <Relay Secret key goes here>`
 - Change directories to the Contract Wizard Deployer
   - `cd contract-wizard-deployer`
 - Run `yarn install` to install the necessary Node packages
