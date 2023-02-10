@@ -110,7 +110,7 @@ Examples:
 - `yarn run deploy -- contract --contract-name DemoGovernor --simulate "0x5FbDB2315678afecb367f032d93F642f64180aa3" "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"`
 - `yarn run deploy -- contract --contract-name DemoToken` **--Warning-- This is an actual deployment**
 
-### Deploying an Governance suite ([Token](https://docs.openzeppelin.com/contracts/4.x/governance#token), [Timelock](https://docs.openzeppelin.com/contracts/4.x/governance#timelock) and [Governor](https://docs.openzeppelin.com/contracts/4.x/governance#governor))
+### Deploying a Governance suite ([Token](https://docs.openzeppelin.com/contracts/4.x/governance#token), [Timelock](https://docs.openzeppelin.com/contracts/4.x/governance#timelock) and [Governor](https://docs.openzeppelin.com/contracts/4.x/governance#governor))
 
 Deploy the OpenZeppelin Governance Suite with the deployer (Defender Relay) set as proposer, executor, admin and owner of the deployed contracts. After deployment, tokens can manually be minted and roles reassigned as desired. All contracts are also added to Defender Admin.
 
