@@ -170,9 +170,9 @@ exports.handler = async function handler(autotaskEvent) {
   if (relayerBalance.gt(0)) {
     // calculate allowance for gas costs
     // total amount of eth required to send a transaction = (gasLimit * gasPrice) + value
-    // Ether transfer consumes ~21,000 uints of gas, using 50,000 units as a conservative estimate
+    // Ether transfer consumes ~21,000 uints of gas, using 200,000 units as a conservative estimate
     const gasPrice = await providerL2.getGasPrice();
-    const transactionGasUnits = ethers.BigNumber.from('50000');
+    const transactionGasUnits = ethers.BigNumber.from('200000');
     const totalGas = gasPrice.mul(transactionGasUnits);
     const amountToSend = relayerBalance.sub(totalGas);
     if (amountToSend.isNegative()) {
