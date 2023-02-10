@@ -136,8 +136,18 @@ exports.handler = async function handler(autotaskEvent) {
   // create instance of Arbitrum bridge contract to bridge funds
   const bridgeContract = new ethers.Contract(arbitrumBridgeAddress, arbitrumBridgeAbi, signerL1);
 
+  /* 
+    Get balance of L2 Relayer - returns ethers.BigNumber
+    Because bridging can take ~10 minutes to confirm, we do not want to bridge again
+    during these 10 minutes if the monitored L2 address is still below the threshold.
+    We want to check if the bridge funds are sitting in the L2 Relayer waiting to be
+    "swept" into the monitored L2 address
+  */
+  const relayerBalance = await providerL2.getBalance(layer2RelayerAddress);
+  const relayerAndMonitoredWalletBalance = relayerBalance.add(layer2WalletBalance)
+
   // bridge funds if below threshold
-  if (layer2WalletBalance.lt(threshold)) {
+  if (relayerAndMonitoredWalletBalance.lt(threshold)) {
     console.debug('Bridging funds to Arbitrum');
     const layer1RelayerAddress = await signerL1.getAddress();
     const layer1RelayerBalance = await providerL1.getBalance(layer1RelayerAddress);
@@ -164,8 +174,6 @@ exports.handler = async function handler(autotaskEvent) {
     so we must run this Autotask again to execute the sweep functionality.
   */
 
-  // get balance of Relayer - returns ethers.BigNumber
-  const relayerBalance = await providerL2.getBalance(layer2RelayerAddress);
 
   if (relayerBalance.gt(0)) {
     // calculate allowance for gas costs
