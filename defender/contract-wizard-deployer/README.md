@@ -43,7 +43,7 @@ In the `defender/contract-wizard-deployer` directory, perform the following step
   - `cd contract-wizard-deployer`
 - Run `yarn install` to install the necessary Node packages
 
-### Solidity files
+### Solidity Files
 
 Contracts can be created, modified and downloaded from OpenZeppelin's [Contracts Wizard](https://wizard.openzeppelin.com/). Hardhat assumes that the contract name will match the Solidity file name and the directory name. Example: MyContract will exist inside of a file called MyContract.sol, located in a folder called MyContract. These contract folders will be located in the `contract-wizard-deployer/contracts` directory.
 
