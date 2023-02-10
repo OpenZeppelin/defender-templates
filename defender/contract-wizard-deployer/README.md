@@ -4,7 +4,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
 
 ## Setup
 
-### Defender API Keys
+### Defender Account Setup
 
 - In your [Defender account](https://defender.openzeppelin.com/), select the Hamburger icon in the upper right corner and click on **Team API Keys**
 - In the Team API Keys screen, click **Create API Key**
