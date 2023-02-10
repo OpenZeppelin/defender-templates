@@ -10,7 +10,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
 - In the Team API Keys screen, click **Create API Key**
 - Make sure that the options for **Manage Proposals and Contracts** is selected (we do not make use of the **Manage Relayers**, **Manage Autotasks**, and **Manage Sentinels** options with this template)
 - Click **Save**
-- Copy your API key and Secret key to a local file (you will **NOT** be able to view your API secret again after this message box goes away)
+- Copy your API key and Secret key to a local file (you will **NOT** be able to view your Secret key again after this message box goes away)
 - Make sure that you really did copy your API key and Secret key to a local file
 - Check the box for **I’ve written down the secret key** and select **Close**
 
