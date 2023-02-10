@@ -68,7 +68,7 @@ contract-wizard-deployer/
 
 ## General usage
 
-These scripts utilizes Hardhat tasks. The command "`yarn run deploy --`" is an alias for "`yarn hardhat --config defender.hh.config.js`", either one can be used, but this guide will use `yarn run deploy --` from this point on.
+These scripts use Hardhat tasks. The command "`yarn run deploy --`" is an alias for "`yarn hardhat --config defender.hh.config.js`". Either command can be used, but this guide will use `yarn run deploy --` from this point on.
 
 Usage: `yarn run deploy -- <task> <arguments>`
 
