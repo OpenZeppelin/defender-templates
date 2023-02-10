@@ -25,7 +25,7 @@ As well as auxiliary resources such as:
 
 In order to orchestrate and monitor smart contracts, Defender will need to know addresses, chain IDs, and ABIs. 
 The best way to get ABIs compatible with Serverless is to:
-1. Copy `sample.env`, fill it with required secrets and source it
+1. `mv sample.env .env`, fill it with required secrets
 2. Place your contracts in the `/contracts` directory 
 3. Run `yarn compile`. This will populate the `./abi` directory 
 
