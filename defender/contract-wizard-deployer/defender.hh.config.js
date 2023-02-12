@@ -124,7 +124,6 @@ task('contract', 'Deploys contract')
   .addParam('contractName', 'Contract name')
   .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
   .addFlag('simulate', 'Only simulates the blockchain effects')
-  .addFlag('verify', 'Verifies contract on Etherscan')
   .addOptionalVariadicPositionalParam('constructorArgs', 'Constructor arguments')
   .setAction(async (taskArgs, hre) => {
     // Validate secrets and retrieve a provider and signer
@@ -274,7 +273,7 @@ task('governance', 'Deploys Token, Timelock and Governor contracts with Defender
   });
 
 // eslint-disable-next-line no-undef
-task('to-defender', 'Adds specified contract to Defender and verifies it on Etherscan')
+task('to-defender', 'Adds specified contract to Defender')
   .addParam('contractName', 'Contract name')
   .addParam('contractAddress', 'Address of deployed contract')
   .addParam('contractNetwork', 'Network that contract is deployed to')
