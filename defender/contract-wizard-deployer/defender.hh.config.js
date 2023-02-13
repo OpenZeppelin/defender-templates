@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 require('@nomicfoundation/hardhat-toolbox');
 
 const req = require('require-yml');
