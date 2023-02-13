@@ -50,6 +50,9 @@ This Autotask will periodically check a Governance contract for active proposals
 ### [Governance(GovernorCompatibilityBravo) Summary](defender/governance_bravo_summary/README.md)
 This Autotask will periodically check a GovernanceCompatibilityBravo contract for active proposals and display the current vote count, quorum threshold status, and remaining time to vote.
 
+### [Bridge Automation for Arbitrum Wallet Addresses](defender/bridge-automation/README.md)
+This Autotask will monitor for low funds on a specified address on Arbitrum and will automatically bridge funds from a wallet address on the L1 side (Ethereum Mainnet) to the L2 side (Arbitrum).
+
 ### [Contract Wizard Deployer](defender/contract-wizard-deployer/README.md)
 This Hardhat script enables developers to take Solidity files that are downloaded from Open Zeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
 
