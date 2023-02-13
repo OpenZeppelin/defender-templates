@@ -7,9 +7,7 @@ import 'hardhat-contract-sizer';
 import '@openzeppelin/hardhat-upgrades';
 import { task } from 'hardhat/config';
 import { deploy } from './scripts/deployContract';
-import * as dotenv from 'dotenv';
 import { transferToken } from './scripts/libraries/ERC721';
-dotenv.config({ path: __dirname + '/.env' });
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || 'https://eth-goerli.alchemyapi.io/v2/your-api-key';
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 // Your API key for Etherscan, obtain one at https://etherscan.io/

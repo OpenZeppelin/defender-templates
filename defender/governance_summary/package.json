@@ -14,7 +14,6 @@
     "defender-kvstore-client": "1.38.0",
     "defender-relay-client": "1.38.0",
     "defender-serverless": "1.0.3",
-    "dotenv": "16.0.3",
     "ethers": "5.7.2"
   },
   "devDependencies": {
