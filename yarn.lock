@@ -3434,7 +3434,7 @@ defender-sentinel-client@^1.31.1, defender-sentinel-client@^1.37.0:
     lodash "^4.17.19"
     node-fetch "^2.6.0"
 
-defender-serverless@^1.0.3:
+defender-serverless@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/defender-serverless/-/defender-serverless-1.0.3.tgz#8ea88003a06d9248e92857d33fe6d1a224d9748f"
   integrity sha512-P9Td0LIwyOjbpCerFggM2SiN6A9QCfiLvaSalbjIQr6o5sZRzbZvwWwHyLUoKYpdsY5bzqA7exO5hkF8CexqmA==
