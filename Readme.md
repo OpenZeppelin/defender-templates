@@ -38,8 +38,8 @@ This Autotask will check for proposal events that have been emitted by an [OpenZ
 If a proposal has been passed (has a state of Succeeded), then the Autotask will queue it in a Timelock (if a Timelock exists) or execute it directly (if no Timelock exists). If the proposal is already queued in a Timelock, the Autotask will check when the proposal can be executed (by checking the ETA value) and execute it if possible.
 
 ### [Monitor ERC721 transfers](defender/monitor-erc721-transfers/README.md)
-This simple template adds ability to monitor for ERC721 token transfers and send notifications.
-BY Default we send notifications in slack, however you are free to use your custom webhook as well 
+This simple template adds the ability to monitor for ERC721 token transfers and send notifications.
+By default we send notifications in slack, however you are free to use your own custom webhook as well.
 
 ### [Governance Alert](defender/governance_alert/README.md)
 This Autotask will monitor and alert on events emitted by a Governance contract.
