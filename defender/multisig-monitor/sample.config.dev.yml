@@ -1,0 +1,4 @@
+# Fill with your multisig address
+multisig-address: "0xD8f3Fe774A847fa2a57066b95b2D3725c0c78B8E"
+# Goerli or Mainnet
+network: "goerli"
