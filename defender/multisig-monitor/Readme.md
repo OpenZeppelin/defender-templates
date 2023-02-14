@@ -32,7 +32,7 @@ If there are events you don't want to be notified on just comment/remove them fr
 - Make sure that you really did copy your API key and Secret key to a local file
 - Check the box for **I’ve written down the secret key** and select **Close**
 
-### Deploy and test
+### Deploy and Test
 
 In the `defender` directory, perform the following steps:
 
