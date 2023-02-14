@@ -3,7 +3,7 @@ import { DefenderRelayProvider } from 'defender-relay-client/lib/ethers';
 import { vrfCoordinatorAddress, subscriptionId, threshold } from '../../config.dev.yml';
 import ABI from '../../../../abi/vrfCoordinator.json';
 
-//gets called once per block
+// gets called once per block
 export async function handler(event) {
   console.log('Starting autotask...');
   const thresholdInWei = ethers.utils.parseEther(threshold);
@@ -19,7 +19,7 @@ export async function handler(event) {
   if (balance.lt(thresholdInWei)) {
     console.log(`Balance is below threshold, emitting alert...`);
     const match = {
-      hash: payload.events[0].transaction.transactionHash, //The actual hash is not important. We won't need it in the autotask notification
+      hash: payload.events[0].transaction.transactionHash, // the actual hash is not important. We won't need it in the autotask notification
       metadata: {},
     };
     matches.push(match);
