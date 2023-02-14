@@ -5,17 +5,17 @@ frameworkVersion: "3"
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: "${self:custom.config.network}-fund-chainlink-subscription" #prepend network name to separate between networks
+  stackName: "${self:custom.config.network}-fund-chainlink-subscription" # prepend network name to separate between networks
   ssot: false
 
 custom:
-  secrets: ${file(../secrets.${self:provider.stage}.yml)}
-  config: ${file(../config.${self:provider.stage}.yml)}
-  addresses: ${file(./subscription-config.${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
+  addresses: ${file(./config.${self:provider.stage}.yml)}
 
 defender:
-  key: ${self:custom.secrets.keys.api}
-  secret: ${self:custom.secrets.keys.secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   low-balance:

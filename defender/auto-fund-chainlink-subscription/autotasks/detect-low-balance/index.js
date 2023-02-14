@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { DefenderRelayProvider } from 'defender-relay-client/lib/ethers';
-import { vrfCoordinatorAddress, subscriptionId, threshold } from '../../subscription-config.dev.yml';
+import { vrfCoordinatorAddress, subscriptionId, threshold } from '../../config.dev.yml';
 import ABI from '../../../../abi/vrfCoordinator.json';
 
 //gets called once per block
