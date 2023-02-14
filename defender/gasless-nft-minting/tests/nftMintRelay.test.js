@@ -1,5 +1,6 @@
 const { expect } = require("chai").use(require('chai-as-promised'));
 const { ethers } = require("hardhat");
+const { BigNumber } = ethers.utils;
 const { signMetaTxRequest } = require("../src/signer");
 const { relay } = require('../autotasks/relay');
 
@@ -16,43 +17,45 @@ describe("autotasks/relay", function () {
     this.deployer = this.accounts[0];
     this.relayer = this.accounts[1];
     this.user = this.accounts[2];
-    this.id = 1;
-    this.qty = 1;
-    this.data = 0x0;
+    this.id = ethers.BigNumber.from(1);
+    this.qty = ethers.BigNumber.from(0);
+    this.bnZero = ethers.BigNumber.from(0);
+    this.callData = 0x00;
   });
 
   it("mints an NFT via a standard tx", async function () {
-    const { nft, deployer, user, id, qty, data } = this;
+    const { nft, deployer, user, id, qty, callData, bnZero } = this;
 
-    await nft.mint(user.address, id, qty, data);
+    expect(await nft.balanceOf(user.address, id)).to.equal(bnZero);
+    await nft.mint(user.address, id, qty, callData);
     expect(await nft.owner()).to.equal(deployer.address);
     expect(await nft.balanceOf(user.address, id)).to.equal(qty);
   });
 
 
   it("mints an NFT via a meta-tx", async function () {
-    const { forwarder, nft, deployer, relayer, user, id, qty, data } = this;
+    const { forwarder, nft, deployer, relayer, user, id, qty, callData, bnZero } = this;
 
     const { request, signature } = await signMetaTxRequest(deployer.provider, forwarder, {
       from: deployer.address,
       to: nft.address,
-      data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, data]),
+      data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, callData]),
     });
 
     const whitelist = [nft.address]
+    expect(await nft.balanceOf(user.address, id)).to.equal(bnZero);
     await relay(forwarder.connect(relayer), request, signature, whitelist);
-
     expect(await nft.owner()).to.equal(deployer.address);
     expect(await nft.balanceOf(user.address, id)).to.equal(qty);
   });
 
   it("refuses to send to non-whitelisted address", async function () {
-    const { forwarder, nft, deployer, relayer, user, id, qty, data } = this;
+    const { forwarder, nft, deployer, relayer, user, id, qty, callData } = this;
 
     const { request, signature } = await signMetaTxRequest(deployer.provider, forwarder, {
       from: deployer.address,
       to: nft.address,
-      data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, data]),
+      data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, callData]),
     });
 
     const whitelist = [];
@@ -62,12 +65,12 @@ describe("autotasks/relay", function () {
   });
 
   it("refuses to send incorrect signature", async function () {
-    const { forwarder, nft, deployer, relayer, user, id, qty, data } = this;
+    const { forwarder, nft, deployer, relayer, user, id, qty, callData } = this;
 
     const { request, signature } = await signMetaTxRequest(deployer.provider, forwarder, {
       from: deployer.address,
       to: nft.address,
-      data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, data]),
+      data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, callData]),
       nonce: 5,
     });
 

@@ -179,9 +179,11 @@ task('sign', 'Signs a request using a Defender Autotask and Relay')
     } = await hre.run('verifySecrets', taskArgs);
 
     // Add data to the event object
-    event.body = {
-      address: recipientAddress,
-    } 
+    event.request = {
+      body: {
+        address: recipientAddress,
+      }
+    }
 
     // Use local autotask
     const result = await signerHandler(event);
