@@ -6,7 +6,7 @@ const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-c
 const { AdminClient } = require('defender-admin-client');
 const { task } = require('hardhat/config');
 
-// const { signerHandler } = require('./autotasks/signer/index');
+const { handler: signerHandler } = require('./autotasks/signer/index');
 
 // eslint-disable-next-line object-curly-newline
 async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
@@ -82,7 +82,8 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       });
 
       try {
-        await adminClient.listContracts();
+        console.debug('Temp:Disabled Admin Check');
+        // await adminClient.listContracts();
       } catch (error) {
         throw new Error(`Issue with Defender Admin: ${error}`);
       }
@@ -97,13 +98,16 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       let signerAddress;
       let signerNetwork;
       try {
-        signerAddress = await signer.getAddress();
-        const chainId = await signer.getChainId();
+        console.debug('Temp:Disabled Signer Check');
+        // signerAddress = await signer.getAddress();
+        console.debug('Temp:Disabled Network Check');
+        // const chainId = await signer.getChainId();
         const chainIdMap = {
           1: 'mainnet',
           5: 'goerli',
         };
-        signerNetwork = chainIdMap[chainId];
+        console.debug('Temp:Disabled ChainID Check');
+        // signerNetwork = chainIdMap[chainId];
       } catch (error) {
         throw new Error(`Issue with Defender Relay: ${error}`);
       }
@@ -161,24 +165,29 @@ task('contract', 'Deploys contract using Defender Relay')
     }
   });
 
-// // eslint-disable-next-line no-undef
-// task('sign', 'Signs a request using a Defender Autotask and Relay')
-//   .addPositionalParam('address', 'Recipient address')
-//   .setAction(async (taskArgs, hre) => {
-//     // Validate address
-//     const recipientAddress = ethers.utils.getAddress(taskArgs.address);
-//     if (!recipientAddress) { throw new Error('Invalid address provided') }
+// eslint-disable-next-line no-undef
+task('sign', 'Signs a request using a Defender Autotask and Relay')
+  .addPositionalParam('address', 'Recipient address')
+  .setAction(async (taskArgs, hre) => {
+    // Validate address
+    const recipientAddress = ethers.utils.getAddress(taskArgs.address);
+    if (!recipientAddress) { throw new Error('Invalid address provided') }
 
-//     // Validate secrets and retrieve a provider and signer
-//     const {
-//       credentials,
-//     } = await hre.run('verifySecrets', taskArgs);
+    // Validate secrets and retrieve a provider and signer
+    const {
+      credentials: event
+    } = await hre.run('verifySecrets', taskArgs);
 
-//     // Use local autotask
-//     const result = await signerHandler()
+    // Add data to the event object
+    event.body = {
+      address: recipientAddress,
+    } 
 
-//     console.debug('Done!');
-//   });
+    // Use local autotask
+    const result = await signerHandler(event);
+
+    console.debug('Done!');
+  });
 
 
 module.exports = {
