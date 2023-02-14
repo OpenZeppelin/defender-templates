@@ -12,20 +12,20 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@nomiclabs/hardhat-waffle": "2.0.1",
+    "@nomiclabs/hardhat-waffle": "2.0.5",
     "@openzeppelin/contracts": "4.4.1",
-    "chai": "4.3.0",
+    "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
-    "defender-autotask-client": "1.4.1",
-    "ethereum-waffle": "3.2.2",
-    "ethers": "5.0.30",
-    "hardhat": "2.0.8",
-    "eslint": "8.33.0",
+    "defender-autotask-client": "1.38.0",
+    "ethereum-waffle": "4.0.9",
+    "ethers": "5.7.2",
+    "hardhat": "2.12.7",
+    "eslint": "8.34.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.27.5"
   },
   "dependencies": {
-    "defender-relay-client": "1.3.1",
+    "defender-relay-client": "1.38.0",
     "eth-sig-util": "3.0.1",
     "require-yml": "2.0.0"
   }
