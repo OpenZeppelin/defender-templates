@@ -1,13 +1,13 @@
-# Monitor upgradable tokens
+# Monitor Upgradable Tokens
 
-This template deploys a Defender Sentinel and other necessary Defender resources to monitor for upgrades and trigger a Slack alert  
-It interacts with the following resources:  
-- [Contracts](../../contracts/underlying-upgradable-token/)  
-- [Scripts](../../scripts/underlying-upgradable-token/)  
+This template deploys a Defender Sentinel and other necessary Defender resources to monitor for upgrades. It will trigger a Slack alert
+if the monitored proxy address is upgraded. This template interacts with the following resources:  
+- [Contracts](../../contracts/underlying-upgradable-token/)
+- [Scripts](../../scripts/underlying-upgradable-token/)
 
 Config files:  
 - **addresses.{env}.yml**: Once deployed configure your proxy address [here](./addresses.dev.yml)
-- **helper-hardhat-config.ts**: Configure your proxy address [here](../../scripts/underlying-upgradable-token/helper-hardhat-config.ts)
+- **helper-hardhat-config.ts**: Configure your proxy address [here](../../scripts/helper-hardhat-config.ts)
 
 ## Deployment :rocket:
 :construction:  **Make sure to run all the commands from the root of the repo, unless otherwise specified.**  
