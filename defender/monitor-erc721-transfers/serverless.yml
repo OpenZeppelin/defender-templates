@@ -1,4 +1,4 @@
-service: my-service
+service: monitor-erc721-transfers
 configValidationMode: error
 frameworkVersion: '3'
 
@@ -20,7 +20,7 @@ resources:
       token:
         name: 'ERC721 Token'
         address: '${self:custom.config.token-address}'
-        network: '${self:custom.config.token-chain}'
+        network: '${self:custom.config.network}'
         # optional
         abi: ${file(../../abi/contracts/ERC721Mock.sol/ERC721Mock.json.abi)}
         # optional
@@ -35,9 +35,9 @@ resources:
 
     sentinels:
       erc721-ownership-monitor:
-        name: 'ERC721 token transfer monitor'
+        name: 'ERC721 Token Transfer Monitor'
         type: 'BLOCK'
-        network: '${self:custom.config.token-chain}'
+        network: '${self:custom.config.network}'
         abi: '${self:resources.Resources.contracts.token.abi}'
         conditions:
           event:
