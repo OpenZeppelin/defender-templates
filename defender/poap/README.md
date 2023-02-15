@@ -13,8 +13,7 @@ This data can be received in Defender autotasks and used to validate that attend
 
 Modify constants.js:
 Select correct `TOKEN_TYPE` and `TOKEN_ADDRESS` and `ERC1155ID` (for ERC1155 token mint);
-build: `yarn build`
-deploy: `sls deploy` 
+build and deploy: `yarn defender`
 
 Now you can log in to your defender account and copy webhook URL that can be used to mint tokens. Make sure relayer has funds and has mint permissions on the contract you are using! 
 
