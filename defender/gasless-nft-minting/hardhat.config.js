@@ -184,13 +184,15 @@ task('sign', 'Signs a request using a Defender Autotask and Relay')
         address: recipientAddress,
       }
     }
-
     // Use local autotask
     const result = await signerHandler(event);
 
-    console.debug('Done!');
+    // TODO: Output signature and results to screen or to file.
+    console.log(result);
   });
 
+// TODO: task: submit request signature to relay autotask
+// Idea: 'yarn sign | yarn relay' 
 
 module.exports = {
   solidity: {

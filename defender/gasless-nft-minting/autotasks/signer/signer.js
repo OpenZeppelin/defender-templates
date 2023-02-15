@@ -34,17 +34,20 @@ function getMetaTxTypeData(chainId, verifyingContract) {
 
 async function signTypedData(signer, from, data) {
   // If signer is a private key, use it to sign
-  if (typeof(signer) === 'string') {
+  if (typeof (signer) === 'string') {
     const privateKey = Buffer.from(signer.replace(/^0x/, ''), 'hex');
     return ethSigUtil.signTypedMessage(privateKey, { data });
   }
 
+  // TODO: If signer is actually a relay, then use:
+  // ref: https://docs.openzeppelin.com/defender/relay#signing-typed-data
+  // const signTypedDataResponse = await relayer.signTypedData({
+  //   domainSeparator,
+  //   hashStructMessage
+  // });
+
   // Otherwise, send the signTypedData RPC call
-  // Note that hardhatvm and metamask require different EIP712 input
-  const isHardhat = data.domain.chainId == 31337;
-  const [method, argData] = isHardhat
-    ? ['eth_signTypedData', data]
-    : ['eth_signTypedData_v4', JSON.stringify(data)]
+  const [method, argData] = ['eth_signTypedData_v4', JSON.stringify(data)];
   return await signer.send(method, [from, argData]);
 }
 
@@ -66,7 +69,7 @@ async function signMetaTxRequest(signer, forwarder, input) {
   return { signature, request };
 }
 
-module.exports = { 
+module.exports = {
   signMetaTxRequest,
   buildRequest,
   buildTypedData,

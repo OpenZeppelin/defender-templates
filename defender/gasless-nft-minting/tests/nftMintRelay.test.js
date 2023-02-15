@@ -1,7 +1,6 @@
 const { expect } = require("chai").use(require('chai-as-promised'));
 const { ethers } = require("hardhat");
-const { BigNumber } = ethers.utils;
-const { signMetaTxRequest } = require("../src/signer");
+const { signMetaTxRequest } = require("../autotasks/signer/signer");
 const { relay } = require('../autotasks/relay');
 
 async function deploy(name, ...params) {
