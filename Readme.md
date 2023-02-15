@@ -88,27 +88,7 @@ You can refer to the Serverless Plugin documentation, code, and example configur
 
 Autotasks are executed in a node 16 runtime with 256mb RAM and a 5-minute timeout. Code snippets are restricted to be smaller than 5mb in size.
 
-For ease of use, a [set of common dependencies are pre-installed in the environment](https://docs.openzeppelin.com/defender/autotasks#environment):
-```
-"@datadog/datadog-api-client": "^1.0.0-beta.5",
-"@gnosis.pm/safe-core-sdk": "^0.3.1",
-"@gnosis.pm/safe-ethers-adapters": "^0.1.0-alpha.3",
-"axios": "0.21.2",
-"axios-retry": "3.1.9",
-"defender-admin-client": "1.37.0-rc.2",
-"defender-autotask-client": "1.37.0-rc.2",
-"defender-autotask-utils": "1.34.0",
-"defender-kvstore-client": "1.37.0-rc.2",
-"defender-relay-client": "1.37.0-rc.2",
-"defender-sentinel-client": "1.37.0-rc.2",
-"ethers": "5.5.3",
-"fireblocks-sdk": "^2.3.2",
-"graphql": "^15.5.1",
-"graphql-request": "3.4.0",
-"web3": "1.3.6"
-```
-
-If you need to use any dependency not listed above, you can use a JavaScript module bundler such as [rollup](https://www.npmjs.com/package/rollup). Refer to `./defender/poap/` for an example of how to build a rollup for an Autotask and deploy it. 
+For ease of use, a [set of common dependencies are pre-installed in the autotask environment](https://docs.openzeppelin.com/defender/autotasks#environment). If you need to use any dependency not pre-installed, you can use a JavaScript module bundler such as [rollup](https://www.npmjs.com/package/rollup). Refer to `./defender/poap/` for an example of how to build a rollup for an Autotask and deploy it. 
 
 To learn more about how to use Autotasks, refer to the [Defender Autotask documentation](https://docs.openzeppelin.com/defender/autotasks). To understand what arguments are passed to the main Autotask function, refer to the [Autotask type definitions](https://github.com/OpenZeppelin/defender-client/blob/ebfb74c29a3cb6509d32919c7a9ff6bfba6f24eb/packages/autotask-utils/src/types.ts)
 
