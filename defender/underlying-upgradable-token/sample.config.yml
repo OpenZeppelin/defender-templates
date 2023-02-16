@@ -1,2 +1,4 @@
 # Fill with your proxy address
 proxy-address: "0x6a6fc4F758c3C0862e02459a13424ec707d5E1Cf"
+# Available networks to monitor: https://github.com/OpenZeppelin/defender-serverless/blob/main/src/types/docs/definitions-definitions-relayer.md#network-constraints
+network: 'goerli'
