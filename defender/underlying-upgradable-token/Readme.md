@@ -9,7 +9,7 @@ if the monitored proxy address is upgraded. This template interacts with the fol
 - **addresses.{env}.yml**: Once deployed configure your proxy address [here](./addresses.dev.yml)
 - **helper-hardhat-config.ts**: Configure your proxy address [here] -->
 
-### Environemnt Variables Setup For Goerli Testnet
+### Environment Variables Setup For Goerli Testnet
 
 -  In the root directory, create an `.env` file with the following fields:
 - `GOERLI_RPC_URL: <RPC URL goes here>`
@@ -44,13 +44,13 @@ In the `defender` directory, perform the following steps:
   - Open the file and modify the following value:
     - `proxy-address` (fill in your proxy address here once your upgradable proxy is upgraded following the steps below)
     - `network`
-- In your `helper-hardhat-config.ts` [file](../../scripts/helper-hardhat-config.ts), configure your proxy address.
+- In your `helper-hardhat-config.ts` [file](../../scripts/helper-hardhat-config.ts), configure your proxy address (this will be done after deploying the proxy contract).
   - We will be using Goerli Testnet to test, so make sure the `proxyAddress` field under Goerli is filled in with your proxy address (after the proxy is deployed).
 
 
 :construction:  **Make sure to run all the commands from the root of the repo, unless otherwise specified.**  
 
-1. Deploy an upgradable token on Goerli (run command from root of the repo):
+1. Deploy an upgradable token on Goerli (run command from the root of the repo):
 ```sh
 $ yarn hardhat run scripts/underlying-upgradable-token/deploy-upgradable-token.ts --network goerli
 ```
