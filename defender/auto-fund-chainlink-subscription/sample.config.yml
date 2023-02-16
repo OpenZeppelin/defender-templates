@@ -1,8 +1,14 @@
-# vrfCoordinatorV2 address on Goerli Testnet
+# vrfCoordinatorV2 address
+# 0x271682DEB8C4E0901D1a1550aD2e64D568E69909 - Ethereum Mainnet address
+# 0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D - Goerli Testnet address
 vrfCoordinatorAddress: "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D"
-# LINK address on Goerli Testnet
+# LINK address
+# 0x514910771AF9Ca656af840dff83E8264EcF986CA - Ethereum Mainnet address
+# 0x326C977E6efc84E512bB9C30f76E30c160eD06FB - Goerli Testnet address
 linkAddress: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
 # WETH address on Goerli Testnet
+# 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2 - Ethereum Mainnet address
+# 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 - Goerli Testnet address
 wethAddress: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
 # Update with your Chainlink subscription id
 subscriptionId: 9893
@@ -10,5 +16,5 @@ subscriptionId: 9893
 threshold: "10"
 # Amount of LINK to add to your subscription
 fundAmount: "2"
-# Network to fund Chainlink subscription (mainnet or goerli)
+# Network to fund Chainlink subscription (Mainnet or Goerli)
 network: "goerli"
