@@ -5,14 +5,11 @@ const tokenAddressSecretName = `${stackName}_TOKEN_ADDRESS`;
 
 const ethers = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
-const ERC1155Abi = ['function mint(address to, uint256 id, uint256 amount)'];
+const ERC1155Abi = ['function mint(address account, uint256 id, uint256 amount, bytes data)'];
+const ERC1155AbiV2 = ['function mint(address to, uint256 id, uint256 amount)'];
 const ERC721Abi = ['function safeMint(address to)'];
 const ERC20Abi = ['function mint(address to, uint256 amount)'];
 
-const TokenTypeEnum = { ERC20: 0, ERC721: 1, ERC1155: 2 };
-const TOKEN_TYPE = TokenTypeEnum.ERC721;
-const ERC1155ID = '1';
-const TOKEN_ADDRESS = '0x0000000000000000000000000000000000000000';
 const domain = { name: 'OpenZeppelin POAP Autotask', version: '1', chainId: '5' };
 const types = {
   attendee: [
@@ -27,8 +24,10 @@ exports.handler = async function (event) {
   if (!secrets) { throw new Error('secrets undefined'); }
 
   const tokenType = secrets[tokenTypeSecretName];
-  const nftId = secrets[nftIdSecretName];
   const tokenAddress = secrets[tokenAddressSecretName];
+  // ERC1155 Specific data
+  const nftId = secrets[nftIdSecretName];
+  const nftData = 0x00;
 
   if (typeof tokenType !== 'string') { throw new Error('Token type not specified') }
   if (!ethers.utils.getAddress(tokenAddress)) { throw new Error('Valid token address not specified') };
@@ -60,19 +59,25 @@ exports.handler = async function (event) {
     let tx;
     if (tokenType.match(erc20)) {
       const abi = ERC20Abi;
-      const contract = new ethers.Contract(TOKEN_ADDRESS, abi, signer);
+      const contract = new ethers.Contract(tokenAddress, abi, signer);
       tx = await contract.mint(address, '1');
       console.log('Minted ERC20 token with tx:', tx.hash);
     }
     if (tokenType.match(erc1155)) {
-      const abi = ERC1155Abi;
-      const contract = new ethers.Contract(TOKEN_ADDRESS, abi, signer);
-      tx = await contract.mint(address, ERC1155ID, '1');
+      const contract = new ethers.Contract(tokenAddress, ERC1155Abi, signer);
+      const contractV2 = new ethers.Contract(tokenAddress, ERC1155AbiV2, signer);
+      let tx;
+      try {
+        // Depending on which contract was used, the mint function might require 3 or 4 parameters
+        tx = await contract.mint(address, nftId, '1', nftData);
+      } catch (error) {
+        tx = await contractV2.mint(address, nftId, '1');
+      }
       console.log('Minted ERC1155 token with tx:', tx.hash);
     }
     if (tokenType.match(erc721)) {
       const abi = ERC721Abi;
-      const contract = new ethers.Contract(TOKEN_ADDRESS, abi, signer);
+      const contract = new ethers.Contract(tokenAddress, abi, signer);
       tx = await contract.safeMint(address);
       console.log('Minted ERC721 token with tx:', tx.hash);
     }

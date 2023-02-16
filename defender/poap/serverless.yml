@@ -18,7 +18,7 @@ defender:
 functions:
   poap-autotask:
     name: 'POAP minter'
-    path: './autotasks/mint-poap/dist'
+    path: './autotasks/mint-poap'
     trigger:
       type: 'webhook'
     paused: false
@@ -29,6 +29,12 @@ resources:
     policies:
       policy-1:
         eip1559-pricing: true
+
+    secrets:
+      stack:
+        TOKEN_TYPE: ${self:custom.config.tokenType}
+        NFT_ID: ${self:custom.config.nftId}
+        TOKEN_ADDRESS: ${self:custom.config.tokenAddress}
 
     relayers:
       relayer-1:
