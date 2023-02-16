@@ -5,10 +5,6 @@ if the monitored proxy address is upgraded. This template interacts with the fol
 - [Contracts](../../contracts/underlying-upgradable-token/)
 - [Scripts](../../scripts/underlying-upgradable-token/)
 
-<!-- Config files:  
-- **addresses.{env}.yml**: Once deployed configure your proxy address [here](./addresses.dev.yml)
-- **helper-hardhat-config.ts**: Configure your proxy address [here] -->
-
 ### Environment Variables Setup For Goerli Testnet
 
 -  In the root directory, create an `.env` file with the following fields:
