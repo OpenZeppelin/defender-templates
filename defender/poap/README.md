@@ -1,13 +1,6 @@
-## POAP Mint with Autotask Defender
+## POAP Minting with Autotask Defender
 
-This template will allow you to create simple POAP minting application quickly. 
-
-The only required action from client is to sign a message, in order to validate his ownership over an address. 
-
-When requesting a POAP mint, client can provide in request some details such as name of attendee, his contact details etc - can be pretty much anything. 
-
-This data can be received in Defender autotasks and used to validate that attendee is legit and/or can be forwarded to CMS.
-
+This code is a template for creating an ERC-1155 POAP (Proof of Attendance Protocol) minting application. The client must sign a message to prove their ownership of an address. The client can provide additional information such as their name, contact details, etc. in the request for the POAP mint. This data can then be used to verify that the attendee is legitimate and/or forwarded to a CMS (content management system). After the request is validated, it can be minted by the Defender Relayer.
 
 ### Setup
 
@@ -16,13 +9,13 @@ Select correct `TOKEN_TYPE` and `TOKEN_ADDRESS` and `ERC1155ID` (for ERC1155 tok
 build: `yarn build`
 deploy: `sls deploy` 
 
-Now you can log in to your defender account and copy webhook URL that can be used to mint tokens. Make sure relayer has funds and has mint permissions on the contract you are using! 
+Now you can log in to your defender account and copy webhook URL that can be used to mint tokens. Make sure the Relayer has funds and has mint permissions on the contract you are using! 
 
 To ease signature generation there is helper script available:
 
 from root of repo `yarn ts-node scripts/signPOAPMessage.ts --name <AttendeeName>`
 
-We encorauge you to experiment with this template, having address and attendee name or another details in autotasks you can forward them to your hubspot/backend and/or implement verification logic! 
+We encourage you to experiment with this template, having address and attendee name or another details in Autotasks you can forward them to your hubspot/backend and/or implement verification logic! 
 
 Example of request body:
 
