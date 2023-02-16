@@ -25,8 +25,9 @@ exports.handler = async function (event) {
 
   const tokenType = secrets[tokenTypeSecretName];
   const tokenAddress = secrets[tokenAddressSecretName];
+  const nftQty = ethers.BigNumber.from(1);
   // ERC1155 Specific data
-  const nftId = secrets[nftIdSecretName];
+  const nftId = ethers.BigNumber.from(secrets[nftIdSecretName]);
   const nftData = 0x00;
 
   if (typeof tokenType !== 'string') { throw new Error('Token type not specified') }
@@ -62,25 +63,26 @@ exports.handler = async function (event) {
       const contract = new ethers.Contract(tokenAddress, abi, signer);
       tx = await contract.mint(address, '1');
       console.log('Minted ERC20 token with tx:', tx.hash);
-    }
-    if (tokenType.match(erc1155)) {
+    } else if (tokenType.match(erc1155)) {
       const contract = new ethers.Contract(tokenAddress, ERC1155Abi, signer);
       const contractV2 = new ethers.Contract(tokenAddress, ERC1155AbiV2, signer);
       let tx;
       try {
         // Depending on which contract was used, the mint function might require 3 or 4 parameters
-        tx = await contract.mint(address, nftId, '1', nftData);
+        tx = await contract.mint(address, nftId, nftQty, nftData);
       } catch (error) {
-        tx = await contractV2.mint(address, nftId, '1');
+        tx = await contractV2.mint(address, nftId, nftQty);
       }
       console.log('Minted ERC1155 token with tx:', tx.hash);
-    }
-    if (tokenType.match(erc721)) {
+    } else if (tokenType.match(erc721)) {
       const abi = ERC721Abi;
       const contract = new ethers.Contract(tokenAddress, abi, signer);
       tx = await contract.safeMint(address);
       console.log('Minted ERC721 token with tx:', tx.hash);
+    } else {
+      throw new Error('Token Type is not erc20, erc721, nor erc1155')
     }
+    
     if (tx?.hash) return tx.hash;
   } else {
     return 'Signature mismatch';
