@@ -1,4 +1,4 @@
-service: defender-serverless-template
+service: multisig-monitor
 configValidationMode: error
 frameworkVersion: "3"
 
@@ -11,7 +11,6 @@ provider:
 custom:
   secrets: ${file(../.secrets/${self:provider.stage}.yml)}
   config: ${file(./config.${self:provider.stage}.yml)}
-  addresses: ${file(./config.${self:provider.stage}.yml)}
 
 defender:
   key: ${self:custom.secrets.keys.defender-api-key}
@@ -25,7 +24,7 @@ resources:
         type: "BLOCK"
         network: "${self:custom.config.network}"
         addresses:
-          - "${self:custom.addresses.multisig-address}"
+          - "${self:custom.config.multisig-address}"
         abi: ${file(../../abi/Safe.json.abi)}
         paused: false
         autotask-condition: null

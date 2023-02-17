@@ -20,7 +20,7 @@ This template deploys a Defender Sentinel and other necessary Defender resources
 - SafeSetup(address,address[],uint256,address,address)
 - SafeModuleTransaction(address,address,uint256,bytes,uint8)
 
-If there are events you don't want to be notified on just comment/remove them from [serverless.yml](./serverless.yml)
+If there are events you don't want to be notified on, just comment/remove them from [serverless.yml](./serverless.yml)
 
 ## Defender Account Setup
 
@@ -38,7 +38,7 @@ In the `defender` directory, perform the following steps:
 
 - A secrets file can be created for each stage of production. We will create one for development
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
-  - Modify the lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API key and Secret key, as indicated:
+  - Modify the lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` as indicated:
   - `defender-api-key: <API Key goes here>`
   - `defender-api-secret: <Secret Key goes here>`
   - `slack-webhook: <SLACK webhook goes here>`
@@ -53,7 +53,7 @@ In the `defender` directory, perform the following steps:
 
 To test this part, [spin up a new multisig](https://help.gnosis-safe.io/en/articles/3876461-creating-a-safe-on-a-web-browser) or use an existing one that you control.
 
-1. Paste your multisig address in the `config.dev.yml` file. This will indicate to the sentinel the address that should be monitored. Now deploy the sentinel by deploying the serverless template
+1. Paste your multisig address in the `config.dev.yml` file. This will indicate to the Sentinel the address that should be monitored. Now deploy the Sentinel by deploying the serverless template:
 
     ````sh
         $ serverless deploy
