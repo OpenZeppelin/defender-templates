@@ -13,7 +13,7 @@ During the first run of the Autotask, it will scan from block zero to the latest
 - In the Team API Keys screen, click **Create API Key**
 - Make sure that the options for **Manage Relayers**, **Manage Autotasks**, and **Manage Sentinels** are selected (we do not make use of the **Manage Proposals and Contracts** option)
 - Click **Save**
-- Copy your API key and Secret key to a local file (you will **NOT** be able to view your API secret again after this message box goes away)
+- Copy your API key and Secret key to a local file (you will **NOT** be able to view your Secret key again after this message box goes away)
 - Make sure that you really did copy your API key and Secret key to a local file
 - Check the box for **I’ve written down the secret key** and select **Close**
 
@@ -24,9 +24,9 @@ In the `defender` directory, perform the following steps:
 - Run `yarn install` to install the necessary Node packages
 - A secrets file can be created for each stage of production. We will create one for development
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
-  - Modify the two lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API key and secret key, as indicated:
+  - Modify the two lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API key and Secret key, as indicated:
   - `defender-api-key: <API Key goes here>`
-  - `defender-api-secret: <API Secret goes here>`
+  - `defender-api-secret: <Secret Key goes here>`
 - Change directories to the stack that will be deployed
   - `cd governance_bravo_summary`
 - A config file can be created for each stage of production. We will create one for development
@@ -34,5 +34,6 @@ In the `defender` directory, perform the following steps:
   - Open the file and modify the following values:
     - `governance_address` 
     - `autotask_run_frequency`
+    - `monitored-network`
 - Run `serverless deploy --stage dev` to deploy the stack to Defender
 - Watch for logs to appear in your Defender account.  Log into your Defender account and click on the `Governance Bravo Summary` Autotask.
