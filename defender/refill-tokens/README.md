@@ -1,6 +1,6 @@
 # Refill tokens template
 
-Takes some address that is being monitored for some particular token balance on scheduled time basis. If balance is below value defined as maximum, autotask will attempt to refill address with that token.
+Takes some address that is being monitored for some particular token balance on a scheduled time basis. If the balance is below a value defined as maximum, the Autotask will attempt to top-up the address with that token.
 
 ## Setting up
 1. Setup secrets in `../.secrets/dev.yml`
