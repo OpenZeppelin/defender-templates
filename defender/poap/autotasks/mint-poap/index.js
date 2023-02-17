@@ -40,6 +40,7 @@ exports.handler = async function (event) {
   if (!signature) { throw new Error('Signature not specified in request') };
   if (!message) { throw new Error('Message not specified in request') };
 
+  const formattedAddress = ethers.utils.getAddress(address);
   const provider = new DefenderRelayProvider(event);
   const signer = new DefenderRelaySigner(event, provider, {
     speed: 'fast',
@@ -61,7 +62,7 @@ exports.handler = async function (event) {
     if (tokenType.match(erc20)) {
       const abi = ERC20Abi;
       const contract = new ethers.Contract(tokenAddress, abi, signer);
-      tx = await contract.mint(address, '1');
+      tx = await contract.mint(formattedAddress, '1');
       console.log('Minted ERC20 token with tx:', tx.hash);
     } else if (tokenType.match(erc1155)) {
       const contract = new ethers.Contract(tokenAddress, ERC1155Abi, signer);
@@ -69,15 +70,16 @@ exports.handler = async function (event) {
       let tx;
       try {
         // Depending on which contract was used, the mint function might require 3 or 4 parameters
-        tx = await contract.mint(address, nftId, nftQty, nftData);
+        tx = await contract.mint(formattedAddress, nftId, nftQty, nftData);
       } catch (error) {
-        tx = await contractV2.mint(address, nftId, nftQty);
+        console.log(`First attempt failed with error: ${error}`)
+        tx = await contractV2.mint(formattedAddress, nftId, nftQty);
       }
       console.log('Minted ERC1155 token with tx:', tx.hash);
     } else if (tokenType.match(erc721)) {
       const abi = ERC721Abi;
       const contract = new ethers.Contract(tokenAddress, abi, signer);
-      tx = await contract.safeMint(address);
+      tx = await contract.safeMint(formattedAddress);
       console.log('Minted ERC721 token with tx:', tx.hash);
     } else {
       throw new Error('Token Type is not erc20, erc721, nor erc1155')

@@ -41,7 +41,7 @@ In the `defender` directory, perform the following steps:
 
 ### Contract Was Deployed with Defender
 
-If the contract was deployed with Defender, then we can simply use the same Relayer (current owner of the contract) to handle the minting of the NFTs.
+If the contract was deployed with Defender, then we can simply use the same Relayer (current owner of the contract) to handle the minting of the NFTs. The Relayer must be reconnected after each deployment.
 
 - In your [Defender account](https://defender.openzeppelin.com/)
 - Click on the **Autotask** link on the left side

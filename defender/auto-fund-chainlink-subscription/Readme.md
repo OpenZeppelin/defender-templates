@@ -1,12 +1,12 @@
 # Auto fund Chainlink Subscription when funds are low
 
-[Chainlink VRF](https://docs.chain.link/vrf/v2/introduction) is one of the most popular options for achieving provable randomness in a blockchain. It can be used for raffles, gaming and other use cases.  
+[Chainlink VRF](https://docs.chain.link/vrf/v2/introduction) is one of the most popular options for achieving provable randomness in a blockchain. It can be used for raffles, gaming, and other use cases.  
 In order to fulfill randomness requests from your smart contracts, you need to have LINK in your subscription.
-We use Defender to observe when funds are low on a Chainlink subscription and use an Autotask to take ETH from a Relayer, swap it for LINK on UniswapV3 and fund the subscription. This process is all done automatically.
+We use Defender to observe when funds are low on a Chainlink subscription and use an Autotask to take ETH from a Relayer, swap it for LINK on UniswapV3, and fund the subscription. This process is all done automatically.
 
 ## Prerequisites
 
-In order to setup this template, you need a Chainlink subscription and some ETH in your relayer.
+In order to set up this template, you need a Chainlink subscription and some ETH in your relayer.
 1. If you don't have a Chainlink subscription, create one following this [guide](https://docs.chain.link/vrf/v2/subscription/)
 2. Get some Goerli ETH from a faucet such as [this](https://goerlifaucet.com/). After deploying your relayer, you will need to send it some ETH so that it can be later swapped for LINK and fund the subscription.
 
@@ -23,7 +23,7 @@ In order to setup this template, you need a Chainlink subscription and some ETH 
 
 ## Deployment Setup :rocket:
 
-This template uses external dependencies, so we will use [Rollup](https://rollupjs.org/guide/en/#introduction) to bundle those dependencies inside our Javascript autotasks. We also leverage the [yaml plugin](https://github.com/rollup/plugins/tree/master/packages/yaml) to define parameters in a central location and reuse them in our serverless template and both autotasks.
+This template uses external dependencies, so we will use [Rollup](https://rollupjs.org/guide/en/#introduction) to bundle those dependencies inside our Javascript Autotasks. We also leverage the [yaml plugin](https://github.com/rollup/plugins/tree/master/packages/yaml) to define parameters in a central location and reuse them in our serverless template and both Autotasks.
 
 In the `defender` directory, perform the following steps:
 
