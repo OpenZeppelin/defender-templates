@@ -35,4 +35,4 @@ In the `defender` directory, perform the following steps:
     - `governance_address` 
     - `autotask_run_frequency`
 - Run `serverless deploy --stage dev` to deploy the stack to Defender
-- Watch for logs to appear in your Defender account.  Log into your Defender account, click on the `Governance Bravo Summary` Autotask.
+- Watch for logs to appear in your Defender account.  Log into your Defender account and click on the `Governance Bravo Summary` Autotask.

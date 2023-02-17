@@ -84,23 +84,14 @@ A participant will be required to sign a message using the private key associate
 From the root of this repo:
 
 - Create/modify the `.env` file
-- Add `PRIVATE_KEY=<YOUR_PRIVATE_KEY>` to the file. Replacing the `<>` text with the private key of the account that will be receiving the POAP NFT.
-- Run `yarn ts-node scripts/signPOAPMessage.ts --name <AttendeeName>` to generate a signature
-- Fill in the request below with your actual address, name, and signature
-```JSON
-{
-  "address": "0xRECIPIENT_ADDRESS",
-  "signature": "0xVERY_LONG_SIGNATURE_STRING",
-  "message": { "name": "MyName", "wallet": "0xRECIPIENT_ADDRESS" }
-}
-```
+- Add `PRIVATE_KEY=<YOUR_PRIVATE_KEY>` to the file. Replacing the `<>` text with the private key of the account that will be receiving the POAP NFT
+- Run `yarn ts-node scripts/signPOAPMessage.ts --name <AttendeeName> --chainId 5` to generate a signature for Goerli Testnet (chain id 5)
 
 ### Submitting the request
-The JSON that you created above will need to be POSTed to the Autotask webhook URL. This can be done with a simple script or with curl:
-
+The JSON that you created above will need to be POSTed to the Autotask webhook URL. This can be done with a simple script or with curl. Replace the URL with your Autotask webhook URL
 ```js
-curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/xxxx
-   -H 'Content-Type: application/json' 
+curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/xxxx \
+   -H 'Content-Type: application/json' \
    -d '{
   "address": "0xRECIPIENT_ADDRESS",
   "signature": "0xVERY_LONG_SIGNATURE_STRING",

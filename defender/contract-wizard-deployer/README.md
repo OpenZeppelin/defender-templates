@@ -22,7 +22,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
 - If you do not have a Relay on the network that you want to deploy to, create one:
   - In the Relay Dashboard screen, click **Create Relayer** in the upper right corner
   - Pick a meaningful name, choose the network that you want to deploy to, and click **Create**
-- Click on the the existing Relay that you would like to use for deployments
+- Click on the existing Relay that you would like to use for deployments
 - Click on the settings gear/cog **⚙** at the top middle and choose **+ Create new API key**
 - Copy your Ethereum Address, API key, and Secret key to a local file (you will **NOT** be able to view your Secret key again after this message box goes away)
 - Make sure that you really did copy your API key and Secret key to a local file
@@ -45,7 +45,7 @@ In the `defender/contract-wizard-deployer` directory, perform the following step
 
 ### Solidity Files
 
-Contracts can be created, modified and downloaded from OpenZeppelin's [Contracts Wizard](https://wizard.openzeppelin.com/). Hardhat assumes that the contract name will match the Solidity file name and the directory name. Example: MyContract will exist inside of a file called MyContract.sol, located in a folder called MyContract. These contract folders will be located in the `contract-wizard-deployer/contracts` directory.
+Contracts can be created, modified, and downloaded from OpenZeppelin's [Contracts Wizard](https://wizard.openzeppelin.com/). Hardhat assumes that the contract name will match the Solidity file name and the directory name. Example: MyContract will exist inside of a file called MyContract.sol, located in a folder called MyContract. These contract folders will be located in the `contract-wizard-deployer/contracts` directory.
 
 ```text
 contract-wizard-deployer/
@@ -111,9 +111,9 @@ Examples:
 - `yarn run deploy contract --contract-name DemoGovernor --simulate "0x5FbDB2315678afecb367f032d93F642f64180aa3" "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"`
 - `yarn run deploy contract --contract-name DemoToken` **--Warning-- This is an actual deployment**
 
-### Deploying a Governance suite ([Token](https://docs.openzeppelin.com/contracts/4.x/governance#token), [Timelock](https://docs.openzeppelin.com/contracts/4.x/governance#timelock) and [Governor](https://docs.openzeppelin.com/contracts/4.x/governance#governor))
+### Deploying a Governance suite ([Token](https://docs.openzeppelin.com/contracts/4.x/governance#token), [Timelock](https://docs.openzeppelin.com/contracts/4.x/governance#timelock), and [Governor](https://docs.openzeppelin.com/contracts/4.x/governance#governor))
 
-Deploy the OpenZeppelin Governance Suite with the deployer (Defender Relay) set as proposer, executor, admin and owner of the deployed contracts. After deployment, tokens can manually be minted and roles reassigned as desired. All contracts are also added to Defender Admin.
+Deploy the OpenZeppelin Governance Suite with the deployer (Defender Relay) set as proposer, executor, admin, and owner of the deployed contracts. After deployment, tokens can manually be minted and roles reassigned as desired. All contracts are also added to Defender Admin.
 
 - `yarn run deploy governance <arguments>` - General usage
 - `yarn run deploy help governance` - View help information in CLI
