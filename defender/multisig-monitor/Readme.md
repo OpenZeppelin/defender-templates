@@ -1,6 +1,6 @@
 # Multisig Monitor
 
-This template deploys a Defender Sentinel and other necessary Defender resources to monitor for all events on a Safe multisig.
+This template deploys a Defender Sentinel and other necessary Defender resources to monitor all events on a Safe multisig.
 
 - ChangedThreshold(uint256)
 - AddedOwner(address)
@@ -20,7 +20,7 @@ This template deploys a Defender Sentinel and other necessary Defender resources
 - SafeSetup(address,address[],uint256,address,address)
 - SafeModuleTransaction(address,address,uint256,bytes,uint8)
 
-If there are events you don't want to be notified on, just comment/remove them from [serverless.yml](./serverless.yml)
+If there are events you don't want to be notified of, just comment/remove them from [serverless.yml](./serverless.yml)
 
 ## Defender Account Setup
 
@@ -42,13 +42,13 @@ In the `defender` directory, perform the following steps:
   - `defender-api-key: <API Key goes here>`
   - `defender-api-secret: <Secret Key goes here>`
   - `slack-webhook: <SLACK webhook goes here>`
-  - Note that by default, we are sending notifications in slack, however you are free to use your own custom webhooks as well.
+  - Note that by default, we are sending notifications in slack, however, you are free to use your own custom webhooks as well.
 - Change directories to the stack that will be deployed
   - `cd multisig-monitor`
 - A config file can be created for each stage of production. We will create one for development
   - Copy and rename `sample.config.yml` to `config.dev.yml`
   - Open the file and modify the following values:
-    - `multisig-address` (instructions below on how to setup a multisig)
+    - `multisig-address` (instructions below on how to set up a multisig)
     - `network`
 
 To test this part, [spin up a new multisig](https://help.gnosis-safe.io/en/articles/3876461-creating-a-safe-on-a-web-browser) or use an existing one that you control.

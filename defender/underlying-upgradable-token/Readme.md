@@ -32,7 +32,7 @@ In the `defender` directory, perform the following steps:
     - `defender-api-secret: <Secret key goes here>`
     - `slack-webhook: <SLACK webhook goes here>`
     - `email-address: <EMAIL address goes here>`
-    - Note that by default, we are sending notifications in slack, however you are free to use your custom webhook as well.
+    - Note that by default, we are sending notifications in slack, however, you are free to use your custom webhook as well.
 - Change directories to the stack that will be deployed
   - `cd underlying-upgradable-token`
 - A configuration file can be created for each stage of production. We will create one for development:
@@ -46,7 +46,7 @@ In the `defender` directory, perform the following steps:
 
 :construction:  **Make sure to run all the commands from the root of the repo, unless otherwise specified.**  
 
-1. Deploy an upgradable token on Goerli (run command from the root of the repo):
+1. Deploy an upgradable token on Goerli (run the command from the root of the repo):
 ```sh
 $ yarn hardhat run scripts/underlying-upgradable-token/deploy-upgradable-token.ts --network goerli
 ```
@@ -59,7 +59,7 @@ $ yarn hardhat run scripts/underlying-upgradable-token/deploy-upgradable-token.t
 $ serverless deploy
 ```
 
-3. Upgrade token to V2 (run command from the root of the repo). This should trigger the alert :rotating_light:
+3. Upgrade token to V2 (run the command from the root of the repo). This should trigger the alert :rotating_light:
 ```sh
 $ yarn hardhat run scripts/underlying-upgradable-token/upgrade-token.ts --network goerli
 ```

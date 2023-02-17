@@ -1,6 +1,6 @@
 ## POAP Minting with Autotask Defender
 
-This code is a template for creating a POAP (Proof of Attendance Protocol) NFT (ERC20, ERC721, or ERC115) minting application. The client must sign a message to prove their ownership of an address. The client can provide additional information such as their name, secret code, GPS location, or other unique identifiers in the request for the POAP mint. This data can then be used to verify that the requestor is an attendee at a particular event. After the request is validated, an POAP NFT can be minted by the Defender Relayer.
+This code is a template for creating a POAP (Proof of Attendance Protocol) NFT (ERC20, ERC721, or ERC115) minting application. The client must sign a message to prove their ownership of an address. The client can provide additional information such as their name, secret code, GPS location, or other unique identifiers in the request for the POAP mint. This data can then be used to verify that the requestor is an attendee at a particular event. After the request is validated, a POAP NFT can be minted by the Defender Relayer.
 
 ## POAP NFT Contract Deployment
 
@@ -37,7 +37,7 @@ In the `defender` directory, perform the following steps:
     - `network`
 - Run `serverless deploy --stage dev` to deploy the stack to Defender
 
-## Relays, Ownership and Autotasks
+## Relays, Ownership, and Autotasks
 
 ### Contract Was Deployed with Defender
 
@@ -65,7 +65,7 @@ If the contract was not deployed with Defender, then the contract ownership or m
 
 - In your [Defender account](https://defender.openzeppelin.com/)
 - Click on the **Relay** link on the left side
-- Find the Relay the currently has ownership of the NFT contract, click on the **copy address** button
+- Find the Relay that currently has ownership of the NFT contract, click on the **copy address** button
 - Transfer some funds that address to cover the NFT minting costs
 
 ### Get the Autotask webhook URL

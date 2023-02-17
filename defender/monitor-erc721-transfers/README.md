@@ -22,7 +22,7 @@ In the `defender` directory, perform the following steps:
     - `defender-api-key: <API Key goes here>`
     - `defender-api-secret: <Secret key goes here>`
     - `slack-webhook: <SLACK webhook goes here>`
-    - Note that by default, we are sending notifications in slack, however you are free to use your custom webhook as well.
+    - Note that by default, we are sending notifications in slack, however, you are free to use your custom webhook as well.
 - Change directories to the stack that will be deployed
   - `cd monitor-erc721-transfers`
 - A configuration file can be created for each stage of production. We will create one for development:
