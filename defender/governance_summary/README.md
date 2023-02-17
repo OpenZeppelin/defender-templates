@@ -33,5 +33,6 @@ In the `defender` directory, perform the following steps:
   - Open the file and modify the following values:
     - `governance_address` 
     - `autotask_run_frequency`
+    - `monitored-network`
 - Run `serverless deploy --stage dev` to deploy the stack to Defender
 - Watch for logs to appear in your Defender account.  Log into your Defender account and click on the `Governance Summary` Autotask.
