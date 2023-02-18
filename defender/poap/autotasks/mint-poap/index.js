@@ -5,8 +5,8 @@ const tokenAddressSecretName = `${stackName}_TOKEN_ADDRESS`;
 
 const ethers = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
-const ERC1155Abi = ['function mint(address account, uint256 id, uint256 amount, bytes data)'];
-const ERC1155AbiV2 = ['function mint(address to, uint256 id, uint256 amount)'];
+const ERC1155AbiStandard = ['function mint(address account, uint256 id, uint256 amount, bytes data)'];
+const ERC1155AbiMock = ['function mint(address to, uint256 id, uint256 amount)'];
 const ERC721Abi = ['function safeMint(address to)'];
 const ERC20Abi = ['function mint(address to, uint256 amount)'];
 
@@ -65,8 +65,8 @@ exports.handler = async function (event) {
       tx = await contract.mint(formattedAddress, '1');
       console.log('Minted ERC20 token with tx:', tx.hash);
     } else if (tokenType.match(erc1155)) {
-      const contract = new ethers.Contract(tokenAddress, ERC1155Abi, signer);
-      const contractV2 = new ethers.Contract(tokenAddress, ERC1155AbiV2, signer);
+      const contract = new ethers.Contract(tokenAddress, ERC1155AbiStandard, signer);
+      const contractV2 = new ethers.Contract(tokenAddress, ERC1155AbiMock, signer);
       let tx;
       try {
         // Depending on which contract was used, the mint function might require 3 or 4 parameters
