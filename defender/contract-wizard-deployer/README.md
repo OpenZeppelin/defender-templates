@@ -30,7 +30,7 @@ This Hardhat script enables developers to take Solidity files that are downloade
 
 ### Local Code Setup
 
-In the `defender/contract-wizard-deployer` directory, perform the following steps:
+In the `defender` directory, perform the following steps:
 
 - A secrets file can be created for each stage of production. We will create one for development:
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
@@ -153,6 +153,3 @@ Examples:
 - `yarn run deploy to-defender --contract-network goerli --contract-name DemoTimelock --contract-address "0xACC0b2A0Ee8445983a8EDA6294c1660C6C0Aa330" 0 '["0x5b46d575f4a5302250233dbbf456d15e6353b7bd"]' '["0x5b46d575f4a5302250233dbbf456d15e6353b7bd"]' "0x5b46d575f4a5302250233dbbf456d15e6353b7bd"`
 - `yarn run deploy to-defender --contract-network goerli --contract-name DemoToken --contract-address "0xEa6CdeD4c27892528C144554624bc28A4da6Ac5C" "0xa2e87B88D805222bf950f81601f43e794a73F481" "0xACC0b2A0Ee8445983a8EDA6294c1660C6C0Aa330"`
 
-## TODO:
-
-- Test and enable Etherscan-Verify
