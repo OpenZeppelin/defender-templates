@@ -10,4 +10,6 @@ recipient-address: "0x0000000000000000000000000000000000000000"
 # If recipient drops below this amount of tokens...
 recipient-minimum-balance: "10"
 #  ... then, this many tokens will be minted to them
-recipient-top-up-amount': "3"
+recipient-top-up-amount: "3"
+# Time in minutes
+autotask-run-frequency: 10
