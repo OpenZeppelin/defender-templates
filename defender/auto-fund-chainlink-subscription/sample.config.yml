@@ -16,5 +16,5 @@ subscriptionId: 9893
 threshold: "10"
 # Amount of LINK to add to your subscription
 fundAmount: "2"
-# Network to fund Chainlink subscription (Mainnet or Goerli)
+# Network to fund Chainlink subscription ("mainnet" or "goerli")
 network: "goerli"
