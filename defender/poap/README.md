@@ -66,7 +66,7 @@ If the contract was not deployed with Defender, then the contract ownership or m
 - In your [Defender account](https://defender.openzeppelin.com/)
 - Click on the **Relay** link on the left side
 - Find the Relay that currently has ownership of the NFT contract, click on the **copy address** button
-- Transfer some funds that address to cover the NFT minting costs
+- Transfer funds to that address to cover the NFT minting costs
 
 ### Get the Autotask webhook URL
 
