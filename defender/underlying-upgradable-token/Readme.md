@@ -8,8 +8,8 @@ if the monitored proxy address is upgraded. This template interacts with the fol
 ### Environment Variables Setup For Goerli Testnet
 
 -  In the root directory, create an `.env` file with the following fields:
-- `GOERLI_RPC_URL: <RPC URL goes here>`
-- `PRIVATE_KEY: <Private Key of deployer address goes here>`
+  - `GOERLI_RPC_URL: <RPC URL goes here>`
+  - `PRIVATE_KEY: <Private Key of deployer address goes here>`
 
 ## Defender Account Setup
 
