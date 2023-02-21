@@ -42,7 +42,7 @@ In the `defender` directory, perform the following steps:
     - `defender-api-key: <API Key goes here>`
     - `defender-api-secret: <Secret Key goes here>`
     - `slack-webhook: <SLACK webhook goes here>`
-  - Note that by default, we are sending notifications in slack, however, you are free to use your own custom webhooks as well.
+  - Note that by default we are sending notifications in Slack, but you are free to use your own custom webhooks as well
 - Change directories to the stack that will be deployed
   - `cd multisig-monitor`
 - A config file can be created for each stage of production. We will create one for development
