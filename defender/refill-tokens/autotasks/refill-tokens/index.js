@@ -9,32 +9,36 @@ const recipientTopUpAmountSecretName = `${stackName}_RECIPIENT_TOP_UP_AMOUNT`;
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { ethers } = require('ethers');
 
-const ERC1155AbiStandard = ['function mint(address account, uint256 id, uint256 amount, bytes data)',
-'function balanceOf(address account, uint256 id) view returns (uint256)'];
-const ERC1155AbiMock = ['function mint(address to, uint256 id, uint256 amount)',
-'function balanceOf(address account, uint256 id) view returns (uint256)'];
-const ERC721Abi = ['function safeMint(address to)',
-'function balanceOf(address account) view returns (uint256)'];
-const ERC20Abi = ['function mint(address to, uint256 amount)',
-'function balanceOf(address account) view returns (uint256)'];
+const ERC1155AbiStandard = [
+  'function mint(address account, uint256 id, uint256 amount, bytes data)',
+  'function balanceOf(address account, uint256 id) view returns (uint256)',
+];
+const ERC1155AbiMock = [
+  'function mint(address to, uint256 id, uint256 amount)',
+  'function balanceOf(address account, uint256 id) view returns (uint256)',
+];
+const ERC721Abi = ['function safeMint(address to)', 'function balanceOf(address account) view returns (uint256)'];
+const ERC20Abi = [
+  'function mint(address to, uint256 amount)',
+  'function balanceOf(address account) view returns (uint256)',
+];
 
 // eslint-disable-next-line func-names
 exports.handler = async function (event) {
-  if (!event) { throw new Error('event undefined'); }
+  if (!event) {
+    throw new Error('event undefined');
+  }
   const { secrets } = event;
-  if (!secrets) { throw new Error('secrets undefined'); }
+  if (!secrets) {
+    throw new Error('secrets undefined');
+  }
 
   const tokenType = secrets[tokenTypeSecretName];
-  const nftId = ethers.BigNumber
-    .from(secrets[nftIdSecretName] ?? 0);
-  const tokenAddress = ethers.utils
-    .getAddress(secrets[tokenAddressSecretName]);
-  const recipientAddress = ethers.utils
-    .getAddress(secrets[recipientAddressSecretName]);
-  const recipientMinimumBalance = ethers.BigNumber
-    .from(secrets[recipientMinimumBalanceSecretName]);
-  const recipientTopUpAmount = ethers.BigNumber
-    .from(secrets[recipientTopUpAmountSecretName]);
+  const nftId = ethers.BigNumber.from(secrets[nftIdSecretName] ?? 0);
+  const tokenAddress = ethers.utils.getAddress(secrets[tokenAddressSecretName]);
+  const recipientAddress = ethers.utils.getAddress(secrets[recipientAddressSecretName]);
+  const recipientMinimumBalance = ethers.BigNumber.from(secrets[recipientMinimumBalanceSecretName]);
+  const recipientTopUpAmount = ethers.BigNumber.from(secrets[recipientTopUpAmountSecretName]);
 
   // ERC1155 Specific data
   const nftData = 0x00;
