@@ -22,7 +22,7 @@ In order to set up this template, you need a Chainlink subscription and some ETH
 
 ## Deployment Setup :rocket:
 
-This template uses external dependencies, so we will use [Rollup](https://rollupjs.org/guide/en/#introduction) to bundle those dependencies inside of our Javascript Autotasks. We also leverage the [yaml plugin](https://github.com/rollup/plugins/tree/master/packages/yaml) to define parameters in a central location and reuse them in our serverless template and both Autotasks.
+This template uses external dependencies, so we will use [Rollup](https://rollupjs.org/guide/en/#introduction) to bundle those dependencies inside of our Javascript Autotasks. We also leverage the [yaml plugin](https://github.com/rollup/plugins/tree/master/packages/yaml) to define parameters in a central location and reuse them in our Serverless template and both Autotasks.
 
 In the `defender` directory, perform the following steps:
 

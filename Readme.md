@@ -129,7 +129,7 @@ If a proposal has been passed (has a state of Succeeded), then the Autotask will
 
 ### [Monitor ERC721 transfers](defender/monitor-erc721-transfers/README.md)
 This simple template adds the ability to monitor for ERC721 token transfers and send notifications.
-By default we send notifications in slack, however you are free to use your own custom webhook as well.
+By default we send notifications in Slack, but you are free to use your own custom webhook as well.
 
 ### [Governance Alert](defender/governance_alert/README.md)
 This Autotask will monitor and alert on events emitted by a Governance contract.
