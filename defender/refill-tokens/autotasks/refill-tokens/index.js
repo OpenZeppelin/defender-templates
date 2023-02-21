@@ -1,4 +1,4 @@
-const stackName = 'poap_minter';
+const stackName = 'refill_tokens';
 const tokenTypeSecretName = `${stackName}_TOKEN_TYPE`;
 const nftIdSecretName = `${stackName}_NFT_ID`;
 const tokenAddressSecretName = `${stackName}_TOKEN_ADDRESS`;
@@ -9,10 +9,14 @@ const recipientTopUpAmountSecretName = `${stackName}_RECIPIENT_TOP_UP_AMOUNT`;
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { ethers } = require('ethers');
 
-const ERC1155AbiStandard = ['function mint(address account, uint256 id, uint256 amount, bytes data)'];
-const ERC1155AbiMock = ['function mint(address to, uint256 id, uint256 amount)'];
-const ERC721Abi = ['function safeMint(address to)'];
-const ERC20Abi = ['function mint(address to, uint256 amount)'];
+const ERC1155AbiStandard = ['function mint(address account, uint256 id, uint256 amount, bytes data)',
+  'function balanceOf(address account, uint256 tokenId)'];
+const ERC1155AbiMock = ['function mint(address to, uint256 id, uint256 amount)',
+  'function balanceOf(address account, uint256 tokenId)'];
+const ERC721Abi = ['function safeMint(address to)',
+  'function balanceOf(address account)'];
+const ERC20Abi = ['function mint(address to, uint256 amount)',
+  'function balanceOf(address account)'];
 
 // eslint-disable-next-line func-names
 exports.handler = async function (event) {
