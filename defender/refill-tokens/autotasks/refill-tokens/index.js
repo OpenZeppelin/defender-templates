@@ -7,7 +7,7 @@ const recipientMinimumBalanceSecretName = `${stackName}_RECIPIENT_MINIMUM_BALANC
 const recipientTopUpAmountSecretName = `${stackName}_RECIPIENT_TOP_UP_AMOUNT`;
 
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
-const ethers = require('ethers');
+const { ethers } = require('ethers');
 
 const ERC1155AbiStandard = ['function mint(address account, uint256 id, uint256 amount, bytes data)'];
 const ERC1155AbiMock = ['function mint(address to, uint256 id, uint256 amount)'];
