@@ -46,8 +46,6 @@ resources:
         network: ${self:custom.config.network}
         min-balance: 1000
         policy: ${self:resources.Resources.policies.policy-1}
-        api-keys:
-          - key1
 
 plugins:
   - defender-serverless
