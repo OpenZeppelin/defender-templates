@@ -24,8 +24,8 @@ In the `defender` directory, perform the following steps:
 - A secrets file can be created for each stage of production. We will create one for development
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
   - Modify the lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` with your Defender API key and Secret key, as indicated:
-  - `defender-api-key: <API Key goes here>`
-  - `defender-api-secret: <Secret Key goes here>`
+    - `defender-api-key: <API Key goes here>`
+    - `defender-api-secret: <Secret Key goes here>`
 - Change directories to the stack that will be deployed
   - `cd poap`
 - A config file can be created for each stage of production. We will create one for development
