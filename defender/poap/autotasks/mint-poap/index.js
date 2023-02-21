@@ -32,7 +32,7 @@ exports.handler = async function (event) {
 
   if (typeof tokenType !== 'string') { throw new Error('Token type not specified') }
   if (!ethers.utils.getAddress(tokenAddress)) { throw new Error('Valid token address not specified') };
-  if (!tokenType) { throw new Error('Token address not specified') };
+  if (!tokenType) { throw new Error('Token type not specified') };
   if (!event.request?.body) { throw new Error('body undefined') }
 
   const { address, signature, message } = event.request.body;
