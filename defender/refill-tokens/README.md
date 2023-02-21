@@ -1,4 +1,4 @@
-# Refill tokens template
+# Refill Tokens Template
 
 Takes some address that is being monitored for some particular token balance on a scheduled time basis. If the balance is below a value defined as maximum, the Autotask will attempt to top-up the address with that token.
 
