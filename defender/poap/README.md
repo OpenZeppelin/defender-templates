@@ -89,7 +89,7 @@ From the root of this repo:
 
 ### Submitting the request
 The JSON that you created above will need to be POSTed to the Autotask webhook URL. This can be done with a simple script or with curl. Replace the URL with your Autotask webhook URL
-```js
+```shell
 curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/xxxx \
    -H 'Content-Type: application/json' \
    -d '{
