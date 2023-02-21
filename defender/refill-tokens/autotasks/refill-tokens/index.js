@@ -14,6 +14,7 @@ const ERC1155AbiMock = ['function mint(address to, uint256 id, uint256 amount)']
 const ERC721Abi = ['function safeMint(address to)'];
 const ERC20Abi = ['function mint(address to, uint256 amount)'];
 
+// eslint-disable-next-line func-names
 exports.handler = async function (event) {
   if (!event) { throw new Error('event undefined'); }
   const { secrets } = event;
@@ -34,8 +35,8 @@ exports.handler = async function (event) {
   // ERC1155 Specific data
   const nftData = 0x00;
 
-  if (tokenAddress == ethers.constants.AddressZero) throw new Error('Token address not specified');
-  if (recipientAddress == ethers.constants.AddressZero) throw new Error('Refill address not specified');
+  if (tokenAddress === ethers.constants.AddressZero) throw new Error('Token address not specified');
+  if (recipientAddress === ethers.constants.AddressZero) throw new Error('Refill address not specified');
 
   const provider = new DefenderRelayProvider(event);
   const signer = new DefenderRelaySigner(event, provider, {
@@ -69,7 +70,7 @@ exports.handler = async function (event) {
       try {
         tx = await contract.mint(recipientAddress, nftId, recipientTopUpAmount, nftData);
       } catch (error) {
-        console.log(`First attempt failed with error: ${error}`)
+        console.log(`First attempt failed with error: ${error}`);
         tx = await contractV2.mint(recipientAddress, nftId, recipientTopUpAmount);
       }
       console.log('Minted ERC1155 tokens with tx:', tx.hash);
@@ -83,6 +84,7 @@ exports.handler = async function (event) {
     console.log('Current balance is:', balance.toString());
     if (balance.lt(recipientMinimumBalance)) {
       for (let i = 0; i < Number(recipientTopUpAmount); i++) {
+        // eslint-disable-next-line no-await-in-loop
         tx = await contract.safeMint(recipientAddress);
         console.log('Minted ERC721 token with tx:', tx.hash);
       }
@@ -90,6 +92,6 @@ exports.handler = async function (event) {
       console.log('Already full. Do nothing.');
     }
   } else {
-    throw new Error('Token Type is not erc20, erc721, nor erc1155')
+    throw new Error('Token Type is not erc20, erc721, nor erc1155');
   }
 };
