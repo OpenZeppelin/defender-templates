@@ -100,4 +100,4 @@ curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/x
 ```
 
 ## Notes
-It is best to add additional fields that can be used to verify a participant's attendance at an event. Moreover, some anti-spam measures should be in place to prevent users from submitting the same request repeatedly and minting NFTs until your Relay runs out of gas.
+It is best to add fields that can be used to verify a participant's attendance at an event. Moreover, some anti-spam measures should be in place to prevent users from submitting the same request repeatedly and minting NFTs until your Relay runs out of gas.
