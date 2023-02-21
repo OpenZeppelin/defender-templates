@@ -31,10 +31,10 @@ In the `defender` directory, perform the following steps:
 - A secrets file can be created for each stage of production. We will create one for development
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
   - Modify the lines in the `.secrets/dev.yml` file, replacing the portion in the angle brackets `<>` as indicated:
-  - `defender-api-key: <API Key goes here>`
-  - `defender-api-secret: <Secret Key goes here>`
-  - `slack-webhook: <SLACK webhook goes here>`
-  - `email-address: <EMAIL address goes here>`
+    - `defender-api-key: <API Key goes here>`
+    - `defender-api-secret: <Secret Key goes here>`
+    - `slack-webhook: <SLACK webhook goes here>`
+    - `email-address: <EMAIL address goes here>`
 - Change directories to the stack that will be deployed
   - `cd auto-fund-chainlink-subscription`
 - A config file can be created for each stage of production. We will create one for development
