@@ -3,7 +3,7 @@ const tokenTypeSecretName = `${stackName}_TOKEN_TYPE`;
 const nftIdSecretName = `${stackName}_NFT_ID`;
 const tokenAddressSecretName = `${stackName}_TOKEN_ADDRESS`;
 
-const ethers = require('ethers');
+const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const ERC1155AbiStandard = ['function mint(address account, uint256 id, uint256 amount, bytes data)'];
 const ERC1155AbiMock = ['function mint(address to, uint256 id, uint256 amount)'];
