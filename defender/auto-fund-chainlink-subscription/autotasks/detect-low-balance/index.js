@@ -3,7 +3,7 @@ import { DefenderRelayProvider } from 'defender-relay-client/lib/ethers';
 import { vrfCoordinatorAddress, subscriptionId, threshold } from '../../config.dev.yml';
 import ABI from '../../../../abi/vrfCoordinator.json';
 
-// gets called anytime a transaction occurs on the Chainlink vrfCoordinatorV2 contract
+// gets called when a transaction occurs on the Chainlink vrfCoordinatorV2 contract
 export async function handler(event) {
   console.log('Starting autotask...');
   const thresholdInWei = ethers.utils.parseEther(threshold);
