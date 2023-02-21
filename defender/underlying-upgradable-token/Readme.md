@@ -32,7 +32,7 @@ In the `defender` directory, perform the following steps:
     - `defender-api-secret: <Secret key goes here>`
     - `slack-webhook: <SLACK webhook goes here>`
     - `email-address: <EMAIL address goes here>`
-    - Note that by default, we are sending notifications in slack, however, you are free to use your custom webhook as well.
+  - Note that by default we are sending notifications in Slack, but you are free to use your custom webhook as well
 - Change directories to the stack that will be deployed
   - `cd underlying-upgradable-token`
 - A configuration file can be created for each stage of production. We will create one for development:
