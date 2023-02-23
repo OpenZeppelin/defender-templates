@@ -1,11 +1,12 @@
-const ethSigUtil = require('eth-sig-util');
+const { ethers } = require('ethers');
 
 const EIP712Domain = [
   { name: 'name', type: 'string' },
   { name: 'version', type: 'string' },
   { name: 'chainId', type: 'uint256' },
-  { name: 'verifyingContract', type: 'address' }
+  { name: 'verifyingContract', type: 'address' },
 ];
+const EIP712DomainTypes = EIP712Domain.map(x => x.type);
 
 const ForwardRequest = [
   { name: 'from', type: 'address' },
@@ -15,6 +16,7 @@ const ForwardRequest = [
   { name: 'nonce', type: 'uint256' },
   { name: 'data', type: 'bytes' },
 ];
+const requestTypes = ForwardRequest.map(x => x.type);
 
 function getMetaTxTypeData(chainId, verifyingContract) {
   return {
@@ -29,24 +31,43 @@ function getMetaTxTypeData(chainId, verifyingContract) {
       verifyingContract,
     },
     primaryType: 'ForwardRequest',
-  }
-};
+  };
+}
 
 async function signTypedData(signer, from, data) {
-  // If signer is a private key, use it to sign
-  if (typeof (signer) === 'string') {
-    const privateKey = Buffer.from(signer.replace(/^0x/, ''), 'hex');
-    return ethSigUtil.signTypedMessage(privateKey, { data });
+  // If signer is a relay, then use Defender
+  if (signer.relayer) {
+    const { domain, message } = data;
+    const abiCoder = new ethers.utils.AbiCoder();
+
+    // Domain and request need to encoded and keccak256 hashed before sending to relay
+    const domainEncoded = abiCoder.encode(EIP712DomainTypes, [
+      domain.name,
+      domain.version,
+      domain.chainId,
+      domain.verifyingContract,
+    ]);
+    const domainHash = ethers.utils.keccak256(domainEncoded);
+
+    const requestEncoded = abiCoder.encode(requestTypes, [
+      message.from,
+      message.to,
+      message.value,
+      message.gas,
+      message.nonce,
+      message.data,
+    ]);
+    const requestHash = ethers.utils.keccak256(requestEncoded);
+
+    // ref: https://docs.openzeppelin.com/defender/relay#signing-typed-data
+    const signTypedDataResponse = await signer.signTypedData({
+      domainSeparator: domainHash,
+      hashStructMessage: requestHash,
+    });
+    return signTypedDataResponse.sig;
   }
 
-  // TODO: If signer is actually a relay, then use:
-  // ref: https://docs.openzeppelin.com/defender/relay#signing-typed-data
-  // const signTypedDataResponse = await relayer.signTypedData({
-  //   domainSeparator,
-  //   hashStructMessage
-  // });
-
-  // Otherwise, send the signTypedData RPC call
+  // Otherwise, send the signTypedData RPC call (Metamask/Hardhat)
   const [method, argData] = ['eth_signTypedData_v4', JSON.stringify(data)];
   return await signer.send(method, [from, argData]);
 }
@@ -63,9 +84,13 @@ async function buildTypedData(forwarder, request) {
 }
 
 async function signMetaTxRequest(signer, forwarder, input) {
+  console.log('Inside sign meta tx request');
   const request = await buildRequest(forwarder, input);
+  console.log('request', request);
   const toSign = await buildTypedData(forwarder, request);
+  console.log('toSign', toSign);
   const signature = await signTypedData(signer, input.from, toSign);
+  console.log('signature', signature);
   return { signature, request };
 }
 

@@ -41,6 +41,9 @@ describe("autotasks/relay", function () {
       data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, callData]),
     });
 
+    console.log(request);
+    console.log(signature);
+
     const whitelist = [nft.address]
     expect(await nft.balanceOf(user.address, id)).to.equal(bnZero);
     await relay(forwarder.connect(relayer), request, signature, whitelist);

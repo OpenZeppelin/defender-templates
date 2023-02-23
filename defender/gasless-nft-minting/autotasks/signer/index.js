@@ -1,10 +1,11 @@
+const stackName = 'gasless_nft_minting';
+const forwarderAddressSecretName = `${stackName}_FORWARDER_ADDRESS`;
+const nftAddressSecretName = `${stackName}_NFT_ADDRESS`;
+
 const { ethers } = require('ethers');
 const { signMetaTxRequest } = require('./signer');
 const { Relayer } = require('defender-relay-client');
-
-// TODO: replace with secret
-const forwarderAddress = '0x4866e460Aa5e999b6146B9D9Aaa6d758306B49a3';
-const nftAddress = '0xBa72B6572dEDaaA3a9e9b9E9E9601528418bCFcA';
+const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 
 const nftMinimalAbi = [
   'function mint(address account, uint256 id, uint256 amount, bytes data)',
@@ -18,15 +19,21 @@ const forwarderAbi = [
 
 async function handler(event) {
   // Parse webhook payload
-  if (!event.request?.body?.address) throw new Error(`Missing payload`);
+  if (!event?.request?.body?.address) throw new Error(`address missing`);
   const { address: recipientAddress } = event.request.body;
+  ethers.utils.getAddress(recipientAddress);
 
-  const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
+  // Get addresses
+  if (!event?.secrets) { throw new Error('secrets undefined'); }
+  const forwarderAddress = event.secrets[forwarderAddressSecretName];
+  const nftAddress = event.secrets[nftAddressSecretName];
+  ethers.utils.getAddress(forwarderAddress);
+  ethers.utils.getAddress(nftAddress);
 
   const provider = new DefenderRelayProvider(event);
   const signer = new DefenderRelaySigner(event, provider, { speed: 'fast' });
-
   const relayer = new Relayer(event);
+
   const { address: from } = await relayer.getRelayer();
   const forwarder = new ethers.Contract(forwarderAddress, forwarderAbi, signer);
   const nft = new ethers.Contract(nftAddress, nftMinimalAbi, signer);
@@ -36,13 +43,12 @@ async function handler(event) {
   const qty = 1;
   const bytes = 0x0;
   const data = nft.interface.encodeFunctionData('mint', [recipientAddress, id, qty, bytes]);
-  // TODO: signMetaTxRequest isn't compatible with Defender Relayers yet.
   const result = await signMetaTxRequest(relayer, forwarder, {
     to: recipientAddress, from, data
   });
 
-  console.log(`Signature: `, result.signature);
-  console.log(`Request: `, result.request);
+  console.log(`Signature: ${result.signature}`);
+  console.log(`Request: ${result.request}\n`);
   return JSON.stringify(result);
 }
 

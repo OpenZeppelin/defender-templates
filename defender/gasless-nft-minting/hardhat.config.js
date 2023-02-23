@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 
 const req = require('require-yml');
+const axios = require('axios');
 const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 const { AdminClient } = require('defender-admin-client');
@@ -167,28 +168,23 @@ task('contract', 'Deploys contract using Defender Relay')
 
 // eslint-disable-next-line no-undef
 task('sign', 'Signs a request using a Defender Autotask and Relay')
+  .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
   .addPositionalParam('address', 'Recipient address')
   .setAction(async (taskArgs, hre) => {
+    // Set default stage
+    const { stage = 'dev' } = taskArgs;
+
     // Validate address
-    const recipientAddress = ethers.utils.getAddress(taskArgs.address);
-    if (!recipientAddress) { throw new Error('Invalid address provided') }
+    const address = ethers.utils.getAddress(taskArgs.address);
+    if (!address) { throw new Error('Invalid address provided') }
 
-    // Validate secrets and retrieve a provider and signer
+    // Retrieve webhooks from config
+    const config = req(`./config.${stage}.yml`);
     const {
-      credentials: event
-    } = await hre.run('verifySecrets', taskArgs);
-
-    // Add data to the event object
-    event.request = {
-      body: {
-        address: recipientAddress,
-      }
-    }
-    // Use local autotask
-    const result = await signerHandler(event);
-
-    // TODO: Output signature and results to screen or to file.
-    console.log(result);
+      'signer-webhook': signerWebhook,
+    } = config;
+    const response = await axios.post(signerWebhook, {address});
+    console.log(response);
   });
 
 // TODO: task: submit request signature to relay autotask

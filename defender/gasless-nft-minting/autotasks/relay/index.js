@@ -1,20 +1,16 @@
+const stackName = 'gasless_nft_minting';
+const forwarderAddressSecretName = `${stackName}_FORWARDER_ADDRESS`;
+
 const ethers = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
-
-// TODO: replace with secret
-const forwarderAddress = '0x4866e460Aa5e999b6146B9D9Aaa6d758306B49a3';
 
 const forwarderAbi = [
   'function execute(tuple(address from, address to, uint256 value, uint256 gas, uint256 nonce, bytes data) req, bytes signature) payable returns (bool, bytes)',
   'function getNonce(address from) view returns (uint256)',
-  'function verify(tuple(address from, address to, uint256 value, uint256 gas, uint256 nonce, bytes data) req, bytes signature) view returns (bool)'
+  'function verify(tuple(address from, address to, uint256 value, uint256 gas, uint256 nonce, bytes data) req, bytes signature) view returns (bool)',
 ];
 
-async function relay(forwarder, request, signature, whitelist) {
-  // Decide if we want to relay this request based on a whitelist
-  const accepts = !whitelist || whitelist.includes(request.to);
-  if (!accepts) throw new Error(`Rejected request to ${request.to}`);
-
+async function relay(forwarder, request, signature) {
   // Validate request on the forwarder contract
   const valid = await forwarder.verify(request, signature);
   if (!valid) throw new Error(`Invalid request`);
@@ -26,8 +22,17 @@ async function relay(forwarder, request, signature, whitelist) {
 
 async function handler(event) {
   // Parse webhook payload
-  if (!event?.request?.body) throw new Error(`Missing payload`);
+  if (!event?.request?.body?.request) throw new Error(`request missing`);
+  if (!event?.request?.body?.signature) throw new Error(`signature missing`);
   const { request, signature } = event.request.body;
+
+  // Get address
+  if (!event?.secrets) {
+    throw new Error('secrets undefined');
+  }
+  const forwarderAddress = event.secrets[forwarderAddressSecretName];
+  ethers.utils.getAddress(forwarderAddress);
+
   console.log(`Relaying`, request);
 
   // Initialize Relayer provider and signer, and forwarder contract
@@ -45,4 +50,4 @@ async function handler(event) {
 module.exports = {
   handler,
   relay,
-}
+};
