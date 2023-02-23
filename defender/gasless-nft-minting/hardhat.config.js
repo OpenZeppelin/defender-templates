@@ -1,4 +1,4 @@
-require("@nomiclabs/hardhat-waffle");
+require('@nomiclabs/hardhat-waffle');
 
 const req = require('require-yml');
 const axios = require('axios');
@@ -28,7 +28,7 @@ async function addContractToDefenderAdmin({ contract, name, client, network, add
 function formatArgs(inputArgs) {
   let args = [];
   if (inputArgs) {
-    args = inputArgs.map((arg) => {
+    args = inputArgs.map(arg => {
       try {
         // Parse numbers and arrays from inputs. Double quoted inputs will be treated as strings
         // 1 = number 1
@@ -81,8 +81,7 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       });
 
       try {
-        console.debug('Temp:Disabled Admin Check');
-        // await adminClient.listContracts();
+        await adminClient.listContracts();
       } catch (error) {
         throw new Error(`Issue with Defender Admin: ${error}`);
       }
@@ -110,7 +109,11 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       console.log(`Defender Relay is on ${signerNetwork} using address: ${signerAddress}`);
 
       return {
-        signer, signerAddress, signerNetwork, adminClient, credentials
+        signer,
+        signerAddress,
+        signerNetwork,
+        adminClient,
+        credentials,
       };
     }
 
@@ -128,11 +131,7 @@ task('contract', 'Deploys contract using Defender Relay')
   .addOptionalVariadicPositionalParam('constructorArgs', 'Constructor arguments')
   .setAction(async (taskArgs, hre) => {
     // Validate secrets and retrieve a provider and signer
-    const {
-      adminClient,
-      signer,
-      signerNetwork,
-    } = await hre.run('verifySecrets', taskArgs);
+    const { adminClient, signer, signerNetwork } = await hre.run('verifySecrets', taskArgs);
 
     // Compile all contracts
     await hre.run('compile');
@@ -165,22 +164,57 @@ task('contract', 'Deploys contract using Defender Relay')
 task('sign', 'Signs a request using a Defender Autotask and Relay')
   .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
   .addPositionalParam('address', 'Recipient address')
-  .setAction(async (taskArgs) => {
+  .setAction(async taskArgs => {
     // Set default stage
     const { stage = 'dev' } = taskArgs;
 
     // Validate address
     const address = ethers.utils.getAddress(taskArgs.address);
-    if (!address) { throw new Error('Invalid address provided') }
+    if (!address) {
+      throw new Error('Invalid address provided');
+    }
 
     // Retrieve webhooks from config
     const config = req(`./config.${stage}.yml`);
-    const {
-      'signer-webhook': signerWebhook,
-    } = config;
+    const { 'signer-webhook': signerWebhook } = config;
+
     const response = await axios.post(signerWebhook, { address });
+    if (response.data?.message){
+      console.error('Signer failed with error', response.data?.message);
+      return false;
+    }
+
     const result = JSON.parse(response.data?.result);
-    console.log('Autotask response:\n', result, '\nStringified:\n', JSON.stringify(result));
+    console.log('Autotask response:\n\n', result, '\n\nStringified:\n\n', JSON.stringify(result), '\n');
+  });
+
+// eslint-disable-next-line no-undef
+task('relay', 'Sends a signed request to a trusted forwarder using a Defender Autotask and Relay')
+  .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
+  .addPositionalParam('signedRequest', 'Stringified JSON containing a request and signature')
+  .setAction(async taskArgs => {
+    // Set default stage
+    const { stage = 'dev' } = taskArgs;
+
+    // Validate address
+    const signedRequest = JSON.parse(taskArgs.signedRequest);
+    if (!signedRequest) { throw new Error('Unable to parse signed request') };
+    const { signature, request } = signedRequest;
+    if (!signature) { throw new Error('signature not found in signed request') };
+    if (!request) { throw new Error('request not found in signed request') };
+
+    // Retrieve webhooks from config
+    const config = req(`./config.${stage}.yml`);
+    const { 'relayer-webhook': relayerWebhook } = config;
+
+    const response = await axios.post(relayerWebhook, { signature, request });
+    if (response.data?.message){
+      console.error('Relay failed with error', response.data?.message);
+      return false;
+    }
+    const result = JSON.parse(response.data?.result);
+    
+    console.log('Autotask response:\n\n', result, '\n\nStringified:\n\n', JSON.stringify(result), '\n');
   });
 
 module.exports = {

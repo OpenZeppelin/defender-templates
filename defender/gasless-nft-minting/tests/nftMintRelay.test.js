@@ -41,29 +41,10 @@ describe("autotasks/relay", function () {
       data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, callData]),
     });
 
-    console.log(request);
-    console.log(signature);
-
-    const whitelist = [nft.address]
     expect(await nft.balanceOf(user.address, id)).to.equal(bnZero);
-    await relay(forwarder.connect(relayer), request, signature, whitelist);
+    await relay(forwarder.connect(relayer), request, signature);
     expect(await nft.owner()).to.equal(deployer.address);
     expect(await nft.balanceOf(user.address, id)).to.equal(qty);
-  });
-
-  it("refuses to send to non-whitelisted address", async function () {
-    const { forwarder, nft, deployer, relayer, user, id, qty, callData } = this;
-
-    const { request, signature } = await signMetaTxRequest(deployer.provider, forwarder, {
-      from: deployer.address,
-      to: nft.address,
-      data: nft.interface.encodeFunctionData('mint', [user.address, id, qty, callData]),
-    });
-
-    const whitelist = [];
-    await expect(
-      relay(forwarder.connect(relayer), request, signature, whitelist)
-    ).to.be.rejectedWith(/rejected/i);
   });
 
   it("refuses to send incorrect signature", async function () {
