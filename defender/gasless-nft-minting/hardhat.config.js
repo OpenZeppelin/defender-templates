@@ -7,8 +7,6 @@ const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-c
 const { AdminClient } = require('defender-admin-client');
 const { task } = require('hardhat/config');
 
-const { handler: signerHandler } = require('./autotasks/signer/index');
-
 // eslint-disable-next-line object-curly-newline
 async function addContractToDefenderAdmin({ contract, name, client, network, address }) {
   let result;
@@ -99,16 +97,13 @@ subtask('verifySecrets', 'Validates all stored secrets and returns signer')
       let signerAddress;
       let signerNetwork;
       try {
-        console.debug('Temp:Disabled Signer Check');
-        // signerAddress = await signer.getAddress();
-        console.debug('Temp:Disabled Network Check');
-        // const chainId = await signer.getChainId();
+        signerAddress = await signer.getAddress();
+        const chainId = await signer.getChainId();
         const chainIdMap = {
           1: 'mainnet',
           5: 'goerli',
         };
-        console.debug('Temp:Disabled ChainID Check');
-        // signerNetwork = chainIdMap[chainId];
+        signerNetwork = chainIdMap[chainId];
       } catch (error) {
         throw new Error(`Issue with Defender Relay: ${error}`);
       }
@@ -170,7 +165,7 @@ task('contract', 'Deploys contract using Defender Relay')
 task('sign', 'Signs a request using a Defender Autotask and Relay')
   .addOptionalParam('stage', 'Deployment stage (uses dev by default)')
   .addPositionalParam('address', 'Recipient address')
-  .setAction(async (taskArgs, hre) => {
+  .setAction(async (taskArgs) => {
     // Set default stage
     const { stage = 'dev' } = taskArgs;
 
@@ -183,12 +178,10 @@ task('sign', 'Signs a request using a Defender Autotask and Relay')
     const {
       'signer-webhook': signerWebhook,
     } = config;
-    const response = await axios.post(signerWebhook, {address});
-    console.log(response);
+    const response = await axios.post(signerWebhook, { address });
+    const result = JSON.parse(response.data?.result);
+    console.log('Autotask response:\n', result, '\nStringified:\n', JSON.stringify(result));
   });
-
-// TODO: task: submit request signature to relay autotask
-// Idea: 'yarn sign | yarn relay' 
 
 module.exports = {
   solidity: {

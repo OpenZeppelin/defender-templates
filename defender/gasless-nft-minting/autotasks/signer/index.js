@@ -34,7 +34,12 @@ async function handler(event) {
   const signer = new DefenderRelaySigner(event, provider, { speed: 'fast' });
   const relayer = new Relayer(event);
 
-  const { address: from } = await relayer.getRelayer();
+  let from;
+  try {
+    ({ address: from } = await relayer.getRelayer());
+  } catch (error) {
+    throw new Error('relayer not connected: ' + error)
+  }
   const forwarder = new ethers.Contract(forwarderAddress, forwarderAbi, signer);
   const nft = new ethers.Contract(nftAddress, nftMinimalAbi, signer);
 
