@@ -1,13 +1,13 @@
 # Monitor Upgradable Tokens
 
 This template deploys a Defender Sentinel and other necessary Defender resources to monitor for upgrades. It will trigger a Slack alert
-if the monitored proxy address is upgraded. This template interacts with the following resources:  
+if the monitored proxy address is upgraded. This template interacts with the following resources: 
 - [Contracts](../../contracts/underlying-upgradable-token/)
 - [Scripts](../../scripts/underlying-upgradable-token/)
 
 ### Environment Variables Setup For Goerli Testnet
 
--  In the root directory, create an `.env` file with the following fields:
+- In the root directory, create an `.env` file with the following fields:
   - `GOERLI_RPC_URL: <RPC URL goes here>`
   - `PRIVATE_KEY: <Private Key of deployer address goes here>`
 

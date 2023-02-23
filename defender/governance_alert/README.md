@@ -1,6 +1,6 @@
 # Governance Alert Template
 
-This Defender Sentinel and Autotask will monitor and display proposal events emitted by [OpenZepplin Governor](https://docs.openzeppelin.com/contracts/4.x/api/governance) and [OpenZepplin GovernorCompatibilityBravo](https://docs.openzeppelin.com/contracts/4.x/api/governance#GovernorCompatibilityBravo) contracts.  This Autotask will display alerts for the following events:
+This Defender Sentinel and Autotask will monitor and display proposal events emitted by [OpenZepplin Governor](https://docs.openzeppelin.com/contracts/4.x/api/governance) and [OpenZepplin GovernorCompatibilityBravo](https://docs.openzeppelin.com/contracts/4.x/api/governance#GovernorCompatibilityBravo) contracts. This Autotask will display alerts for the following events:
 * ProposalCanceled
 * ProposalCreated
 * ProposalExecuted
@@ -44,4 +44,4 @@ In the `defender` directory, perform the following steps:
     - `monitored-addresses`
     - `monitored-network`
 - Run `serverless deploy --stage dev` to deploy the stack to Defender
-- Watch for logs to appear in your Defender account.  Log into your Defender account, click on the `Governance Alert` Autotask.
+- Watch for logs to appear in your Defender account. Log into your Defender account, click on the `Governance Alert` Autotask.

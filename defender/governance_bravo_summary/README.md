@@ -4,7 +4,7 @@ This Defender Autotask will periodically check and display the status of active 
 
 ## Optimizations
 
-During the first run of the Autotask, it will scan from block zero to the latest block.  It will then search for new `ProposalCreated` events starting from the last block searched.  The current status of all active proposals will then be displayed in the Autotask logs.
+During the first run of the Autotask, it will scan from block zero to the latest block. It will then search for new `ProposalCreated` events starting from the last block searched. The current status of all active proposals will then be displayed in the Autotask logs.
 
 ## Defender Account Setup
 
@@ -35,4 +35,4 @@ In the `defender` directory, perform the following steps:
     - `autotask_run_frequency`
     - `monitored-network`
 - Run `serverless deploy --stage dev` to deploy the stack to Defender
-- Watch for logs to appear in your Defender account.  Log into your Defender account and click on the `Governance Bravo Summary` Autotask.
+- Watch for logs to appear in your Defender account. Log into your Defender account and click on the `Governance Bravo Summary` Autotask.
