@@ -10,12 +10,12 @@ const types = {
   ],
 };
 
-export interface POAPMEssage {
+export interface POAPMessage {
   name: string;
   wallet: string;
 }
 export const signPOAPMessage = async (name: string, signer: Wallet | SignerWithAddress) => {
-  const message: POAPMEssage = { name: name, wallet: signer.address };
+  const message: POAPMessage = { name: name, wallet: signer.address };
   return signer._signTypedData(domain, types, message);
 };
 
