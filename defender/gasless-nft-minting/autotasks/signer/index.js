@@ -49,12 +49,12 @@ async function handler(event) {
   const bytes = 0x0;
   const data = nft.interface.encodeFunctionData('mint', [recipientAddress, id, qty, bytes]);
   const result = await signMetaTxRequest(relayer, forwarder, {
-    to: recipientAddress, from, data
+    to: nftAddress, from, data
   });
 
   console.log(`Signature: ${result.signature}`);
   console.log(`Request: ${result.request}\n`);
-  return JSON.stringify(result);
+  return result;
 }
 
 module.exports = {

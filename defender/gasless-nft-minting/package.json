@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "sign": "hardhat --config hardhat.config.js sign",
+    "relay": "hardhat --config hardhat.config.js relay",
     "deploy": "hardhat --config hardhat.config.js",
     "test": "NODE_ENV=test hardhat --config hardhat.config.js test"
   },

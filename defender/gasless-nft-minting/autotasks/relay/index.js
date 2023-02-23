@@ -33,13 +33,21 @@ async function handler(event) {
   const forwarderAddress = event.secrets[forwarderAddressSecretName];
   ethers.utils.getAddress(forwarderAddress);
 
-  console.log(`Relaying`, request);
-
   // Initialize Relayer provider and signer, and forwarder contract
   const credentials = { ...event };
   const provider = new DefenderRelayProvider(credentials);
   const signer = new DefenderRelaySigner(credentials, provider, { speed: 'fast' });
   const forwarder = new ethers.Contract(forwarderAddress, forwarderAbi, signer);
+
+  // Test relay
+  try {
+    await signer.getAddress();
+  } catch (error) {
+    console.error('Relay is not working, check if it is connected : ', error);
+    throw error;
+  }
+
+  console.log(`Relaying`, request);
 
   // Relay transaction!
   const tx = await relay(forwarder, request, signature);
