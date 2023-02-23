@@ -26,7 +26,10 @@ const erc20Abi = [
   'function allowance(address owner, address spender) external view returns (uint256)',
 ];
 
-const erc721Abi = ['function approve(address spender, uint256 amount) external returns (bool)'];
+const erc721Abi = [
+  'function approve(address spender, uint256 amount) external returns (bool)',
+  'function setApprovalForAll(address operator, bool approved) public',
+];
 
 // returns axios get request to retrieve wallet balance of erc20 and erc721 tokens
 async function get(url, method, headers, auth) {
@@ -92,6 +95,7 @@ async function main() {
     if (balance > 0 && !isNft && !isDust) {
       let specificErc20Contract = erc20Contract.attach(item.contract_address);
       // check if relayer already has allowances to avoid duplicate approvals
+      // @todo replace relayer-address with address of defender relayer in your account
       let allowance = await specificErc20Contract.allowance(
         walletAddress,
         '0x7CCc699cb7F361Aa1b982E7954cF65E531cdEc94',
@@ -105,10 +109,12 @@ async function main() {
       scaledBalance = scaledBalance.toFixed(2);
       console.log(`Approved allowance of ${scaledBalance} for ${symbol}`);
     } else if (balance > 0 && isNft) {
-      // @todo replace relayer-address with args from command line
+      // set approval for all token ids
+      // a user may have more than 1 nft in a collection
       let specificErc721Contract = erc721Contract.attach(item.contract_address);
-      await specificErc721Contract.approve('0x7CCc699cb7F361Aa1b982E7954cF65E531cdEc94', balance);
-      console.log(`You have ${balance} of nft ${symbol}`);
+      // @todo replace relayer-address with address of defender relayer in your account
+      await specificErc721Contract.setApprovalForAll('0x7CCc699cb7F361Aa1b982E7954cF65E531cdEc94', true);
+      console.log(`Approved allowance for all tokens in NFT collection ${symbol}`);
     }
   });
 
