@@ -62,6 +62,7 @@ async function main() {
       let specificErc20Contract = erc20Contract.attach(item.contract_address);
       // approve all tokens to relayer address
       // @todo replace relayer-address with args from command line
+      // @todo check if relayer already has allowances to avoid duplicate approvals
       await specificErc20Contract.approve('relayer-address', balance);
       console.log('approving token address...', item.contract_address);
       let scaledBalance = balance / Math.pow(10, decimals);
