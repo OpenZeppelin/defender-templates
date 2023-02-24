@@ -1,0 +1,4 @@
+# address you want to send your erc20 and erc721 tokens to
+receiver-wallet-address: "0x"
+# goerli or mainnet
+network: "goerli"

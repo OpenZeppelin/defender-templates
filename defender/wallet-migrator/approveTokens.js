@@ -2,24 +2,21 @@
 // have them paste in the private key to approve?
 // then if something happens, you can go manually click on run autotask, which will transfer out all tokens for you
 require('dotenv').config();
+const yaml = require('js-yaml');
+const fs   = require('fs');
 const axios = require('axios');
 const { ethers } = require('ethers');
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const COVALENT_API_KEY = process.env.COVALENT_API_KEY;
-const yargs = require('yargs');
-
-const options = {
-  network: {
-    type: 'string',
-    required: true,
-    description: 'network',
-    alias: 'n',
-  },
-};
-
-const cliOptions = yargs.options(options).parseSync();
+let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', {schema: 'JSON_SCHEMA'}));
+secretsFile = JSON.parse(JSON.stringify(secretsFile).replace(/-/g, ''))
+const DEFENDER_API_KEY = secretsFile.keys.defenderapikey
+const DEFENDER_API_SECRET = secretsFile.keys.defenderapisecret
+const configFile = yaml.load(fs.readFileSync('defender/wallet-migrator/config.dev.yml', 'utf8'));
+const { RelayClient } = require('defender-relay-client');
+const relayClient = new RelayClient({ apiKey: DEFENDER_API_KEY, apiSecret: DEFENDER_API_SECRET });
 
 const erc20Abi = [
   'function approve(address _spender, uint256 _value) external',
@@ -42,7 +39,7 @@ async function get(url, method, headers, auth) {
 }
 
 async function main() {
-  const network = cliOptions.network;
+  const network = configFile.network;
   let rpcEndpoint;
   let chainId;
 
