@@ -24,7 +24,7 @@ In order to set up this template, you need a Chainlink subscription and some ETH
 
 This template uses external dependencies, so we will use [Rollup](https://rollupjs.org/guide/en/#introduction) to bundle those dependencies inside of our Javascript Autotasks. We also leverage the [yaml plugin](https://github.com/rollup/plugins/tree/master/packages/yaml) to define parameters in a central location and reuse them in our Serverless template and both Autotasks.
 
-In the `defender` directory, perform the following steps:
+In the `defender/auto-fund-chainlink-subscription` directory, perform the following steps:
 
 - Run `yarn install` to install the necessary Node packages
 - Run `yarn build` to bundle the Autotasks using Rollup
@@ -45,3 +45,4 @@ In the `defender` directory, perform the following steps:
     - `fundAmount`
     - `network`
 - Run `serverless deploy --stage dev` to deploy the stack to Defender
+- Alternatively, you can also run `yarn defender`, which will run both the `yarn build` and `serverless deploy` steps together.
