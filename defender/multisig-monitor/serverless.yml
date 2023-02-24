@@ -1,17 +1,16 @@
-service: defender-serverless-template
+service: multisig-monitor
 configValidationMode: error
 frameworkVersion: "3"
 
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: "${self:custom.config.network}-multisig" #prepend network name to separate between networks
+  stackName: "${self:custom.config.network}-multisig" # prepend network name to separate between networks
   ssot: false
 
 custom:
-  secrets: ${file(../secrets.${self:provider.stage}.yml)}
-  config: ${file(../config.${self:provider.stage}.yml)}
-  addresses: ${file(./addresses.${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
 
 defender:
   key: ${self:custom.secrets.keys.defender-api-key}
@@ -25,7 +24,7 @@ resources:
         type: "BLOCK"
         network: "${self:custom.config.network}"
         addresses:
-          - "${self:custom.addresses.multisig-address}"
+          - "${self:custom.config.multisig-address}"
         abi: ${file(../../abi/Safe.json.abi)}
         paused: false
         autotask-condition: null
@@ -35,7 +34,7 @@ resources:
           channels:
             - ${self:resources.Resources.notifications.slack-security}
         conditions:
-          event: #monitors all Safe events. If you don't want all of them just comment or remove
+          event: # monitors all Safe events. If you don't want all of them just comment or remove
             - signature: "ChangedThreshold(uint256)"
             - signature: "AddedOwner(address)"
             - signature: "RemovedOwner(address)"

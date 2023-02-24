@@ -3,3 +3,5 @@ name: Governance Summary
 governance_address: '0xD63123527551F037fAAc74bf5fDA5B71569cf5af'
 # Autotask run frequency in minutes
 autotask_run_frequency: 1440
+# Possible Defender networks: https://github.com/OpenZeppelin/defender-client/blob/master/packages/base/src/utils/network.ts`
+monitored-network: 'mainnet'

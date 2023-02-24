@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const stackName = 'governance_bravo_summary';
 const governanceAddressSecretName = `${stackName}_governance_address`;
 

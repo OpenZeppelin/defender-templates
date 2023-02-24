@@ -1,0 +1,15 @@
+# Token type: "erc20", "erc721", or "erc1155" is supported
+token-type: "erc20"
+# (optional) If using ERC1155, specify with NFT ID to mint
+nft-id: "1"
+# Token address and network
+token-address: "0x0000000000000000000000000000000000000000"
+network: "goerli"
+# Recipient Information
+recipient-address: "0x0000000000000000000000000000000000000000"
+# If recipient drops below this amount of tokens...
+recipient-minimum-balance: "10"
+#  ... then, this many tokens will be minted to them
+recipient-top-up-amount: "3"
+# Time in minutes
+autotask-run-frequency: 10
