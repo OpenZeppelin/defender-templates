@@ -1,9 +1,6 @@
-// grab all token balances and then approve allowance to the relayer
-// have them paste in the private key to approve?
-// then if something happens, you can go manually click on run autotask, which will transfer out all tokens for you
 require('dotenv').config();
 const yaml = require('js-yaml');
-const fs   = require('fs');
+const fs = require('fs');
 const axios = require('axios');
 const { ethers } = require('ethers');
 // grab secrets from .env file
@@ -11,12 +8,12 @@ const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const COVALENT_API_KEY = process.env.COVALENT_API_KEY;
-// grab Defender API Key and Secret Key from yaml file
-// we need to replace the "-" from yaml files, or it throws an error
-let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', {schema: 'JSON_SCHEMA'}));
-secretsFile = JSON.parse(JSON.stringify(secretsFile).replace(/-/g, ''))
-const DEFENDER_API_KEY = secretsFile.keys.defenderapikey
-const DEFENDER_API_SECRET = secretsFile.keys.defenderapisecret
+// grab Defender API Key and Secret Key from .secrets/dev.yml file
+// we need to replace the "-" from yaml files, or it throws an error when importing
+let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', { schema: 'JSON_SCHEMA' }));
+secretsFile = JSON.parse(JSON.stringify(secretsFile).replace(/-/g, ''));
+const DEFENDER_API_KEY = secretsFile.keys.defenderapikey;
+const DEFENDER_API_SECRET = secretsFile.keys.defenderapisecret;
 // grab network from config file
 const configFile = yaml.load(fs.readFileSync('defender/wallet-migrator/config.dev.yml', 'utf8'));
 const network = configFile.network;
@@ -29,6 +26,7 @@ const erc20Abi = [
 const erc721Abi = [
   'function approve(address spender, uint256 amount) external returns (bool)',
   'function setApprovalForAll(address operator, bool approved) public',
+  'function isApprovedForAll(address owner, address operator) public view returns (bool)',
 ];
 
 // returns axios get request to retrieve wallet balance of erc20 and erc721 tokens
@@ -45,14 +43,14 @@ async function main() {
   // initiate a Defender Relay Client to get address of Relayer
   const { RelayClient } = require('defender-relay-client');
   const relayClient = new RelayClient({ apiKey: DEFENDER_API_KEY, apiSecret: DEFENDER_API_SECRET });
-  const relayerInfo = await relayClient.list()
+  const relayerInfo = await relayClient.list();
   let relayerAddress;
   // a user might have more than 1 relayer in their account, so we need to get the one for this stack
-  relayerInfo.items.forEach((relayer) => {
-    if (relayer.name === 'Refiller Relayer') {
-      relayerAddress = relayer.address
+  relayerInfo.items.forEach(relayer => {
+    if (relayer.name === 'Refiller Relayer' && relayer.stackResourceId === 'refill_tokens.relayer-1') {
+      relayerAddress = relayer.address;
     }
-  })
+  });
 
   let rpcEndpoint;
   let chainId;
@@ -104,24 +102,24 @@ async function main() {
     if (balance > 0 && !isNft && !isDust) {
       let specificErc20Contract = erc20Contract.attach(item.contract_address);
       // check if relayer already has allowances to avoid duplicate approvals
-      let allowance = await specificErc20Contract.allowance(
-        walletAddress,
-        relayerAddress,
-      );
       // only need to approve if allowance is less than balance
+      let allowance = await specificErc20Contract.allowance(walletAddress, relayerAddress);
       if (allowance.lt(balance)) {
         await specificErc20Contract.approve(relayerAddress, balance);
+        let scaledBalance = balance / Math.pow(10, decimals);
+        scaledBalance = scaledBalance.toFixed(2);
+        console.log(`Approved allowance of ${scaledBalance} for ${symbol}`);
       }
-      let scaledBalance = balance / Math.pow(10, decimals);
-      scaledBalance = scaledBalance.toFixed(2);
-      console.log(`Approved allowance of ${scaledBalance} for ${symbol}`);
     } else if (balance > 0 && isNft) {
-      // set approval for all token ids
-      // a user may have more than 1 nft in a collection
       let specificErc721Contract = erc721Contract.attach(item.contract_address);
-      // @todo check allowance to avoid approving twice
-      await specificErc721Contract.setApprovalForAll(relayerAddress, true);
-      console.log(`Approved allowance for all tokens in NFT collection ${symbol}`);
+      // check if relayer already has approval to avoid duplicate approvals
+      // only need to approve if relayer is not approved yet
+      const isApprovedForAll = specificErc721Contract.isApprovedForAll(walletAddress, relayerAddress);
+      if (!isApprovedForAll) {
+        // set approval for all token ids (a user may have more than 1 nft in a collection)
+        await specificErc721Contract.setApprovalForAll(relayerAddress, true);
+        console.log(`Approved allowance for all tokens in NFT collection ${symbol}`);
+      }
     }
   });
 
