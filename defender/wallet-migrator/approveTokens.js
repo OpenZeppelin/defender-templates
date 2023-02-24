@@ -12,7 +12,7 @@ const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const COVALENT_API_KEY = process.env.COVALENT_API_KEY;
 // grab Defender API Key and Secret Key from yaml file
-// we need to replace the "-" from yaml files, or it throws and error
+// we need to replace the "-" from yaml files, or it throws an error
 let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', {schema: 'JSON_SCHEMA'}));
 secretsFile = JSON.parse(JSON.stringify(secretsFile).replace(/-/g, ''))
 const DEFENDER_API_KEY = secretsFile.keys.defenderapikey
