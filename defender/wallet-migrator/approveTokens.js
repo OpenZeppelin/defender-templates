@@ -47,7 +47,7 @@ async function main() {
   let relayerAddress;
   // a user might have more than 1 relayer in their account, so we need to get the one for this stack
   relayerInfo.items.forEach(relayer => {
-    if (relayer.name === 'Refiller Relayer' && relayer.stackResourceId === 'refill_tokens.relayer-1') {
+    if (relayer.name === 'Migrator Relay' && relayer.stackResourceId === 'wallet_migrator.relayer-1') {
       relayerAddress = relayer.address;
     }
   });
@@ -88,22 +88,22 @@ async function main() {
     console.log(error);
   }
 
-  let erc20Contract = new ethers.Contract('0x', erc20Abi, signer); // first address doesn't matter, will be replaced with the address of the token
-  let erc721Contract = new ethers.Contract('0x', erc721Abi, signer); // first address doesn't matter, will be replaced with the address of the token
+  const erc20Contract = new ethers.Contract('0x', erc20Abi, signer); // first address doesn't matter, will be replaced with the address of the token
+  const erc721Contract = new ethers.Contract('0x', erc721Abi, signer); // first address doesn't matter, will be replaced with the address of the token
 
   const promises = responseData.map(async item => {
-    let balance = item.balance;
-    let isNft = item.type === 'nft';
-    let isDust = item.type === 'dust'; // tokens with less than $0.1 in spot fiat value get classified as dust (ignore unless it's eth)
-    let decimals = item.contract_decimals;
-    let symbol = item.contract_ticker_symbol;
+    const balance = item.balance;
+    const isNft = item.type === 'nft';
+    const isDust = item.type === 'dust'; // tokens with less than $0.1 in spot fiat value get classified as dust (ignore unless it's eth)
+    const decimals = item.contract_decimals;
+    const symbol = item.contract_ticker_symbol;
 
     // ignore if token value is less than $0.1
     if (balance > 0 && !isNft && !isDust) {
-      let specificErc20Contract = erc20Contract.attach(item.contract_address);
+      const specificErc20Contract = erc20Contract.attach(item.contract_address);
       // check if relayer already has allowances to avoid duplicate approvals
       // only need to approve if allowance is less than balance
-      let allowance = await specificErc20Contract.allowance(walletAddress, relayerAddress);
+      const allowance = await specificErc20Contract.allowance(walletAddress, relayerAddress);
       if (allowance.lt(balance)) {
         await specificErc20Contract.approve(relayerAddress, balance);
         let scaledBalance = balance / Math.pow(10, decimals);
@@ -111,7 +111,7 @@ async function main() {
         console.log(`Approved allowance of ${scaledBalance} for ${symbol}`);
       }
     } else if (balance > 0 && isNft) {
-      let specificErc721Contract = erc721Contract.attach(item.contract_address);
+      const specificErc721Contract = erc721Contract.attach(item.contract_address);
       // check if relayer already has approval to avoid duplicate approvals
       // only need to approve if relayer is not approved yet
       const isApprovedForAll = specificErc721Contract.isApprovedForAll(walletAddress, relayerAddress);
