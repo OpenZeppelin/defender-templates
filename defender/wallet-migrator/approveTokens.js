@@ -6,17 +6,20 @@ const yaml = require('js-yaml');
 const fs   = require('fs');
 const axios = require('axios');
 const { ethers } = require('ethers');
+// grab secrets from .env file
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const COVALENT_API_KEY = process.env.COVALENT_API_KEY;
+// grab Defender API Key and Secret Key from yaml file
+// we need to replace the "-" from yaml files, or it throws and error
 let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', {schema: 'JSON_SCHEMA'}));
 secretsFile = JSON.parse(JSON.stringify(secretsFile).replace(/-/g, ''))
 const DEFENDER_API_KEY = secretsFile.keys.defenderapikey
 const DEFENDER_API_SECRET = secretsFile.keys.defenderapisecret
+// grab network from config file
 const configFile = yaml.load(fs.readFileSync('defender/wallet-migrator/config.dev.yml', 'utf8'));
-const { RelayClient } = require('defender-relay-client');
-const relayClient = new RelayClient({ apiKey: DEFENDER_API_KEY, apiSecret: DEFENDER_API_SECRET });
+const network = configFile.network;
 
 const erc20Abi = [
   'function approve(address _spender, uint256 _value) external',
@@ -39,11 +42,21 @@ async function get(url, method, headers, auth) {
 }
 
 async function main() {
-  const network = configFile.network;
+  // initiate a Defender Relay Client to get address of Relayer
+  const { RelayClient } = require('defender-relay-client');
+  const relayClient = new RelayClient({ apiKey: DEFENDER_API_KEY, apiSecret: DEFENDER_API_SECRET });
+  const relayerInfo = await relayClient.list()
+  let relayerAddress;
+  // a user might have more than 1 relayer in their account, so we need to get the one for this stack
+  relayerInfo.items.forEach((relayer) => {
+    if (relayer.name === 'Refiller Relayer') {
+      relayerAddress = relayer.address
+    }
+  })
+
   let rpcEndpoint;
   let chainId;
 
-  // using arguments from command line to avoid importing values from yaml file (requires rollup.js)
   if (network === 'goerli') {
     rpcEndpoint = GOERLI_RPC_URL;
     chainId = '5';
@@ -61,7 +74,6 @@ async function main() {
   const headers = {
     'Content-Type': 'application/json',
   };
-  // @todo replace chain id and address with args from the command line
   const url = `https://api.covalenthq.com/v1/${chainId}/address/${walletAddress}/balances_v2/?no-nft-fetch=true&nft=true`;
   const auth = {
     username: COVALENT_API_KEY,
@@ -92,15 +104,13 @@ async function main() {
     if (balance > 0 && !isNft && !isDust) {
       let specificErc20Contract = erc20Contract.attach(item.contract_address);
       // check if relayer already has allowances to avoid duplicate approvals
-      // @todo replace relayer-address with address of defender relayer in your account
       let allowance = await specificErc20Contract.allowance(
         walletAddress,
-        '0x7CCc699cb7F361Aa1b982E7954cF65E531cdEc94',
+        relayerAddress,
       );
       // only need to approve if allowance is less than balance
       if (allowance.lt(balance)) {
-        // @todo replace relayer-address with address of defender relayer in your account
-        await specificErc20Contract.approve('0x7CCc699cb7F361Aa1b982E7954cF65E531cdEc94', balance);
+        await specificErc20Contract.approve(relayerAddress, balance);
       }
       let scaledBalance = balance / Math.pow(10, decimals);
       scaledBalance = scaledBalance.toFixed(2);
@@ -109,8 +119,8 @@ async function main() {
       // set approval for all token ids
       // a user may have more than 1 nft in a collection
       let specificErc721Contract = erc721Contract.attach(item.contract_address);
-      // @todo replace relayer-address with address of defender relayer in your account
-      await specificErc721Contract.setApprovalForAll('0x7CCc699cb7F361Aa1b982E7954cF65E531cdEc94', true);
+      // @todo check allowance to avoid approving twice
+      await specificErc721Contract.setApprovalForAll(relayerAddress, true);
       console.log(`Approved allowance for all tokens in NFT collection ${symbol}`);
     }
   });
