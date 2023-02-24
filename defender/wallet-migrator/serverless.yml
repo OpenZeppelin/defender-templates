@@ -24,7 +24,7 @@ functions:
     path: autotask-1
     trigger:
       type: schedule
-      frequency: 1000000000 # for testing. set to never run right now
+      frequency: 1000000000 #  @todo for testing. set to never run right now
     paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
 
@@ -39,7 +39,10 @@ resources:
 
     secrets:
       stack:
+        SENDER_WALLET_ADDRESS: ${self:custom.config.sender-wallet-address}
         RECEIVER_WALLET_ADDRESS: ${self:custom.config.receiver-wallet-address}
+        COVALENT_API_KEY: ${self:custom.secrets.keys.covalent-api-key}
+        NETWORK: ${self:custom.config.network}
 
     relayers:
       relayer-1:

@@ -11,7 +11,13 @@ GOERLI_RPC_URL
 PRIVATE_KEY
 COVALENT_API_KEY
 
+### secrets setup
+COVALENT_API_KEY
+
 ### config setup
 
 make sure that you also have your defender api and secrets in before running approval script
 deploy relayer and autotask first before you run script to approve all tokens
+
+### running the script
+the user should only need to run `yarn node defender/wallet-migrator/approveTokens.js` for the script to work
