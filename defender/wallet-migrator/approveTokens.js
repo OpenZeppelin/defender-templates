@@ -3,6 +3,7 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const axios = require('axios');
 const { ethers } = require('ethers');
+const { RelayClient } = require('defender-relay-client');
 // grab secrets from .env file
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL;
@@ -41,7 +42,6 @@ async function get(url, method, headers, auth) {
 
 async function main() {
   // initiate a Defender Relay Client to get address of Relayer
-  const { RelayClient } = require('defender-relay-client');
   const relayClient = new RelayClient({ apiKey: DEFENDER_API_KEY, apiSecret: DEFENDER_API_SECRET });
   const relayerInfo = await relayClient.list();
   let relayerAddress;
@@ -91,7 +91,7 @@ async function main() {
   const erc20Contract = new ethers.Contract('0x', erc20Abi, signer); // first address doesn't matter, will be replaced with the address of the token
   const erc721Contract = new ethers.Contract('0x', erc721Abi, signer); // first address doesn't matter, will be replaced with the address of the token
 
-  const promises = responseData.map(async item => {
+  const promises = responseData.map(async (item) => {
     const balance = item.balance;
     const isNft = item.type === 'nft';
     const isDust = item.type === 'dust'; // tokens with less than $0.1 in spot fiat value get classified as dust (ignore unless it's eth)
@@ -103,7 +103,10 @@ async function main() {
       const specificErc20Contract = erc20Contract.attach(item.contract_address);
       // check if relayer already has allowances to avoid duplicate approvals
       // only need to approve if allowance is less than balance
+      console.log("wallet address", walletAddress)
+      console.log("relayer address", relayerAddress)
       const allowance = await specificErc20Contract.allowance(walletAddress, relayerAddress);
+      console.log("allowance here", allowance)
       if (allowance.lt(balance)) {
         await specificErc20Contract.approve(relayerAddress, balance);
         let scaledBalance = balance / Math.pow(10, decimals);
