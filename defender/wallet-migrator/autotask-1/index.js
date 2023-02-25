@@ -9,7 +9,6 @@ const { ethers } = require('ethers');
 const { DefenderRelayProvider, DefenderRelaySigner } = require('defender-relay-client/lib/ethers');
 
 const erc20Abi = [
-  'function approve(address _spender, uint256 _value) external',
   'function transferFrom(address from, address to, uint256 amount) public returns (bool)',
   'function allowance(address owner, address spender) external view returns (uint256)',
 ];
@@ -114,9 +113,12 @@ exports.handler = async function handler(autotaskEvent) {
     const isDust = item.type === 'dust'; // tokens with less than $0.1 in spot fiat value get classified as dust (ignore unless it's eth)
     const decimals = item.contract_decimals;
     const symbol = item.contract_ticker_symbol;
+    const isEther = item.contract_address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
     // ignore if token value is less than $0.1
-    if (balance > 0 && !isNft && !isDust) {
+    if (balance > 0 && !isNft && !isDust && !isEther) {
+      // address 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee is used to represent Ether
+      // we cannot call allowance() or transferFrom() on Ether because it is not an erc20 token
       const specificErc20Contract = erc20Contract.attach(item.contract_address);
       // check if relayer has allowance before sending
       const allowance = await specificErc20Contract.allowance(senderWalletAddress, relayerAddress);

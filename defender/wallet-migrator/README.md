@@ -21,3 +21,8 @@ deploy relayer and autotask first before you run script to approve all tokens
 
 ### running the script
 the user should only need to run `yarn node defender/wallet-migrator/approveTokens.js` for the script to work
+
+### steps
+- deploy serverless
+- run approval script
+- run transfer script (autotask)
