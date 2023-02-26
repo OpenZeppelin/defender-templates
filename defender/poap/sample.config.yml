@@ -1,0 +1,7 @@
+# Token type: "erc20", "erc721", or "erc1155" is supported
+tokenType: "erc20"
+# (optional) If using ERC1155, specify with NFT ID to mint
+nftId: "1"
+# Token address and network
+tokenAddress: "0x0000000000000000000000000000000000000000"
+network: "goerli"

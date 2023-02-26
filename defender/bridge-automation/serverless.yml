@@ -1,0 +1,45 @@
+service: bridge-automation
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: dev
+  stackName: bridge_automation
+  ssot: false
+
+# Configure and rename sample.secrets.yml to ../.secrets/dev.yml
+custom:
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.yml)}
+
+# Make sure that you have created keys in your Defender account and added them to your ../.secrets/dev.yml file
+defender:
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
+
+functions:
+  autotask-1:
+    name: Arbitrum (Layer2) Address Monitor Autotask
+    path: autotask-1
+    trigger:
+      type: schedule
+      frequency: ${self:custom.config.autotask-frequency}
+    paused: false
+
+resources:
+  Resources:
+    secrets:
+      stack:
+        LAYER2_WALLET_ADDRESS: ${self:custom.config.layer2-wallet-address}
+        LAYER2_RELAYER_API_KEY: ${self:custom.secrets.keys.layer2-relayer-api-key}
+        LAYER2_RELAYER_API_SECRET: ${self:custom.secrets.keys.layer2-relayer-api-secret}
+        LAYER1_RELAYER_API_KEY: ${self:custom.secrets.keys.layer1-relayer-api-key}
+        LAYER1_RELAYER_API_SECRET: ${self:custom.secrets.keys.layer1-relayer-api-secret}
+        THRESHOLD: ${self:custom.config.threshold}
+        AMOUNT: ${self:custom.config.amount}
+        ARBITRUM_BRIDGE_ADDRESS: ${self:custom.config.arbitrum-bridge-address}
+
+plugins:
+  - defender-serverless
+  

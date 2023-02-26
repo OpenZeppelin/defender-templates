@@ -42,7 +42,7 @@ resources:
     relayers:
       relayer-1:
         name: ${self:custom.config.name} Serverless Relay
-        network: mainnet
+        network: ${self:custom.config.monitored-network}
         min-balance: 100000000000000000
 
 plugins:

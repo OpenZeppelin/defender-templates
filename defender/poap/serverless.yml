@@ -5,21 +5,23 @@ frameworkVersion: '3'
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: 'poap-mint-tokens'
+  stackName: 'poap_minter'
   ssot: false
 custom:
-  config: ${file(../.secrets/${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
+
 defender:
-  key: ${self:custom.config.keys.defender-api-key}
-  secret: ${self:custom.config.keys.defender-api-secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   poap-autotask:
-    name: 'Poap mint'
-    path: './autotasks/mint-poap/dist'
+    name: 'POAP minter'
+    path: './autotasks/mint-poap'
     trigger:
       type: 'webhook'
-    paused: true #Default paused you have to change this once autotask has correct addresses set
+    paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
 
 resources:
@@ -28,14 +30,18 @@ resources:
       policy-1:
         eip1559-pricing: true
 
+    secrets:
+      stack:
+        TOKEN_TYPE: ${self:custom.config.tokenType}
+        NFT_ID: ${self:custom.config.nftId}
+        TOKEN_ADDRESS: ${self:custom.config.tokenAddress}
+
     relayers:
       relayer-1:
-        name: 'Poap minter Relayer'
-        network: 'goerli'
+        name: 'POAP minter Relayer'
+        network: ${self:custom.config.network}
         min-balance: 1000
         policy: ${self:resources.Resources.policies.policy-1}
-        api-keys:
-          - key1
 
 plugins:
   - defender-serverless
