@@ -1,4 +1,6 @@
 const { ethers } = require('ethers');
+const ethSigUtil = require('eth-sig-util');
+const { TypedDataUtils, SignTypedDataVersion } = require('@metamask/eth-sig-util');
 
 const EIP712Domain = [
   { name: 'name', type: 'string' },
@@ -6,7 +8,6 @@ const EIP712Domain = [
   { name: 'chainId', type: 'uint256' },
   { name: 'verifyingContract', type: 'address' },
 ];
-const EIP712DomainTypes = EIP712Domain.map(x => x.type);
 
 const ForwardRequest = [
   { name: 'from', type: 'address' },
@@ -16,7 +17,6 @@ const ForwardRequest = [
   { name: 'nonce', type: 'uint256' },
   { name: 'data', type: 'bytes' },
 ];
-const requestTypes = ForwardRequest.map(x => x.type);
 
 function getMetaTxTypeData(chainId, verifyingContract) {
   return {
@@ -35,12 +35,34 @@ function getMetaTxTypeData(chainId, verifyingContract) {
 }
 
 async function signTypedData(signer, from, data) {
+
+  const hashStruct = TypedDataUtils.hashStruct(data.primaryType, data.message, data.types, SignTypedDataVersion.V4);
+  console.log('hash:', hashStruct);
+
+  const eip712Hash = TypedDataUtils.eip712Hash(data, SignTypedDataVersion.V4); //  (data.primaryType, data.message, data.types, SignTypedDataVersion.V4);
+  console.log('hash:', eip712Hash);
+
+  const { domain, types, message: value } = data;
+  const typedSig = await signer._signTypedData(domain, types, value);
+  console.log(`Typed data signature is ${typedSig}`);
+
+  const typedSigAddress = ethers.utils.verifyTypedData(domain, types, value, typedSig);
+  console.log(`Typed data signature address is ${typedSigAddress} matching relayer address`);
+
+
+  // If signer is a private key, use it to sign
+  if (typeof (signer) === 'string') {
+    const privateKey = Buffer.from(signer.replace(/^0x/, ''), 'hex');
+    return ethSigUtil.signTypedMessage(privateKey, { data });
+  }
+
   // If signer is a relay, then use Defender
   if (signer.relayer) {
     const { domain, message } = data;
     const abiCoder = new ethers.utils.AbiCoder();
 
     // Domain and request need to encoded and keccak256 hashed before sending to relay
+    // ref: https://eips.ethereum.org/EIPS/eip-712#definition-of-typed-structured-data-%F0%9D%95%8A
     /* Solidity Reference:
 
       bytes32 private constant _TYPEHASH =
@@ -78,42 +100,20 @@ async function signTypedData(signer, from, data) {
       }
     */
 
-    const domainEncoded = abiCoder.encode([
-      'string',
-      'string',
-      'uint256',
-      'address'
-    ], [
-      domain.name,
-      domain.version,
-      domain.chainId,
-      domain.verifyingContract,
-    ]);
+    const domainEncoded = abiCoder.encode(
+      ['string', 'string', 'uint256', 'address'],
+      [domain.name, domain.version, domain.chainId, domain.verifyingContract,]);
     const domainHash = ethers.utils.keccak256(domainEncoded);
     console.debug('domainHash', domainHash);
 
     const functionString = 'ForwardRequest(address from,address to,uint256 value,uint256 gas,uint256 nonce,bytes data)';
-    const functionEncoded = abiCoder.encode(['string'],[functionString]);
+    const functionEncoded = abiCoder.encode(['string'], [functionString]);
     const functionHash = ethers.utils.keccak256(functionEncoded);
 
     const dataHash = ethers.utils.keccak256(message.data)
-    const requestEncoded = abiCoder.encode([
-      'bytes',
-      'address',
-      'address',
-      'uint256',
-      'uint256',
-      'uint256',
-      'bytes',
-    ], [
-      functionHash,
-      message.from,
-      message.to,
-      message.value,
-      message.gas,
-      message.nonce,
-      dataHash,
-    ]);
+    const requestEncoded = abiCoder.encode(
+      ['bytes', 'address', 'address', 'uint256', 'uint256', 'uint256', 'bytes'],
+      [functionHash, message.from, message.to, message.value, message.gas, message.nonce, dataHash,]);
     const requestHash = ethers.utils.keccak256(requestEncoded);
     console.debug('requestHash', requestHash);
 
@@ -128,7 +128,7 @@ async function signTypedData(signer, from, data) {
   // Otherwise, send the signTypedData RPC call (Metamask/Hardhat)
   // Only Available for JsonRpcSigners
   const [method, argData] = ['eth_signTypedData_v4', JSON.stringify(data)];
-  return await signer.send(method, [from, argData]);
+  return await signer.send('eth_signTypedData_v4', [from, JSON.stringify(data)]);
 }
 
 async function buildRequest(forwarder, input) {
