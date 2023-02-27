@@ -6,15 +6,15 @@ import {
   linkAddress,
   wethAddress,
   fundAmount,
-} from '../../subscription-config.dev.yml';
+} from '../../config.dev.yml';
 import { FeeAmount } from '@uniswap/v3-sdk';
 import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import Router from '@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json';
 import linkAbi from '../../../../abi/Link.json';
 import vrfCoordinatorAbi from '../../../../abi/vrfCoordinator.json';
-import erc20Abi from '../../../../abi/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json';
+import erc20Abi from '../../../../abi/contracts/ERC20Mock.sol/ERC20Mock.json';
 
-//These are the same across all networks - https://docs.uniswap.org/contracts/v3/reference/deployments
+// These are the same across all networks - https://docs.uniswap.org/contracts/v3/reference/deployments
 const quoterAddress = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 const swapRouterAddress = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
 

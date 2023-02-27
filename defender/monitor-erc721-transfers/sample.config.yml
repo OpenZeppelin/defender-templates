@@ -1,0 +1,4 @@
+# Address of the ERC721 token you want to monitor
+token-address: '0xe8Ad714Bd6096db0148bCc0a37497e78cF080c43'
+# Available networks to monitor: https://github.com/OpenZeppelin/defender-serverless/blob/main/src/types/docs/definitions-definitions-relayer.md#network-constraints
+network: 'goerli' 
