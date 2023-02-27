@@ -119,12 +119,11 @@ Interactions with the Autotasks will be done via webhook URLs. Add the URLs to y
 
 ## Typical Usage
 
-The Signer Autotask can now authorize minting of Tokens without spending any gas by signing a minting request and sending it back to the requestor via HTTP.
+The Signer Autotask can now authorize the minting of Tokens without needing to spend any gas. This is done by signing a minting request and sending it back to the user via HTTP.
 
-A user with a signed request can send the request to the Relayer Autotask via HTTP and also not spend gas.
+The user can then send the signed request to the Relayer Autotask via HTTP, again without needing to spend any gas.
 
-The Relayer Autotask verify the request and signature and execute the transaction on-chain if they are valid.
-
+Upon receiving this request, the Relayer Autotask will verify both the request and signature's validity before executing the desired transaction on the blockchain.
 ### Signing and Relaying with scripts
 
 A `sign` and `relay` script are included in this template use the deployed Autotasks. 
