@@ -207,28 +207,6 @@ describe('signing and verifying', function () {
     // const toSign = await buildTypedData(forwarderContract, request);
     // toSign contains: domain, types, primaryType, and message properties
 
-    const json = {
-      domain: {
-        name: 'MinimalForwarder',
-        version: '0.0.1',
-        chainId: 31337,
-        verifyingContract: '0x0165878A594ca255338adfa4d48449f69242Eb8F'
-      },
-      primaryType: 'ForwardRequest',
-      message: {
-        value: 0,
-        gas: 1000000,
-        nonce: '0',
-        from: '0x5b46D575f4a5302250233DBBF456d15e6353B7bd',
-        to: '0xBa72B6572dEDaaA3a9e9b9E9E9601528418bCFcA',
-        data: '0x731133e90000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000'
-      }
-    }
-    const { domain, types, message } = toSign;
-
-    const typedSig = await liveSigner._signTypedData(domain, types, message);
-    console.log(`Typed data signature is ${typedSig}`);
-
   });
 
 });
