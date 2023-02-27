@@ -104,26 +104,31 @@ exports.handler = async function handler(autotaskEvent) {
   const signer = new DefenderRelaySigner(autotaskEvent, provider, { speed: 'fast' });
   const relayerAddress = await signer.getAddress();
 
-  const erc20Contract = new ethers.Contract('0x', erc20Abi, signer); // first address doesn't matter, will be replaced with the address of the token
-  const erc721Contract = new ethers.Contract('0x', erc721Abi, signer); // first address doesn't matter, will be replaced with the address of the token
+  // autotask will fail if we pass in a non-erc20 and non-erc721 address in when creating a contract
+  // these are place holder addresses that are valid and deployed on Goerli
+  const erc20Contract = new ethers.Contract('0x1dab4e59bef57ef41b338c349f1f9e30bf534a10', erc20Abi, signer);
+  const erc721Contract = new ethers.Contract('0xCfD7cEF761A60dFBA0D240ee4fF82f7f51242675', erc721Abi, signer);
 
-  const promises = responseData.map(async (item) => {
+  for (var i = 0; i < responseData.length; i++) {
+    const item = responseData[i];
     const balance = item.balance;
     const isNft = item.type === 'nft';
     const isDust = item.type === 'dust'; // tokens with less than $0.1 in spot fiat value get classified as dust (ignore unless it's eth)
     const decimals = item.contract_decimals;
     const symbol = item.contract_ticker_symbol;
-    const isEther = item.contract_address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    const isEther = item.contract_address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
-    // ignore if token value is less than $0.1
+    // ignore if token value is less than $0.1 or is Ether
+    // address 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee is used to represent Ether
+    // we cannot call allowance() or transferFrom() on Ether because it is not an erc20 token
+    // there isn't a way to approve an allowance of Ether ahead of time like we can or erc20 tokens
     if (balance > 0 && !isNft && !isDust && !isEther) {
-      // address 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee is used to represent Ether
-      // we cannot call allowance() or transferFrom() on Ether because it is not an erc20 token
       const specificErc20Contract = erc20Contract.attach(item.contract_address);
       // check if relayer has allowance before sending
       const allowance = await specificErc20Contract.allowance(senderWalletAddress, relayerAddress);
       if (allowance > 0) {
-        await specificErc20Contract.transferFrom(senderWalletAddress, receiverWalletAddress, allowance);
+        const tx = await specificErc20Contract.transferFrom(senderWalletAddress, receiverWalletAddress, allowance);
+        await tx.wait();
         // scale allowances for logging
         let scaledAllowance = allowance / Math.pow(10, decimals);
         scaledAllowance = scaledAllowance.toFixed(2);
@@ -131,9 +136,8 @@ exports.handler = async function handler(autotaskEvent) {
         let scaledBalance = balance / Math.pow(10, decimals);
         scaledBalance = scaledBalance.toFixed(2);
         // balance and allowance should be the same because the total balance should have been previously approved
-        console.log(`Out of ${scaledBalance} tokens in wallet, ${scaledAllowance} was sent`);
         console.log(
-          `Transfered ${scaledAllowance} of ${symbol} from ${senderWalletAddress} to ${receiverWalletAddress}`,
+          `Out of ${scaledBalance} ${symbol} tokens in wallet ${senderWalletAddress}, ${scaledAllowance} was sent to wallet ${receiverWalletAddress}`,
         );
       }
     } else if (balance > 0 && isNft) {
@@ -141,21 +145,20 @@ exports.handler = async function handler(autotaskEvent) {
       // check if relayer is approved as an operator before transfering
       // transfer all nfts one by one if relayer is approved as an operator
       // we need to do this because there is no transfer all method for erc721 and a sender may have more than 1 nft in a collection
-      const isApprovedForAll = specificErc721Contract.isApprovedForAll(senderWalletAddress, relayerAddress);
+      const isApprovedForAll = await specificErc721Contract.isApprovedForAll(senderWalletAddress, relayerAddress);
       if (isApprovedForAll) {
         const nftCollectionData = item.nft_data;
         nftCollectionData.map(async individualNft => {
           const tokenId = individualNft.token_id;
-          await specificErc721Contract.transferFrom(senderWalletAddress, receiverWalletAddress, tokenId);
+          const tx = await specificErc721Contract.transferFrom(senderWalletAddress, receiverWalletAddress, tokenId);
+          await tx.wait();
           console.log(
             `Transfered NFT ${symbol} with token id ${tokenId} from ${senderWalletAddress} to ${receiverWalletAddress}`,
           );
         });
       }
     }
-  });
-
-  await Promise.all(promises);
+  }
 
   return true;
 };
