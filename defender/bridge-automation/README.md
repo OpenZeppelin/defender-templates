@@ -19,8 +19,8 @@ subsequent executions of the Autotask that will sweep the funds. Again, this ext
 transaction occurs on the L2 side, we can safely transfer from our L2 EOA to any address specified by the user. 
 
 Please note that a caveat here is that although unlikely, a misbehaving [Sequencer](https://developer.offchainlabs.com/inside-arbitrum-nitro#inboxes-fast-and-slow) 
-could result in the submitted transaction to sit in the Delayed Inbox for 24 hours before someone else can force it through. Ideally, a well behaved Sequencer 
-will result in the initial bridging transaction to be confirmed within 10 minutes.
+could result in the submitted transaction sitting in the Delayed Inbox for 24 hours before someone else can force it through. Ideally, a well-behaved Sequencer 
+will result in the initial bridging transaction being confirmed within 10 minutes.
 
 ## Defender Account Setup
 

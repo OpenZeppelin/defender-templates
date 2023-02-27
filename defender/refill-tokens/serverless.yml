@@ -1,26 +1,28 @@
 service: my-service
 configValidationMode: error
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: 'refill-tokens'
+  stackName: "refill_tokens"
   ssot: false
 custom:
-  config: ${file(../.secrets/${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
+
 defender:
-  key: ${self:custom.config.keys.defender-api-key}
-  secret: ${self:custom.config.keys.defender-api-secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   refiller-autotask:
-    name: 'Refill address with tokens'
-    path: './autotasks/refill-tokens/dist'
+    name: "Refill address with tokens"
+    path: "./autotasks/refill-tokens"
     trigger:
-      type: 'schedule'
-      frequency: 1
-    paused: true #Default paused you have to change this once autotask has correct addresses set
+      type: "schedule"
+      frequency: ${self:custom.config.autotask-run-frequency}
+    paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
 
 resources:
@@ -29,10 +31,19 @@ resources:
       policy-1:
         eip1559-pricing: true
 
+    secrets:
+      stack:
+        TOKEN_TYPE: ${self:custom.config.token-type}
+        NFT_ID: ${self:custom.config.nft-id}
+        TOKEN_ADDRESS: ${self:custom.config.token-address}
+        RECIPIENT_ADDRESS: ${self:custom.config.recipient-address}
+        RECIPIENT_MINIMUM_BALANCE: ${self:custom.config.recipient-minimum-balance}
+        RECIPIENT_TOP_UP_AMOUNT: ${self:custom.config.recipient-minimum-balance}
+
     relayers:
       relayer-1:
-        name: 'Refiller Relayer'
-        network: 'goerli'
+        name: "Refiller Relayer"
+        network: ${self:custom.config.network}
         min-balance: 1000
         policy: ${self:resources.Resources.policies.policy-1}
 

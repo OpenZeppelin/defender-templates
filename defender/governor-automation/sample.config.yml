@@ -1,5 +1,6 @@
 # Governor contract and network that the Autotask will automate
 governor-contract-address: '0xDBd38F7e739709fe5bFaE6cc8eF67C3820830E0C'
+# Possible Defender networks: https://github.com/OpenZeppelin/defender-client/blob/master/packages/base/src/utils/network.ts`
 network: mainnet
 # How often should the Autotask run? (in minutes)
 autotask-frequency: 60

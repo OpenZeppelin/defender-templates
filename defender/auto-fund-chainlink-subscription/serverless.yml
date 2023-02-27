@@ -1,25 +1,24 @@
-service: defender-serverless-template
+service: auto-fund-chainlink-subscription
 configValidationMode: error
 frameworkVersion: "3"
 
 provider:
   name: defender
   stage: ${opt:stage, 'dev'}
-  stackName: "${self:custom.config.network}-fund-chainlink-subscription" #prepend network name to separate between networks
+  stackName: "${self:custom.config.network}-fund-chainlink-subscription" # prepend network name to separate between networks
   ssot: false
 
 custom:
-  secrets: ${file(../secrets.${self:provider.stage}.yml)}
-  config: ${file(../config.${self:provider.stage}.yml)}
-  addresses: ${file(./subscription-config.${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
 
 defender:
-  key: ${self:custom.secrets.keys.api}
-  secret: ${self:custom.secrets.keys.secret}
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
 
 functions:
   low-balance:
-    name: "Detect low balance on chainlink subscription"
+    name: "Detect Low Balance On Chainlink Subscription"
     path: "./autotasks/detect-low-balance/dist"
     relayer: ${self:resources.Resources.relayers.relayer-1}
     trigger:
@@ -27,7 +26,7 @@ functions:
     paused: false
 
   fund-subscription:
-    name: "Funds chainlink subscription"
+    name: "Fund Chainlink Subscription"
     path: "./autotasks/fund-subscription/dist"
     relayer: ${self:resources.Resources.relayers.relayer-1}
     trigger:
@@ -42,7 +41,7 @@ resources:
 
     relayers:
       relayer-1:
-        name: "Fund relayer"
+        name: "Fund Relayer"
         network: "${self:custom.config.network}"
         min-balance: 1000
         policy: ${self:resources.Resources.policies.policy-1}
@@ -53,7 +52,7 @@ resources:
         type: "BLOCK"
         network: "${self:custom.config.network}"
         addresses:
-          - "${self:custom.addresses.vrfCoordinatorAddress}"
+          - "${self:custom.config.vrfCoordinatorAddress}"
         abi: ${file(../../abi/vrfCoordinator.json.abi)}
         paused: false
         autotask-condition: ${self:functions.low-balance}
