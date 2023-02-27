@@ -66,7 +66,7 @@ from your wallet address to the deployed Relayer's address. From the root of thi
 
 Now, your Autotask is ready for execution in case of any emergencies that may occur with your wallet. To execute the Autotask and sweep all your ERC20 and ERC721 tokens 
 to another wallet, ensure that your deployed Relayer has enough funds to pay for gas fees and follow these steps: 
-**Be aware that following these steps below will result in the Autotask executing and transfering all ERC20 and ERC721 to your other specified receiver wallet!**
+**Be aware that following these steps below will result in the Autotask executing and transferring all ERC20 and ERC721 to your other specified receiver wallet!**
 
 - In your [Defender account](https://defender.openzeppelin.com/), select the Autotask tab on the left panel.
 - Click on the Autotask named **Wallet Migrator Autotask** that you just deployed with this stack.

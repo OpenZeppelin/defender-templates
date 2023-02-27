@@ -142,7 +142,7 @@ exports.handler = async function handler(autotaskEvent) {
       }
     } else if (balance > 0 && isNft) {
       const specificErc721Contract = erc721Contract.attach(item.contract_address);
-      // check if relayer is approved as an operator before transfering
+      // check if relayer is approved as an operator before transferring
       // transfer all nfts one by one if relayer is approved as an operator
       // we need to do this because there is no transfer all method for erc721 and a sender may have more than 1 nft in a collection
       const isApprovedForAll = await specificErc721Contract.isApprovedForAll(senderWalletAddress, relayerAddress);
