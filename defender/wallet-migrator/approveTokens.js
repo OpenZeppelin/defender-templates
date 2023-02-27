@@ -91,7 +91,8 @@ async function main() {
   const erc20Contract = new ethers.Contract('0x', erc20Abi, signer); // first address doesn't matter, will be replaced with the address of the token
   const erc721Contract = new ethers.Contract('0x', erc721Abi, signer); // first address doesn't matter, will be replaced with the address of the token
 
-  const promises = responseData.map(async item => {
+  for (var i = 0; i < responseData.length; i++) {
+    const item = responseData[i];
     const balance = item.balance;
     const isNft = item.type === 'nft';
     const isDust = item.type === 'dust'; // tokens with less than $0.1 in spot fiat value get classified as dust (ignore unless it's eth)
@@ -106,7 +107,8 @@ async function main() {
       // only need to approve if allowance is less than balance
       const allowance = await specificErc20Contract.allowance(walletAddress, relayerAddress);
       if (allowance.lt(balance)) {
-        await specificErc20Contract.approve(relayerAddress, balance);
+        let tx = await specificErc20Contract.approve(relayerAddress, balance);
+        await tx.wait(); // wait till tx is mined to avoid problem with nonces
         let scaledBalance = balance / Math.pow(10, decimals);
         scaledBalance = scaledBalance.toFixed(2);
         console.log(`Approved allowance of ${scaledBalance} for ${symbol}`);
@@ -115,16 +117,15 @@ async function main() {
       const specificErc721Contract = erc721Contract.attach(item.contract_address);
       // check if relayer already has approval to avoid duplicate approvals
       // only need to approve if relayer is not approved yet
-      const isApprovedForAll = specificErc721Contract.isApprovedForAll(walletAddress, relayerAddress);
+      const isApprovedForAll = await specificErc721Contract.isApprovedForAll(walletAddress, relayerAddress);
       if (!isApprovedForAll) {
         // set approval for all token ids (a user may have more than 1 nft in a collection)
-        await specificErc721Contract.setApprovalForAll(relayerAddress, true);
+        let tx = await specificErc721Contract.setApprovalForAll(relayerAddress, true);
+        await tx.wait(); // wait till tx is mined to avoid problem with nonces
         console.log(`Approved allowance for all tokens in NFT collection ${symbol}`);
       }
     }
-  });
-
-  await Promise.all(promises);
+  }
 }
 
 main();
