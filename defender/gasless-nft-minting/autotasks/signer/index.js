@@ -4,7 +4,6 @@ const nftAddressSecretName = `${stackName}_NFT_ADDRESS`;
 
 const { ethers } = require('ethers');
 const { signMetaTxRequest } = require('./signer');
-const { Relayer } = require('defender-relay-client');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 
 const nftMinimalAbi = [
@@ -32,24 +31,23 @@ async function handler(event) {
 
   const provider = new DefenderRelayProvider(event);
   const signer = new DefenderRelaySigner(event, provider, { speed: 'fast' });
-  const relayer = new Relayer(event);
 
-  let from;
+  let signerAddress;
   try {
-    ({ address: from } = await relayer.getRelayer());
+    signerAddress = ethers.utils.getAddress(await signer.getAddress());
   } catch (error) {
     throw new Error('relayer not connected: ' + error)
   }
-  const forwarder = new ethers.Contract(forwarderAddress, forwarderAbi, signer);
-  const nft = new ethers.Contract(nftAddress, nftMinimalAbi, signer);
+  const forwarderContract = new ethers.Contract(forwarderAddress, forwarderAbi, signer);
+  const nftContract = new ethers.Contract(nftAddress, nftMinimalAbi, signer);
 
   console.log(`Signing mint request for ${recipientAddress}`);
-  const id = 1;
-  const qty = 1;
+  const id = ethers.BigNumber.from(1);;
+  const qty = ethers.BigNumber.from(1);;
   const bytes = 0x0;
-  const data = nft.interface.encodeFunctionData('mint', [recipientAddress, id, qty, bytes]);
-  const result = await signMetaTxRequest(relayer, forwarder, {
-    to: nftAddress, from, data
+  const data = nftContract.interface.encodeFunctionData('mint', [recipientAddress, id, qty, bytes]);
+  const result = await signMetaTxRequest(signer, forwarderContract, {
+    to: nftAddress, from: signerAddress, data
   });
 
   console.log(`Signature: ${result.signature}`);

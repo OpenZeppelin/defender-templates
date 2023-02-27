@@ -1,8 +1,7 @@
 const { expect } = require('chai').use(require('chai-as-promised'));
 const { ethers } = require('hardhat');
-const { signMetaTxRequest, buildRequest, buildTypedData } = require('../autotasks/signer/signer');
+const { signMetaTxRequest } = require('../autotasks/signer/signer');
 const req = require('require-yml');
-const { Relayer } = require('defender-relay-client');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 
 async function deploy(name, ...params) {
@@ -26,7 +25,6 @@ if (relaySecretKey === undefined) {
 }
 const credentials = { apiKey: relayApiKey, apiSecret: relaySecretKey };
 
-const liveRelayer = new Relayer(credentials);
 const liveProvider = new DefenderRelayProvider(credentials);
 const liveSigner = new DefenderRelaySigner(credentials, liveProvider, {
   speed: 'fast',
@@ -34,18 +32,17 @@ const liveSigner = new DefenderRelaySigner(credentials, liveProvider, {
 
 describe('signing and verifying', function () {
   let liveSignerAddress;
-  let liveRelayerAddress;
   let forwarderContract;
   let nftContract;
-  let deployerAccount;
-  let relayerAccount;
-  let userAccount;
+  let deployerSigner;
+  let deployerAddress;
+  let userAddress;
   let liveNftContract;
   let liveForwarderContract;
 
   // ERC 1155 Params
   const id = ethers.BigNumber.from(1);
-  const qty = ethers.BigNumber.from(0);
+  const qty = ethers.BigNumber.from(1);
   const callData = 0x00;
 
   before(async function () {
@@ -59,9 +56,9 @@ describe('signing and verifying', function () {
   beforeEach(async function () {
     // Generic accounts
     const accounts = await ethers.getSigners();
-    deployerAccount = accounts[0];
-    relayerAccount = accounts[1];
-    userAccount = accounts[2];
+    deployerSigner = accounts[0];
+    deployerAddress = accounts[0].address;
+    userAddress = accounts[1].address;
 
     // Hardhat
     forwarderContract = await deploy('MinimalForwarder');
@@ -83,51 +80,32 @@ describe('signing and verifying', function () {
 
   it('signs and verifies an NFT mint request on hardhat network using RPC call', async function () {
     // Deployer should be NFT contract owner
-    expect(await nftContract.owner()).to.equal(deployerAccount.address);
+    expect(await nftContract.owner()).to.equal(deployerAddress);
 
     // Sign the request from deployer account to the NFT contract
-    const { request, signature } = await signMetaTxRequest(deployerAccount.provider, forwarderContract, {
-      from: deployerAccount.address,
+    const { request, signature } = await signMetaTxRequest(deployerSigner.provider, forwarderContract, {
+      from: deployerAddress,
       to: nftContract.address,
-      data: nftContract.interface.encodeFunctionData('mint', [userAccount.address, id, qty, callData]),
+      data: nftContract.interface.encodeFunctionData('mint', [userAddress, id, qty, callData]),
     });
 
     // Verify it
     expect(await forwarderContract.verify(request, signature)).to.equal(true);
   });
 
-  it('signs and verifies an NFT mint request on hardhat network using private key', async function () {
-    // Deployer should be NFT contract owner
-    expect(await nftContract.owner()).to.equal(deployerAccount.address);
-
+  it('signs and verifies an NFT mint request on live network using Defender Relayer', async function () {
     // Sign the request from deployer account to the NFT contract
-    const hardhatPrivateKey0 = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
-    const { request, signature } = await signMetaTxRequest(hardhatPrivateKey0, forwarderContract, {
-      from: deployerAccount.address,
-      to: nftContract.address,
-      data: nftContract.interface.encodeFunctionData('mint', [userAccount.address, id, qty, callData]),
-    });
+    const input = {
+      from: liveSignerAddress,
+      to: liveNftContract.address,
+      data: liveNftContract.interface.encodeFunctionData('mint', [userAddress, id, qty, callData]),
+    }
+    const { request, signature } = await signMetaTxRequest(liveSigner, liveForwarderContract, input);
 
     // Verify it
-    expect(await forwarderContract.verify(request, signature)).to.equal(true);
+    expect(await liveForwarderContract.verify(request, signature)).to.equal(true);
   });
 
-  // it('signs and verifies an NFT mint request on hardhat network', async function () {
-  //   const { forwarderContract, nftContract, deployerAccount, userAccount, id, qty, callData } = this;
-
-  //   // Deployer should be NFT contract owner
-  //   expect(await nftContract.owner()).to.equal(deployerAccount.address);
-
-  //   // Sign the request from deployer account to the NFT contract
-  //   const { request, signature } = await signMetaTxRequest(deployerAccount.provider, forwarderContract, {
-  //     from: deployerAccount.address,
-  //     to: nftContract.address,
-  //     data: nftContract.interface.encodeFunctionData('mint', [userAccount.address, id, qty, callData]),
-  //   });
-
-  //   // Verify it
-  //   expect(await forwarderContract.verify(request, signature)).to.equal(true);
-  // });
 
   it('OZ Relayer can sign a message with EIP-151 standard', async function () {
     // Sign a with the relayer
@@ -141,7 +119,8 @@ describe('signing and verifying', function () {
     expect(signatureAddress).to.equal(liveSignerAddress);
   });
 
-  it('OZ Relayer can sign a message with EIP-712 v1 standard', async function () {
+  it('OZ Relayer can sign a message with EIP-712 - simple version', async function () {
+    // ref: https://forum.openzeppelin.com/t/cant-get-the-minimalforwarder-contract-to-successfully-verify-my-eip712-signature/34809/3
     const request = {
       value: 0,
       gas: 300000,
@@ -174,7 +153,6 @@ describe('signing and verifying', function () {
       message: request,
     };
 
-
     const signature = await liveSigner._signTypedData(
       typedData.domain,
       typedData.types,
@@ -188,25 +166,6 @@ describe('signing and verifying', function () {
       signature
     );
 
-    console.debug(liveSignerAddress);
-    console.debug(signature);
-    console.debug(verifiedAddress);
-    
-    console.log(
-      ethers.utils.getAddress(liveSignerAddress) ===
-      ethers.utils.getAddress(verifiedAddress)
-    ); // true
-
-    // Sign the request from deployer account to the NFT contract
-    const input = {
-      from: liveSignerAddress,
-      to: liveNftContract.address,
-      data: liveNftContract.interface.encodeFunctionData('mint', [userAccount.address, id, qty, callData]),
-    }
-    // const request = await buildRequest(forwarderContract, input);
-    // const toSign = await buildTypedData(forwarderContract, request);
-    // toSign contains: domain, types, primaryType, and message properties
-
+    expect(verifiedAddress).to.equal(liveSignerAddress);
   });
-
 });
