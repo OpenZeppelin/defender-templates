@@ -8,13 +8,14 @@ const { RelayClient } = require('defender-relay-client');
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const COVALENT_API_KEY = process.env.COVALENT_API_KEY;
 // grab Defender API Key and Secret Key from .secrets/dev.yml file
 // we need to replace the "-" from yaml files, or it throws an error when importing
 let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', { schema: 'JSON_SCHEMA' }));
 secretsFile = JSON.parse(JSON.stringify(secretsFile).replace(/-/g, ''));
 const DEFENDER_API_KEY = secretsFile.keys.defenderapikey;
 const DEFENDER_API_SECRET = secretsFile.keys.defenderapisecret;
+const COVALENT_API_KEY = secretsFile.keys.covalentapikey;
+
 // grab network from config file
 const configFile = yaml.load(fs.readFileSync('defender/wallet-migrator/config.dev.yml', 'utf8'));
 const network = configFile.network;

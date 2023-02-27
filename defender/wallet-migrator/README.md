@@ -56,7 +56,6 @@ From the root of this repo, follow these steps to run the approval script:
 - Add your RPC URL to perform on-chain transactions
   - `GOERLI_RPC_URL: <Your Goerli RPC URL here>` add this field if you are using the Goerli Testnet, otherwise leave empty.
   - `MAINNET_RPC_URL: <Your Goerli RPC URL here>` add this field if you are using Mainnet, otherwise leave empty.
-  - `COVALENT_API_KEY: <Your Covalent API Key goes here>`
 
 Make sure that your Defender Serverless stack is deployed BEFORE you run the following script. The following script will approve all ERC20 and ERC721 tokens 
 from your wallet address to the deployed Relayer's address. From the root of this repo, run 
