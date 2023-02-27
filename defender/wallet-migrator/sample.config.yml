@@ -1,4 +1,6 @@
+# address of sender looking to migrate erc20 and erc721 tokens from
+sender-wallet-address: "0YOURWALLETADDRESS"
 # address you want to send your erc20 and erc721 tokens to
-receiver-wallet-address: "0x"
+receiver-wallet-address: "0xRECEIVERWALLETADDRESS"
 # goerli or mainnet
 network: "goerli"
