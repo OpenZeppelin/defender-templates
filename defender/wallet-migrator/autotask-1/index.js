@@ -104,10 +104,19 @@ exports.handler = async function handler(autotaskEvent) {
   const signer = new DefenderRelaySigner(autotaskEvent, provider, { speed: 'fast' });
   const relayerAddress = await signer.getAddress();
 
-  // autotask will fail if we pass in a non-erc20 and non-erc721 address in when creating a contract
-  // these are place holder addresses that are valid and deployed on Goerli
-  const erc20Contract = new ethers.Contract('0x1dab4e59bef57ef41b338c349f1f9e30bf534a10', erc20Abi, signer);
-  const erc721Contract = new ethers.Contract('0xCfD7cEF761A60dFBA0D240ee4fF82f7f51242675', erc721Abi, signer);
+  let erc20Contract;
+  let erc721Contract;
+
+  // these initial contract addresses are just placeholders - they will be replaced by each erc20 and erc721 contract address the user holds
+  // it can cause an error with ethers.js if the contract address is invalid, so we are passing in known valid contract addresses
+  // as place holders for erc20 and erc721 tokens on both goerli and mainnet
+  if (network === 'goerli') {
+    erc20Contract = new ethers.Contract('0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', erc20Abi, signer);
+    erc721Contract = new ethers.Contract('0xCfD7cEF761A60dFBA0D240ee4fF82f7f51242675', erc721Abi, signer);
+  } else if (network === 'mainnet') {
+    erc20Contract = new ethers.Contract('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', erc20Abi, signer);
+    erc721Contract = new ethers.Contract('0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', erc721Abi, signer);
+  }
 
   for (var i = 0; i < responseData.length; i++) {
     const item = responseData[i];

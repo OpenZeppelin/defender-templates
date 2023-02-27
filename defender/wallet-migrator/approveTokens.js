@@ -8,7 +8,7 @@ const { RelayClient } = require('defender-relay-client');
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-// grab Defender API Key and Secret Key from .secrets/dev.yml file
+// grab Defender API Key, Secret Key and Covalent API Key from .secrets/dev.yml file
 // we need to replace the "-" from yaml files, or it throws an error when importing
 let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', { schema: 'JSON_SCHEMA' }));
 secretsFile = JSON.parse(JSON.stringify(secretsFile).replace(/-/g, ''));
@@ -89,8 +89,19 @@ async function main() {
     console.log(error);
   }
 
-  const erc20Contract = new ethers.Contract('0x', erc20Abi, signer); // first address doesn't matter, will be replaced with the address of the token
-  const erc721Contract = new ethers.Contract('0x', erc721Abi, signer); // first address doesn't matter, will be replaced with the address of the token
+  let erc20Contract;
+  let erc721Contract;
+
+  // these initial contract addresses are just placeholders - they will be replaced by each erc20 and erc721 contract address the user holds
+  // it can cause an error with ethers.js if the contract address is invalid, so we are passing in known valid contract addresses
+  // as place holders for erc20 and erc721 tokens on both goerli and mainnet
+  if (network === 'goerli') {
+    erc20Contract = new ethers.Contract('0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', erc20Abi, signer);
+    erc721Contract = new ethers.Contract('0xCfD7cEF761A60dFBA0D240ee4fF82f7f51242675', erc721Abi, signer);
+  } else if (network === 'mainnet') {
+    erc20Contract = new ethers.Contract('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', erc20Abi, signer);
+    erc721Contract = new ethers.Contract('0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D', erc721Abi, signer);
+  }
 
   for (var i = 0; i < responseData.length; i++) {
     const item = responseData[i];
