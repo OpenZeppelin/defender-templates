@@ -146,6 +146,11 @@ This Autotask will monitor for low funds on a specified address on Arbitrum and 
 ### [Contract Wizard Deployer](defender/contract-wizard-deployer/README.md)
 This Hardhat script enables developers to take Solidity files that are downloaded from Open Zeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
 
+### [Wallet Migrator](defender/wallet-migrator/README.md)
+This Defender Autotask will automatically transfer all ERC20 and ERC721 tokens from a user's wallet address to another specified wallet address. The transfer happens in a two step 
+process: the first step is to approve an allowance to your Defender Relayer using the approval script found in `defender/wallet-migrator/approveTokens.js`, and the second step is 
+the execution of the Autotask, where the transferring transactions take place.
+
 ---
 ## Additional Resources
 
