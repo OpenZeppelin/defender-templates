@@ -35,29 +35,61 @@ function getMetaTxTypeData(chainId, verifyingContract) {
 }
 
 async function signTypedData(signer, from, data) {
+  console.log(`Signer is a ${signer.constructor.name}`);
 
-  const hashStruct = TypedDataUtils.hashStruct(data.primaryType, data.message, data.types, SignTypedDataVersion.V4);
-  console.log('hash:', hashStruct);
+  if (signer.constructor.name === 'Relayer') {
+    const eip712Hash = TypedDataUtils.eip712Hash(data, SignTypedDataVersion.V4); //  (data.primaryType, data.message, data.types, SignTypedDataVersion.V4);
+    const emptyBuffer = Buffer.from("");
 
-  const eip712Hash = TypedDataUtils.eip712Hash(data, SignTypedDataVersion.V4); //  (data.primaryType, data.message, data.types, SignTypedDataVersion.V4);
-  console.log('hash:', eip712Hash);
+    const signTypedDataResponse = await signer.signTypedData({
+      domainSeparator: eip712Hash,
+      hashStructMessage: emptyBuffer,
+    });
 
-  const { domain, types, message: value } = data;
-  const typedSig = await signer._signTypedData(domain, types, value);
-  console.log(`Typed data signature is ${typedSig}`);
+    console.debug(signTypedDataResponse);
 
-  const typedSigAddress = ethers.utils.verifyTypedData(domain, types, value, typedSig);
-  console.log(`Typed data signature address is ${typedSigAddress} matching relayer address`);
+  }
+
+
+  if (signer.constructor.name === 'DefenderRelaySigner') {
+    // const hashStruct = TypedDataUtils.hashStruct(data.primaryType, data.message, data.types, SignTypedDataVersion.V4);
+    // console.log('hash:', hashStruct);
+
+
+    console.log('hash:', eip712Hash);
+    console.debug(data.message.nonce = '1');
+    console.debug(TypedDataUtils.eip712Hash(data, SignTypedDataVersion.V4))
+    console.debug(data.message.nonce = '2');
+    console.debug(TypedDataUtils.eip712Hash(data, SignTypedDataVersion.V4))
+    console.debug(data.message.nonce = '3');
+    console.debug(TypedDataUtils.eip712Hash(data, SignTypedDataVersion.V4))
+    console.debug(data.message.nonce = '4');
+    console.debug(TypedDataUtils.eip712Hash(data, SignTypedDataVersion.V4))
+
+
+
+    const { domain, types, message: value } = data;
+    delete
+
+      console.debug('domain\n', domain, '\ntypes\n', types, '\nValues\n', value);
+
+    const typedSig = await signer._signTypedData(domain, types, value);
+    console.log(`Typed data signature is ${typedSig}`);
+
+    const typedSigAddress = ethers.utils.verifyTypedData(domain, types, value, typedSig);
+    console.log(`Typed data signature address is ${typedSigAddress} matching relayer address`);
+
+  }
 
 
   // If signer is a private key, use it to sign
-  if (typeof (signer) === 'string') {
+  if (signer.constructor.name === 'String') {
     const privateKey = Buffer.from(signer.replace(/^0x/, ''), 'hex');
     return ethSigUtil.signTypedMessage(privateKey, { data });
   }
 
   // If signer is a relay, then use Defender
-  if (signer.relayer) {
+  if (false) {
     const { domain, message } = data;
     const abiCoder = new ethers.utils.AbiCoder();
 
@@ -127,7 +159,6 @@ async function signTypedData(signer, from, data) {
 
   // Otherwise, send the signTypedData RPC call (Metamask/Hardhat)
   // Only Available for JsonRpcSigners
-  const [method, argData] = ['eth_signTypedData_v4', JSON.stringify(data)];
   return await signer.send('eth_signTypedData_v4', [from, JSON.stringify(data)]);
 }
 
@@ -146,7 +177,7 @@ async function signMetaTxRequest(signer, forwarder, input) {
   const request = await buildRequest(forwarder, input);
   const toSign = await buildTypedData(forwarder, request);
   const signature = await signTypedData(signer, input.from, toSign);
-  console.debug('signature', signature);
+  // console.debug('signature', signature);
   return { signature, request };
 }
 
