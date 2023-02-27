@@ -24,7 +24,8 @@ functions:
     path: autotask-1
     trigger:
       type: schedule
-      frequency: 1000000000 #  @todo for testing. set to never run right now
+      # set to never run on a schedule and only run manually
+      frequency: 1000000000
     paused: false
     relayer: ${self:resources.Resources.relayers.relayer-1}
 
@@ -52,3 +53,4 @@ resources:
 
 plugins:
   - defender-serverless
+  
