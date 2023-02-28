@@ -159,7 +159,7 @@ curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/x
 
 ## Tests
 
-Check that contract can mint with both standard and gasless transactions
+Check that the contract can mint with both standard and gasless transactions
 - `yarn test tests/nftContract.test.js`
 Check that the configured Defender Relay can sign and verify meta transactions
 - `yarn test tests/eip712sig.online.test.js`
