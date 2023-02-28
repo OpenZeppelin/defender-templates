@@ -4,13 +4,12 @@ const fs = require('fs');
 const axios = require('axios');
 const { ethers } = require('ethers');
 const { RelayClient } = require('defender-relay-client');
-const hre = require('hardhat')
-// grab chain id, and rpc endpoint from hardhat
-const {chainId, url: rpcEndpoint} = hre.network.config
+const hre = require('hardhat');
+// grab chain id, and rpc endpoint from hardhat config
+const { chainId, url: rpcEndpoint } = hre.network.config;
 // grab private key from .env file
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 // grab Defender API Key, Secret Key and Covalent API Key from .secrets/dev.yml file
-// we need to replace the "-" from yaml files, or it throws an error when importing
 let secretsFile = yaml.load(fs.readFileSync('defender/.secrets/dev.yml', 'utf8', { schema: 'JSON_SCHEMA' }));
 const DEFENDER_API_KEY = secretsFile.keys['defender-api-key'];
 const DEFENDER_API_SECRET = secretsFile.keys['defender-api-secret'];
@@ -22,7 +21,6 @@ const erc20Abi = [
 ];
 
 const erc721Abi = [
-  'function approve(address spender, uint256 amount) external returns (bool)',
   'function setApprovalForAll(address operator, bool approved) public',
   'function isApprovedForAll(address owner, address operator) public view returns (bool)',
 ];
@@ -42,11 +40,11 @@ async function main() {
   const relayClient = new RelayClient({ apiKey: DEFENDER_API_KEY, apiSecret: DEFENDER_API_SECRET });
   const relayerInfo = await relayClient.list();
   const relayer = relayerInfo.items.find(
-    item => item.name === 'Migrator Relay' && item.stackResourceId === 'wallet_migrator.relayer-1'
+    item => item.name === 'Migrator Relay' && item.stackResourceId === 'wallet_migrator.relayer-1',
   );
-  
+
   const relayerAddress = relayer?.address;
-  
+
   if (relayerAddress === undefined) {
     throw new Error('Relayer address not found');
   }
@@ -78,7 +76,8 @@ async function main() {
 
   for (var i = 0; i < responseData.length; i++) {
     const {
-      balance, type,
+      balance,
+      type,
       contract_decimals: decimals,
       contract_ticker_symbol: symbol,
       contract_address: contractAddress,
