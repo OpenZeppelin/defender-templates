@@ -1,4 +1,4 @@
-service: governance-alert
+service: gasless-nft-minter
 configValidationMode: error
 frameworkVersion: '3'
 
