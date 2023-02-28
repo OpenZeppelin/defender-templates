@@ -21,7 +21,7 @@ This section will help you set up the following:
 
 - In your [Defender account](https://defender.openzeppelin.com/), select the Hamburger icon in the upper right corner and click on **Team API Keys**
 - In the Team API Keys screen, click **Create API Key**
-- Make sure that the options for **Manage Autotasks** and **Manage Proposals and Contracts** are selected (we do not make use of the **Manage Relayers** and **Manage Sentinels** options with this template)
+- Make sure that all Capabilities are selected
 - Click **Save**
 - Copy your API key and Secret key to a local file (you will **NOT** be able to view your Secret key again after this message box goes away)
 - Make sure that you really did copy your API key and Secret key to a local file
@@ -48,7 +48,7 @@ This section will help you set up the following:
 
 ### Local Code Setup
 
-In the `gasless-nft-minting` directory, perform the following steps:
+In the `defender` directory, perform the following steps:
 
 - A secrets file can be created for each stage of production. We will create one for development:
   - Copy and rename the `sample.secrets.yml` to `.secrets/dev.yml`
