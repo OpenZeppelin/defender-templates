@@ -1,7 +1,7 @@
 const stackName = 'gasless_nft_minting';
 const forwarderAddressSecretName = `${stackName}_FORWARDER_ADDRESS`;
 
-const ethers = require('ethers');
+const { ethers } = require('ethers');
 const { DefenderRelaySigner, DefenderRelayProvider } = require('defender-relay-client/lib/ethers');
 
 const forwarderAbi = [
