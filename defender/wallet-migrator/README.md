@@ -1,6 +1,6 @@
 # Wallet Migrator
 
-This Defender Autotask will automatically transfer all ERC20 and ERC721 tokens from a user's wallet address to another specified wallet address. The transfer happens in a two step 
+This Defender Autotask will automatically transfer all ERC20 and ERC721 tokens from a user's wallet address to another specified wallet address. The transfer happens in a two-step 
 process: the first step is to approve an allowance to your Defender Relayer using the approval script found in `defender/wallet-migrator/approveTokens.js`, and the second step is 
 the execution of the Autotask, where the transferring transactions take place.
 
@@ -20,10 +20,10 @@ as a convenient tool to avoid manually transferring every ERC20 and ERC721 token
 ### Covalent API Key Setup
 
 This template will make use of [Covalent's API](https://www.covalenthq.com/docs/api/balances/get-token-balances-for-address/) to query for all 
-all balances of ERC20 and ERC721 tokens of the sender's specified wallet address. To get an API key, navigate to [Covalent's website](https://www.covalenthq.com/)
-and select **Get an API key**. Follow the instructions to sign up for an account, or login to your existing account if you already have one. 
+balances of ERC20 and ERC721 tokens of the sender's specified wallet address. To get an API key, navigate to [Covalent's website](https://www.covalenthq.com/)
+and select **Get an API key**. Follow the instructions to sign up for an account, or log in to your existing account if you already have one. 
 Once you are logged in and have created an API Key, you can navigate to your home platform [page](https://www.covalenthq.com/platform/#/) where the API key is shown. 
-Write down your API Key is a safe place, as you will need it for later steps.
+Write down your API Key in a safe place, as you will need it for later steps.
 
 ## Local Code Setup
 
@@ -54,12 +54,12 @@ From the root of this repo, follow these steps to run the approval script:
 
 - Create/modify the `.env` file
 - Add your RPC URL to perform on-chain transactions
-  - `GOERLI_RPC_URL: <Your Goerli RPC URL here>` add this field if you are using the Goerli Testnet, otherwise leave empty.
-  - `MAINNET_RPC_URL: <Your Goerli RPC URL here>` add this field if you are using Mainnet, otherwise leave empty.
+  - `GOERLI_RPC_URL: <Your Goerli RPC URL here>` add this field if you are using the Goerli Testnet, otherwise leave it empty.
+  - `MAINNET_RPC_URL: <Your Goerli RPC URL here>` add this field if you are using Mainnet, otherwise leave it empty.
 
 Make sure that your Defender Serverless stack is deployed BEFORE you run the following script. The following script will approve all ERC20 and ERC721 tokens 
 from your wallet address to the deployed Relayer's address. From the root of this repo, run 
-`yarn node defender/wallet-migrator/approveTokens.js`.
+`yarn hardhat run defender/wallet-migrator/approveTokens.js --network<myNetwork>`.
 
 ## Running the Autotask
 
