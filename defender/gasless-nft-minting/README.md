@@ -165,4 +165,4 @@ Check that the configured Defender Relay can sign and verify meta transactions
 - `yarn test tests/eip712sig.online.test.js`
 
 ## Notes
-This is a proof of concept template, the Autotask currently allow for unlimited mints of NFTs and can be easily abused until the Relay runs out of funds.
+This is a proof of concept template. The Autotask currently allows for unlimited mints of NFTs and can be easily abused until the Relay runs out of funds.
