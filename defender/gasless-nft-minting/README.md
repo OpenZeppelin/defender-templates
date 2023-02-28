@@ -135,7 +135,7 @@ In the `gasless-nft-minting` directory, perform the following steps:
 
 ### Submitting Requests with Curl
 
-Signature requests can be submitted with curl. Replace the URL with your Signer Autotask webhook URL and 
+Signature requests can be submitted with curl. Replace the URL with your Signer Autotask webhook URL and the address with the recipient address:
 ```shell
 curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/xxxx \
    -H 'Content-Type: application/json' \
