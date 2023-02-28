@@ -101,7 +101,7 @@ The same thing must be done for the Autotask that will relay the request:
 - Click on the **Autotask** link on the left side
 - Click on **Gasless NFT Minting Relayer Autotask** Autotask
 - Click on the settings **gear/cog** at the top middle, and select **Edit Settings**
-- In the **Connect a Relayer** section, choose ANY Relayer that has enough funds to execute the minting requests on that are submitted to it
+- In the **Connect a Relayer** section, choose ANY Relayer that has enough funds to execute the minting requests that are submitted to it
 
 ### Get the Autotask webhook URLs
 
