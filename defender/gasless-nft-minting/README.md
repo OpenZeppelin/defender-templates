@@ -123,7 +123,7 @@ The Signer Autotask can now authorize minting of Tokens without spending any gas
 
 A user with a signed request can send the request to the Relayer Autotask via HTTP and also not spend gas.
 
-The Relayer Autotask verify the request and signature and execute the transaction on-chain if they are valid.
+The Relayer Autotask verifies the request and signature and executes the transaction on-chain if they are valid.
 
 ### Signing and Relaying with scripts
 
