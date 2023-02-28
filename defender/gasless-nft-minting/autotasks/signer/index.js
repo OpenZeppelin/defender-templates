@@ -26,6 +26,7 @@ async function handler(event) {
   if (!event?.secrets) { throw new Error('secrets undefined'); }
   const forwarderAddress = event.secrets[forwarderAddressSecretName];
   const nftAddress = event.secrets[nftAddressSecretName];
+  // Validate addresses getAddress() will throw an error if they are not valid
   ethers.utils.getAddress(forwarderAddress);
   ethers.utils.getAddress(nftAddress);
 
