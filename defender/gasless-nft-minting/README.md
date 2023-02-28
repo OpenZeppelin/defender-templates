@@ -127,7 +127,7 @@ The Relayer Autotask verifies the request and signature and executes the transac
 
 ### Signing and Relaying with scripts
 
-A `sign` and `relay` script are included in this template use the deployed Autotasks. 
+The `sign` and `relay` scripts included in this template use the deployed Autotasks. 
 
 In the `gasless-nft-minting` directory, perform the following steps:
 - `yarn sign <address>` - to have the Signer Autotask sign a mint request
