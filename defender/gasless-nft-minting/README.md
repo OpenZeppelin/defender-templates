@@ -13,7 +13,7 @@ This section will help you set up the following:
 - Update `config.dev.yml` with the 2 deployed contract addresses
 - Deploy the Autotasks with `serverless deploy`
 - Connect Relays to deployed Autotasks
-  - Contract Deployer relay must be connected to the signing Autotask
+  - Contract Deployer Relay must be connected to the signing Autotask
   - Any Relayer with funds can be connected to the Relay Autotask
 - Copy the 2 Autotask webhooks into the `config.dev.yml` file
 
