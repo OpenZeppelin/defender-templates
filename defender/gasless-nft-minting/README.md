@@ -141,7 +141,7 @@ curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/x
    -H 'Content-Type: application/json' \
    -d '{"address": "0xRECIPIENT_ADDRESS"}'
 ```
-Relay requests submitted with curl. Replace the URL with your Relay Autotask webhook URL
+Relay requests can also be submitted with curl. Replace the URL with your Relay Autotask webhook URL and the curl data fields (signature, to, from, and data) with appropriate values.
 ```shell
 curl -X POST https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/xxxx \
    -H 'Content-Type: application/json' \
