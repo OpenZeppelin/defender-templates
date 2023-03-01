@@ -2,6 +2,8 @@
 
 This code will allow users to deploy an [ERC-2771-compatible](https://docs.openzeppelin.com/contracts/4.x/api/metatx#ERC2771Context) [ERC-1155 NFT](https://docs.openzeppelin.com/contracts/4.x/erc1155) contract and then use one Autotask to sign mint requests, and another Autotask to relay the request to a [trusted forwarder](https://docs.openzeppelin.com/contracts/4.x/api/metatx#MinimalForwarder) which will send the request to the NFT contract to mint an NFT for the user.
 
+> :warning: **This is a proof of concept template only**. The Autotask currently allows for unlimited mints of NFTs and can be easily abused until the Relay runs out of funds.
+
 ## Setup  overview
 
 The following sections will help you set up the following steps. A detailed explanation of each is provided in further sections:
@@ -22,7 +24,6 @@ The following sections will help you set up the following steps. A detailed expl
 
 ## Defender Keys and Deploying Contracts
 
-This section will 
 ### Defender Account Setup
 
 - In your [Defender account](https://defender.openzeppelin.com/), select the Hamburger icon in the upper right corner and click on **Team API Keys**
@@ -173,5 +174,3 @@ Check that the contract can mint with both standard and gasless transactions
 Check that the configured Defender Relay can sign and verify meta transactions
 - `yarn test tests/eip712sig.online.test.js`
 
-## Notes
-This is a proof of concept template. The Autotask currently allows for unlimited mints of NFTs and can be easily abused until the Relay runs out of funds.
