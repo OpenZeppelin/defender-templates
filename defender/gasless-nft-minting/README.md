@@ -2,19 +2,29 @@
 
 This code will allow users to deploy an [ERC-2771-compatible](https://docs.openzeppelin.com/contracts/4.x/api/metatx#ERC2771Context) [ERC-1155 NFT](https://docs.openzeppelin.com/contracts/4.x/erc1155) contract and then use one Autotask to sign mint requests, and another Autotask to relay the request to a [trusted forwarder](https://docs.openzeppelin.com/contracts/4.x/api/metatx#MinimalForwarder) which will send the request to the NFT contract to mint an NFT for the user.
 
-## Setup
+## Setup  overview
 
-This section will help you set up the following steps. A detailed explanation of each is provided in further sections:
-- Acquire Defender and Relay keys
-- Add funds to the Relay
-- Deploy contracts
-- Update `config.dev.yml` with the 2 deployed contract addresses
-- Deploy the Autotasks
-- Connect Relays to deployed Autotasks
-  - Contract Deployer Relay must be connected to the signing Autotask
-  - Any Relayer with funds can be connected to the Relay Autotask
+The following sections will help you set up the following steps. A detailed explanation of each is provided in further sections:
+- Defender Keys and Deploying Contracts
+  - Acquire Defender and Relay keys
+  - Add funds to the Relay
+  - Update `.secrets/dev.yml` with the Defender and Relay keys
+  - Deploy contracts
+- Serverless Deployment and Connecting Relays
+  - Update `config.dev.yml` with the 2 deployed contract addresses
+  - Deploy the Autotasks
+  - Connect Relays to deployed Autotasks
+- Signing and Relaying Requests with Scripts (Option A)
+  - Update `config.dev.yml` with the 2 Autotask webhooks
+  - Running the scripts
+- Signing and Relaying Requests with Curl (Option B)
+- Testing Defender Signing functions
+
 - Copy the 2 Autotask webhooks into the `config.dev.yml` file
 
+## Defender Keys and Deploying Contracts
+
+This section will 
 ### Defender Account Setup
 
 - In your [Defender account](https://defender.openzeppelin.com/), select the Hamburger icon in the upper right corner and click on **Team API Keys**
@@ -73,6 +83,7 @@ Contracts will be deployed using the Defender Relay that you configured earlier.
   - `yarn deploy contract --contract-name DemoNFT "0xMINIMAL_FORWARDER_ADDRESS"`
 - Make a note of both newly deployed contract addresses. They will need to be added to the config file mentioned below
 
+## Serverless Deployment and Connecting Relays
 ### Serverless Deployment Setup :rocket:
 
 Now that the contracts are deployed, they can be added to the config file so that the Autotasks know which contracts they are signing for and forwarding to. In the `gasless-nft-minting` directory, perform the following steps:
@@ -101,6 +112,17 @@ The same thing must be done for the Autotask that will relay the request:
 - Click on the settings **gear/cog** at the top middle, and select **Edit Settings**
 - In the **Connect a Relayer** section, choose ANY Relayer that has enough funds to execute the minting requests that are submitted to it
 
+## Typical Usage
+
+The Signer Autotask can now authorize the minting of Tokens without needing to spend any gas. This is done by signing a minting request and sending it back to the user via HTTP.
+
+A user with a signed request can send the request to the Relayer Autotask via HTTP and also not spend gas.
+
+The Relayer Autotask verifies the request and signature and executes the transaction on-chain if they are valid.
+
+Upon receiving this request, the Relayer Autotask will verify both the request and signature's validity before executing the desired transaction on the blockchain.
+
+## Signing and Relaying Requests with Scripts (Option A)
 ### Get the Autotask webhook URLs
 
 Interactions with the Autotasks will be done via webhook URLs. Add the URLs to your config file:
@@ -114,17 +136,7 @@ Interactions with the Autotasks will be done via webhook URLs. Add the URLs to y
   - In the **Gasless NFT Minting Relayer Autotask** Autotask box, click on the **Copy** button to copy the Autotask Webhook URL to your clipboard
   - Save the Autotask URL as the value `relayer-webhook` in your `config.dev.yml` file
 
-
-## Typical Usage
-
-The Signer Autotask can now authorize the minting of Tokens without needing to spend any gas. This is done by signing a minting request and sending it back to the user via HTTP.
-
-A user with a signed request can send the request to the Relayer Autotask via HTTP and also not spend gas.
-
-The Relayer Autotask verifies the request and signature and executes the transaction on-chain if they are valid.
-
-Upon receiving this request, the Relayer Autotask will verify both the request and signature's validity before executing the desired transaction on the blockchain.
-### Signing and Relaying with scripts
+### Using the scripts
 
 The `sign` and `relay` scripts included in this template use the deployed Autotasks. 
 
@@ -132,7 +144,7 @@ In the `gasless-nft-minting` directory, perform the following steps:
 - `yarn sign <address>` - to have the Signer Autotask sign a mint request
 - `yarn relay '<stringified JSON>'` - to relay the request and mint the NFT to the user
 
-### Submitting Requests with Curl
+## Signing and Relaying Requests with Curl (Option B)
 
 Signature requests can be submitted with curl. Replace the URL with your Signer Autotask webhook URL and the address with the recipient address:
 ```shell
