@@ -146,6 +146,10 @@ This Autotask will monitor for low funds on a specified address on Arbitrum and 
 ### [Contract Wizard Deployer](defender/contract-wizard-deployer/README.md)
 This Hardhat script enables developers to take Solidity files that are downloaded from Open Zeppelin's [Contract Wizard](https://wizard.openzeppelin.com/), deploy them using a [Defender Relay](https://defender.openzeppelin.com/#/relay), and upload them to [Defender Admin](https://defender.openzeppelin.com/#/admin).
 
+# [Gasless NFT Minter](defender/gasless-nft-minting/README.md)
+
+This code will allow users to deploy an [ERC-2771-compatible](https://docs.openzeppelin.com/contracts/4.x/api/metatx#ERC2771Context) [ERC-1155 NFT](https://docs.openzeppelin.com/contracts/4.x/erc1155) contract and then use one Autotask to sign mint requests, and another Autotask to relay the request to a [trusted forwarder](https://docs.openzeppelin.com/contracts/4.x/api/metatx#MinimalForwarder) which will send the request to the NFT contract to mint an NFT for the user.
+
 ### [Wallet Migrator](defender/wallet-migrator/README.md)
 This Defender Autotask will automatically transfer all ERC20 and ERC721 tokens from a user's wallet address to another specified wallet address. The transfer happens in a two step 
 process: the first step is to approve an allowance to your Defender Relayer using the approval script found in `defender/wallet-migrator/approveTokens.js`, and the second step is 

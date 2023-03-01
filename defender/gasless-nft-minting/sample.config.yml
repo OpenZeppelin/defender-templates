@@ -1,0 +1,6 @@
+# Parameters for Defender
+forwarder-address: "0x00"
+nft-address: "0x00"
+# Parameters for Hardhat Tasks (optional)
+signer-webhook: "https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/xxxx"
+relayer-webhook: "https://api.defender.openzeppelin.com/autotasks/xxxx/runs/webhook/xxxx"

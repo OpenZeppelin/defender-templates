@@ -1,0 +1,41 @@
+service: gasless-nft-minter
+configValidationMode: error
+frameworkVersion: '3'
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: gasless_nft_minting
+  ssot: false
+
+custom:
+  config: ${file(./config.${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+
+defender:
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
+
+functions:
+  signer:
+    name: Gasless NFT Minting Signer Autotask
+    path: autotasks/signer
+    trigger:
+      type: webhook
+    paused: false
+  relay:
+    name: Gasless NFT Minting Relayer Autotask
+    path: autotasks/relay
+    trigger:
+      type: webhook
+    paused: false
+
+resources:
+  Resources:
+    secrets:
+      stack:
+        FORWARDER_ADDRESS: ${self:custom.config.forwarder-address}
+        NFT_ADDRESS: ${self:custom.config.nft-address}
+
+plugins:
+  - defender-serverless
