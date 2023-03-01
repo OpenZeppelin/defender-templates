@@ -20,8 +20,6 @@ The following sections will help you set up the following steps. A detailed expl
 - Signing and Relaying Requests with Curl (Option B)
 - Testing Defender Signing functions
 
-- Copy the 2 Autotask webhooks into the `config.dev.yml` file
-
 ## Defender Keys and Deploying Contracts
 
 This section will 
