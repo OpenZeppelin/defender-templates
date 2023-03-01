@@ -51,7 +51,7 @@ This section will
 
 - In your [Defender account](https://defender.openzeppelin.com/)
 - Click on the **Relay** link on the left side
-- Find the Relay that deployed the NFT contract, click on the **copy address** button
+- Find the Relay that will be used to deploy the NFT contract, click on the **copy address** button
 - Transfer funds to that address to cover the deployment and NFT minting costs
 
 ### Local Code Setup
