@@ -4,14 +4,12 @@ This code will allow users to deploy an [ERC-2771-compatible](https://docs.openz
 
 ## Setup
 
-This section will help you set up the following:
+This section will help you set up the following steps. A detailed explanation of each is provided in further sections:
 - Acquire Defender and Relay keys
 - Add funds to the Relay
 - Deploy contracts
-  - `yarn deploy contract --contract-name MinimalForwarder`
-  - `yarn deploy contract --contract-name DemoNFT "0xMINIMAL_FORWARDER_ADDRESS"`
 - Update `config.dev.yml` with the 2 deployed contract addresses
-- Deploy the Autotasks with `serverless deploy`
+- Deploy the Autotasks
 - Connect Relays to deployed Autotasks
   - Contract Deployer Relay must be connected to the signing Autotask
   - Any Relayer with funds can be connected to the Relay Autotask
