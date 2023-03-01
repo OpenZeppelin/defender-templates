@@ -1,0 +1,56 @@
+service: wallet-migrator
+configValidationMode: error
+frameworkVersion: "3"
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: wallet_migrator
+  ssot: false
+
+# Configure and rename sample.secrets.yml to .secrets/dev.yml
+custom:
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+  config: ${file(./config.${self:provider.stage}.yml)}
+
+# Make sure that you have created keys in your Defender account and added them to your .secrets/dev.yml file
+defender:
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
+
+functions:
+  autotask-1:
+    name: Wallet Migrator Autotask
+    path: autotask-1
+    trigger:
+      type: schedule
+      # set to never run on a schedule and only run manually
+      frequency: 1000000000
+    paused: true
+    relayer: ${self:resources.Resources.relayers.relayer-1}
+
+resources:
+  Resources:
+    policies:
+      policy-1:
+        gas-price-cap: 1000
+        whitelist-receivers:
+          - ${self:custom.config.receiver-wallet-address}
+        eip1559-pricing: true
+
+    secrets:
+      stack:
+        SENDER_WALLET_ADDRESS: ${self:custom.config.sender-wallet-address}
+        RECEIVER_WALLET_ADDRESS: ${self:custom.config.receiver-wallet-address}
+        COVALENT_API_KEY: ${self:custom.secrets.keys.covalent-api-key}
+        NETWORK: ${self:custom.config.network}
+
+    relayers:
+      relayer-1:
+        name: Migrator Relay
+        network: ${self:custom.config.network}
+        min-balance: 100000000000000000
+
+plugins:
+  - defender-serverless
+  
