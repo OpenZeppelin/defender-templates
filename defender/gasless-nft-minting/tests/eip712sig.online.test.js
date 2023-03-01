@@ -108,7 +108,7 @@ describe('signing and verifying', function () {
 
 
   it('OZ Relayer can sign a message with EIP-151 standard', async function () {
-    // Sign a with the relayer
+    // Sign a message with the relayer
     const message = 'Funds are safu!';
     const signature = await liveSigner.signMessage(message);
 
