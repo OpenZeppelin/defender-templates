@@ -1,6 +1,6 @@
 # Governance Summary Template
 
-This Defender Autotask will periodically check and display the status of active proposals on an [OpenZepplin Governor](https://docs.openzeppelin.com/contracts/4.x/api/governance) contract.
+This Defender Autotask will periodically check and display the status of active proposals on an [OpenZeppelin Governor](https://docs.openzeppelin.com/contracts/4.x/api/governance) contract.
 
 ## Optimizations
 
