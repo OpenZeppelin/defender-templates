@@ -1,6 +1,6 @@
 # Governance Bravo Summary Template
 
-This Defender Autotask will periodically check and display the status of active proposals on an [OpenZepplin GovernorCompatibilityBravo](https://docs.openzeppelin.com/contracts/4.x/api/governance#GovernorCompatibilityBravo) contract.
+This Defender Autotask will periodically check and display the status of active proposals on an [OpenZeppelin GovernorCompatibilityBravo](https://docs.openzeppelin.com/contracts/4.x/api/governance#GovernorCompatibilityBravo) contract.
 
 ## Optimizations
 
