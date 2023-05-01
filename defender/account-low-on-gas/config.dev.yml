@@ -1,0 +1,10 @@
+L1:
+  network: 'goerli'
+  low-gas-threshold: '0.001'
+  accounts:
+    - '0x0000000000000000000000000000000000000000'
+L2:
+  low-gas-threshold: '0.01'
+  network: 'mumbai'
+  accounts:
+    - '0x0000000000000000000000000000000000000000'

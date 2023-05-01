@@ -90,6 +90,7 @@
     "defender-admin-client": "^1.37.0",
     "defender-autotask-client": "^1.37.0",
     "defender-relay-client": "^1.37.0",
-    "defender-sentinel-client": "^1.37.0"
+    "defender-sentinel-client": "^1.37.0",
+    "defender-autotask-utils": "^1.39.0"
   }
 }
