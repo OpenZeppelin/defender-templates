@@ -21,8 +21,8 @@ export async function handler(event: AutotaskEvent) {
   const provider = new DefenderRelayProvider(event);
   const scopedSecrets = ScopedSecretsProvider(event);
 
-  const _threshold = scopedSecrets[`LOW_GAS_TRESHOLD`];
-  if (!_threshold) throw new Error('Gas threshold not set');
+  const _minimum = scopedSecrets[`LOW_GAS_THRESHOLD`];
+  if (!_minimum) throw new Error('Gas minimum not set');
 
   let retval: SentinelConditionResponse = { matches: [] };
   for (const evt of match.events) {
@@ -30,17 +30,17 @@ export async function handler(event: AutotaskEvent) {
     for (const address of evt.matchedAddresses) {
       console.log('checking balance of ', address);
       const balance = await provider.getBalance(address);
-      const threshold = ethers.utils.parseEther(_threshold);
+      const minimum = ethers.utils.parseEther(_minimum);
       console.log('balance:', ethers.utils.formatEther(balance));
-      console.log('threshold:', ethers.utils.formatEther(threshold));
-      console.log('threshold.gt(balance)', threshold.gt(balance));
-      if (threshold.gt(balance)) {
+      console.log('minimum:', ethers.utils.formatEther(minimum));
+      console.log('minimum.gt(balance)', minimum.gt(balance));
+      if (minimum.gt(balance)) {
         retval.matches.push({
           hash: evt.hash,
           metadata: {
             address: address,
             balance: balance,
-            threshold: ethers.utils.formatEther(threshold),
+            minimum: ethers.utils.formatEther(minimum),
           },
         });
       }

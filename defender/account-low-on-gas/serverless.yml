@@ -41,8 +41,8 @@ resources:
   Resources:
     secrets:
       stack:
-        L1_LOW_GAS_TRESHOLD: ${self:custom.config.L1.low-gas-threshold}
-        L2_LOW_GAS_TRESHOLD: ${self:custom.config.L2.low-gas-threshold}
+        L1_LOW_GAS_THRESHOLD: ${self:custom.config.L1.low-gas-threshold}
+        L2_LOW_GAS_THRESHOLD: ${self:custom.config.L2.low-gas-threshold}
     relayers:
       L2-Reader:
         name: 'L2 Reader'
