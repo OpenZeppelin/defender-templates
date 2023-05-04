@@ -21,7 +21,7 @@ export async function handler(event: AutotaskEvent) {
   const provider = new DefenderRelayProvider(event);
   const scopedSecrets = ScopedSecretsProvider(event);
 
-  const _minimum = scopedSecrets[`LOW_GAS_THRESHOLD`];
+  const _minimum = scopedSecrets['LOW_GAS_THRESHOLD'];
   if (!_minimum) throw new Error('Gas minimum not set');
 
   let retval: SentinelConditionResponse = { matches: [] };
