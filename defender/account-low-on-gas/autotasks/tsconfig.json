@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "es2020",
+    "module": "commonjs",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "outDir": "compile",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "resolveJsonModule": true
+  },
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "include": ["*/**.yml", "**/*.ts", "checkInvariantState/index.ts", "accountBalanceCheck/index.ts"],
+  "exclude": ["dist", "compile", "node_modules/*/**"]
+}

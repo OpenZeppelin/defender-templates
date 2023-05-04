@@ -1,39 +1,39 @@
 # OpenZeppelin Defender Templates
 
-This repository contains Defender templates built in preparation for the ETHDenver hackathon to be used for projects participating in the OpenZeppelin Defender Bounty. These templates are meant to be a place to get inspiration and kickstart your project. 
+This repository contains Defender templates built in preparation for the ETHDenver hackathon to be used for projects participating in the OpenZeppelin Defender Bounty. These templates are meant to be a place to get inspiration and kickstart your project.
 
 ---
-## What is Defender Serverless? 
+## What is Defender Serverless?
 
-Defender Serverless is a way to build your off-chain infrastructure as code. With these templates you can build complex monitoring and automation workflows and perhaps even escape the need of building a stand-alone backend at all! 
+Defender Serverless is a way to build your off-chain infrastructure as code. With these templates you can build complex monitoring and automation workflows and perhaps even escape the need of building a stand-alone backend at all!
 
 
 ## Usage
 
 We have three basic building primitives:
- - **Relayers**: Send transactions via a regular HTTP API with secure private key storage, transaction signing, nonce management, gas pricing estimation, and resubmissions. 
+ - **Relayers**: Send transactions via a regular HTTP API with secure private key storage, transaction signing, nonce management, gas pricing estimation, and resubmissions.
  - **Sentinels**: Monitor transactions to a contract by defining conditions on events, functions, and transaction parameters.
  - **Autotasks**: Run serverless JS code on a regular basis, via webhooks, or in response to a transaction
 
 As well as auxiliary resources such as:
- - **contracts**: Information about your smart contract and its methods 
+ - **contracts**: Information about your smart contract and its methods
  - **policies**: Rules for Relayers on how to submit transactions
  - **secrets**: Key value pairs that you can store safely in Defender platform
- - **notifications**: Configuration on how you want to receive notifications 
+ - **notifications**: Configuration on how you want to receive notifications
 
 ### Working with smart contracts
 
-In order to orchestrate and monitor smart contracts, Defender will need to know addresses, chain IDs, and ABIs. 
+In order to orchestrate and monitor smart contracts, Defender will need to know addresses, chain IDs, and ABIs.
 The best way to get ABIs compatible with Serverless is to:
 1. `mv sample.env .env`, fill it with required secrets
-2. Place your contracts in the `/contracts` directory 
-3. Run `yarn compile`. This will populate the `./abi` directory 
+2. Place your contracts in the `/contracts` directory
+3. Run `yarn compile`. This will populate the `./abi` directory
 
-You can also run `yarn deploy` to deploy to various networks. We recommend storing deployed addresses in a JSON file such as `./deployments/mainnet.json`so that you can import those into Autotasks or Serverless configurations. 
+You can also run `yarn deploy` to deploy to various networks. We recommend storing deployed addresses in a JSON file such as `./deployments/mainnet.json`so that you can import those into Autotasks or Serverless configurations.
 
 
 ### Setup Defender
-In order to use these templates you must first [create a Defender account](https://defender.openzeppelin.com). A free trial account is powerful enough to get you running for a hackathon or PoC. *Note: Each unique email address can only be associated with one Defender account.* 
+In order to use these templates you must first [create a Defender account](https://defender.openzeppelin.com). A free trial account is powerful enough to get you running for a hackathon or PoC. *Note: Each unique email address can only be associated with one Defender account.*
 
 Once you have created a Defender account, [generate an API key and and a Secret key](https://defender.openzeppelin.com/#/api-keys) so that you can programmatically interact with the Defender API without having to use the Web UI. *Note: Ensure that you have copied both keys to a local file on your development machine. The Secret key will only be visible ONCE and will not be accessible again.*
 
@@ -53,7 +53,7 @@ defender:
   key: <API key>
   secret: <Secret key>
 ```
-Everything else is optional. 
+Everything else is optional.
 
 Autotasks are defined under the `functions` property:
 ```yml
@@ -74,7 +74,7 @@ resources:
     notifications:
 ```
 To better understand how to define your Defender infrastructure resources, a good reference is the [types definition](https://github.com/OpenZeppelin/defender-serverless/blob/main/src/types/index.ts) code.
-The types used by the Defender Serverless Plugin are prefixed by `Y`. For example, the `YSentinel` type describes how to define a Sentinel.  
+The types used by the Defender Serverless Plugin are prefixed by `Y`. For example, the `YSentinel` type describes how to define a Sentinel.
 
 ### Building an Autotask
 [Autotasks](https://docs.openzeppelin.com/defender/autotasks) are small JS code snippets that you can upload to the Defender platform. Autotasks can be executed in the following ways:
@@ -88,7 +88,7 @@ You can refer to the Serverless Plugin documentation, code, and example configur
 
 Autotasks are executed in a node 16 runtime with 256mb RAM and a 5-minute timeout. Code snippets are restricted to be smaller than 5mb in size.
 
-For ease of use, a [set of common dependencies are pre-installed in the autotask environment](https://docs.openzeppelin.com/defender/autotasks#environment). If you need to use any dependency not pre-installed, you can use a JavaScript module bundler such as [rollup](https://www.npmjs.com/package/rollup). Refer to `./defender/poap/` for an example of how to build a rollup for an Autotask and deploy it. 
+For ease of use, a [set of common dependencies are pre-installed in the autotask environment](https://docs.openzeppelin.com/defender/autotasks#environment). If you need to use any dependency not pre-installed, you can use a JavaScript module bundler such as [rollup](https://www.npmjs.com/package/rollup). Refer to `./defender/poap/` for an example of how to build a rollup for an Autotask and deploy it.
 
 To learn more about how to use Autotasks, refer to the [Defender Autotask documentation](https://docs.openzeppelin.com/defender/autotasks). To understand what arguments are passed to the main Autotask function, refer to the [Autotask type definitions](https://github.com/OpenZeppelin/defender-client/blob/ebfb74c29a3cb6509d32919c7a9ff6bfba6f24eb/packages/autotask-utils/src/types.ts)
 
@@ -103,23 +103,23 @@ Once your project is well defined you can deploy your infrastructure to your Def
 ## Templates
 ### [Underlying Asset Monitor](defender/underlying-upgradable-token/Readme.md)
 
-Most DeFi protocols face risks when integrating with upgradable tokens that are outside of the protocol's reach.  
+Most DeFi protocols face risks when integrating with upgradable tokens that are outside of the protocol's reach.
 This section shows how to monitor upgradable tokens and emit an alert :rotating_light: if they get updated.
 
 ### [Multisig Monitor](defender/multisig-monitor/Readme.md)
-Most protocols have some dependency on a multisig that has special powers granted by the community. It is good practice to monitor events on that multisig.  
+Most protocols have some dependency on a multisig that has special powers granted by the community. It is good practice to monitor events on that multisig.
 This template shows how to monitor for administrative events in the multisig, such as changes in the owners and threshold.
 
 ### [Auto fund chainlink subscription when funds are low](defender/auto-fund-chainlink-subscription/Readme.md)
-[Chainlink VRF](https://docs.chain.link/vrf/v2/introduction) is one of the most popular options for achieving provable randomness in a blockchain. It can be used for raffles, gaming and other use cases. Wouldn't it be great if you can monitor when funds are running low and automatically fund the subscription?  
+[Chainlink VRF](https://docs.chain.link/vrf/v2/introduction) is one of the most popular options for achieving provable randomness in a blockchain. It can be used for raffles, gaming and other use cases. Wouldn't it be great if you can monitor when funds are running low and automatically fund the subscription?
 
 ### [Gasless POAP minting](defender/poap/README.md)
 Lightweight and effective Proof of Attendance Protocol implementation with Defender. The POAP can be ERC721/1555/20 depending on configuration.
 
-In This POAP user (client) first needs to sign a message through his wallet such as metamask, that contains his address and some other typed message fields that developer can specify - name, email etc. 
-Then client can POST to autotask webhook with his message and signature in request body. 
+In This POAP user (client) first needs to sign a message through his wallet such as metamask, that contains his address and some other typed message fields that developer can specify - name, email etc.
+Then client can POST to autotask webhook with his message and signature in request body.
 
-In autotask script, developer can verify that data and perhaps send it to CMS, and mint token with use of Relayer.  
+In autotask script, developer can verify that data and perhaps send it to CMS, and mint token with use of Relayer.
 
 ### [Governor Automation](defender/governor-automation/README.md)
 
@@ -151,9 +151,12 @@ This Hardhat script enables developers to take Solidity files that are downloade
 This code will allow users to deploy an [ERC-2771-compatible](https://docs.openzeppelin.com/contracts/4.x/api/metatx#ERC2771Context) [ERC-1155 NFT](https://docs.openzeppelin.com/contracts/4.x/erc1155) contract and then use one Autotask to sign mint requests, and another Autotask to relay the request to a [trusted forwarder](https://docs.openzeppelin.com/contracts/4.x/api/metatx#MinimalForwarder) which will send the request to the NFT contract to mint an NFT for the user.
 
 ### [Wallet Migrator](defender/wallet-migrator/README.md)
-This Defender Autotask will automatically transfer all ERC20 and ERC721 tokens from a user's wallet address to another specified wallet address. The transfer happens in a two step 
-process: the first step is to approve an allowance to your Defender Relayer using the approval script found in `defender/wallet-migrator/approveTokens.js`, and the second step is 
+This Defender Autotask will automatically transfer all ERC20 and ERC721 tokens from a user's wallet address to another specified wallet address. The transfer happens in a two step
+process: the first step is to approve an allowance to your Defender Relayer using the approval script found in `defender/wallet-migrator/approveTokens.js`, and the second step is
 the execution of the Autotask, where the transferring transactions take place.
+
+### [Wallet Migrator](defender/account-low-on-gas/README.md)
+This Defender Sentinel will send notification alert whenever any of monitored accounts balance after transaction is below the minimum threshold value.
 
 ---
 ## Additional Resources

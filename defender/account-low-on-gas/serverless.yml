@@ -1,0 +1,100 @@
+service: LowGasTemplate
+configValidationMode: error
+frameworkVersion: '3'
+
+custom:
+  config: ${file(./config.${self:provider.stage}.yml)}
+  secrets: ${file(../.secrets/${self:provider.stage}.yml)}
+
+  low-on-gas-message: |
+    :warning: {{ sentinel.name }} :warning:
+
+    Account: {{ metadata.address }}
+
+    [Block Explorer]({{ transaction.link }})
+
+provider:
+  name: defender
+  stage: ${opt:stage, 'dev'}
+  stackName: 'LowGasTemplate_${self:provider.stage}'
+  ssot: false
+defender:
+  key: ${self:custom.secrets.keys.defender-api-key}
+  secret: ${self:custom.secrets.keys.defender-api-secret}
+functions:
+  low-gas-condition-L1:
+    name: LowGasTemplate_${self:provider.stage}_L1_lowOnGas
+    path: './autotasks/dist/accountBalanceCheck'
+    trigger:
+      type: 'webhook'
+    paused: 'false'
+    relayer: ${self:resources.Resources.relayers.L1-Reader}
+  low-gas-condition-L2:
+    name: LowGasTemplate_${self:provider.stage}_L2_lowOnGas
+    path: './autotasks/dist/accountBalanceCheck'
+    trigger:
+      type: 'webhook'
+    paused: 'false'
+    relayer: ${self:resources.Resources.relayers.L2-Reader}
+
+resources:
+  Resources:
+    secrets:
+      stack:
+        L1_LOW_GAS_THRESHOLD: ${self:custom.config.L1.low-gas-threshold}
+        L2_LOW_GAS_THRESHOLD: ${self:custom.config.L2.low-gas-threshold}
+    relayers:
+      L2-Reader:
+        name: 'L2 Reader'
+        network: ${self:custom.config.L2.network}
+        min-balance: 1000
+      L1-Reader:
+        name: 'L1 Reader'
+        network: ${self:custom.config.L1.network}
+        min-balance: 1000
+    notifications:
+      slack:
+        type: 'slack' # Enum: https://github.com/OpenZeppelin/defender-serverless/blob/main/src/types/docs/definitions-definitions-notificationtype.md
+        name: 'Informative notifications'
+        config:
+          url: ${self:custom.secrets.notifications.slack-webhook}
+        paused: false
+
+    sentinels:
+      account-low-on-gas-L1:
+        name: 'Account is low on gas'
+        paused: false
+        type: 'BLOCK'
+        network: ${self:custom.config.L1.network}
+        addresses: ${self:custom.config.L1.accounts}
+        conditions:
+          event:
+            - signature: ''
+          function:
+            - signature: ''
+        autotask-condition: ${self:functions.low-gas-condition-L1}
+        confirm-level: 1
+        notify-config:
+          message: ${self:custom.low-on-gas-message}
+          channels:
+            - ${self:resources.Resources.notifications.slack}
+      account-low-on-gas-L2:
+        name: 'Account is low on gas'
+        paused: false
+        type: 'BLOCK'
+        network: ${self:custom.config.L2.network}
+        addresses: ${self:custom.config.L2.accounts}
+        conditions:
+          event:
+            - signature: ''
+          function:
+            - signature: ''
+        autotask-condition: ${self:functions.low-gas-condition-L2}
+        confirm-level: 1
+        notify-config:
+          message: ${self:custom.low-on-gas-message}
+          channels:
+            - ${self:resources.Resources.notifications.slack}
+
+plugins:
+  - defender-serverless
