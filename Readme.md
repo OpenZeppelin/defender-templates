@@ -1,6 +1,6 @@
 # OpenZeppelin Defender Templates
 
-This repository contains Defender templates built in preparation for the ETHDenver hackathon to be used for projects participating in the OpenZeppelin Defender Bounty. These templates are meant to be a place to get inspiration and kickstart your project.
+This repository contains Defender templates to be used for inspiration and kickstarting your project on OpenZeppelin Defender using serverless configuations.
 
 ---
 ## What is Defender Serverless?
