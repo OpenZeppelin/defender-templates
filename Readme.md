@@ -1,6 +1,6 @@
 # OpenZeppelin Defender Templates
 
-This repository contains Defender templates to be used fot inspiration and kickstarting your project on OpenZeppelin Defender using serverless configuations.
+This repository contains Defender templates to be used for inspiration and kickstarting your project on OpenZeppelin Defender using serverless configuations.
 
 ---
 ## What is Defender Serverless?
